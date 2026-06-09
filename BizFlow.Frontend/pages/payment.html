@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BizFlow - Thanh Toán</title>
+    <script src="https://cdn.jsdelivr.net/npm/heroicons@2.0.18/16/solid/index.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .navbar h1 {
+            font-size: 24px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .app-badge {
+            width: 32px;
+            height: 32px;
+            border-radius: 12px;
+            display: grid;
+            place-items: center;
+            font-weight: 700;
+            font-size: 12px;
+            color: #fff;
+            background: #4c6fff;
+        }
+
+        .navbar .btn {
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+            padding: 30px;
+        }
+
+        .header h2 {
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .payment-method {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .method-option {
+            padding: 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .method-option:hover {
+            border-color: #4CAF50;
+            background: #f0f8f5;
+        }
+
+        .method-option.active {
+            border-color: #4CAF50;
+            background: linear-gradient(135deg, rgba(76, 175, 80, 0.1) 0%, rgba(69, 160, 73, 0.05) 100%);
+        }
+
+        .method-icon {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .method-name {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #4CAF50;
+            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .order-summary {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+            overflow: hidden;
+            height: fit-content;
+            position: sticky;
+            top: 20px;
+        }
+
+        .summary-header {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+            padding: 20px;
+        }
+
+        .summary-header h3 {
+            font-size: 18px;
+        }
+
+        .summary-content {
+            padding: 20px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 14px;
+        }
+
+        .summary-row.total {
+            border-bottom: none;
+            padding-top: 15px;
+            font-size: 18px;
+            font-weight: 700;
+            color: #4CAF50;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-secondary {
+            background: #e0e0e0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #d0d0d0;
+        }
+
+        .btn-primary {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #45a049;
+        }
+
+        .app-popup {
+            position: fixed;
+            inset: 0;
+            background: rgba(22, 26, 38, 0.45);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 70;
+            padding: 16px;
+        }
+
+        .app-popup.show {
+            display: flex;
+        }
+
+        .app-popup-card {
+            background: #ffffff;
+            border-radius: 12px;
+            width: min(360px, 90vw);
+            box-shadow: 0 20px 50px rgba(12, 20, 36, 0.2);
+            padding: 16px;
+            display: grid;
+            gap: 12px;
+        }
+
+        .app-popup-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .app-popup-header h3 {
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .app-popup-message {
+            font-size: 13px;
+            color: #4b5366;
+            line-height: 1.5;
+        }
+
+        .app-popup-actions {
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .info-box {
+            background: linear-gradient(135deg, rgba(76, 175, 80, 0.1) 0%, rgba(69, 160, 73, 0.05) 100%);
+            border-left: 4px solid #4CAF50;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 12px;
+            }
+
+            .navbar {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 10px;
+                padding: 12px 16px;
+            }
+
+            .navbar h1 {
+                font-size: 20px;
+                justify-content: center;
+                text-align: center;
+            }
+
+            .navbar .btn {
+                width: 100%;
+            }
+
+            .container {
+                grid-template-columns: 1fr;
+            }
+
+            .order-summary {
+                position: static;
+            }
+
+            .header {
+                padding: 20px;
+            }
+
+            .header h2 {
+                font-size: 24px;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .payment-method {
+                grid-template-columns: 1fr;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .btn-group {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header h2 {
+                font-size: 22px;
+            }
+
+            .summary-header h3 {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <h1><span class="app-badge">BH</span> BizFlow - Thanh Toán</h1>
+        <button class="btn" onclick="logout()">Đăng Xuất</button>
+    </div>
+
+    <div class="container">
+        <div class="card">
+            <div class="header">
+                <h2>Thông Tin Giao Hàng & Thanh Toán</h2>
+                <p>Vui lòng kiểm tra kỹ địa chỉ và phương thức vận chuyển</p>
+            </div>
+
+            <div class="content">
+                <!-- Địa chỉ nhận hàng -->
+                <div class="form-group">
+                    <label>📍 Địa Chỉ Nhận Hàng</label>
+                    <div class="form-row">
+                        <input type="text" id="shipReceiverName" placeholder="Tên người nhận">
+                        <input type="text" id="shipReceiverPhone" placeholder="Số điện thoại">
+                    </div>
+                    <textarea id="shipReceiverAddress" placeholder="Địa chỉ chi tiết (Số nhà, đường, phường/xã, quận/huyện...)" rows="2" style="margin-top:10px;"></textarea>
+                </div>
+
+                <!-- Đơn vị vận chuyển -->
+                <label>🚚 Đơn Vị Vận Chuyển</label>
+                <div class="payment-method" id="shippingMethods" style="margin-bottom:30px;">
+                    <div class="method-option active" onclick="selectShipping(this, 'STANDARD', 15000)">
+                        <div class="method-icon">🚚</div>
+                        <div class="method-name">Tiêu Chuẩn</div>
+                        <div style="font-size:12px; color:var(--muted)">15.000₫ (3-5 ngày)</div>
+                    </div>
+                    <div class="method-option" onclick="selectShipping(this, 'FAST', 30000)">
+                        <div class="method-icon">🚀</div>
+                        <div class="method-name">Giao Nhanh</div>
+                        <div style="font-size:12px; color:var(--muted)">30.000₫ (1-2 ngày)</div>
+                    </div>
+                    <div class="method-option" onclick="selectShipping(this, 'ECONOMY', 10000)">
+                        <div class="method-icon">💰</div>
+                        <div class="method-name">Tiết Kiệm</div>
+                        <div style="font-size:12px; color:var(--muted)">10.000₫ (5-7 ngày)</div>
+                    </div>
+                </div>
+
+                <label>💳 Phương Thức Thanh Toán</label>
+                <div class="payment-method" id="paymentMethods">
+                    <div class="method-option active" onclick="selectPayment(this, 'cash')">
+                        <div class="method-icon">💵</div>
+                        <div class="method-name">Tiền Mặt</div>
+                    </div>
+                    <div class="method-option" onclick="selectPayment(this, 'transfer')">
+                        <div class="method-icon">🏦</div>
+                        <div class="method-name">Chuyển Khoản</div>
+                    </div>
+                </div>
+
+                <div id="paymentForm">
+                    <div id="transferSection" style="display:none;">
+                        <div class="info-box">
+                            <strong>📋 Thông tin chuyển khoản:</strong>
+                            <p>Ngân hàng: VCB<br>
+                            Số tài khoản: 1021209511<br>
+                            Nội dung: Thanh toán đơn hàng</p>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Ghi Chú Đơn Hàng</label>
+                        <textarea id="orderNote" placeholder="Ghi chú thêm cho shop..." rows="2"></textarea>
+                    </div>
+                </div>
+
+                <div class="btn-group">
+                    <button class="btn btn-secondary" onclick="window.location.href='/pages/select-quantity.html'">← Quay Lại</button>
+                    <button class="btn btn-primary" onclick="confirmPayment()">Đặt Hàng (Xác Nhận)</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="order-summary">
+            <div class="summary-header">
+                <h3>📦 Tóm Tắt Đơn Hàng</h3>
+            </div>
+            <div class="summary-content">
+                <div class="summary-row">
+                    <span>Sản phẩm:</span>
+                    <span id="summaryProduct">--</span>
+                </div>
+                <div class="summary-row">
+                    <span>Tạm tính:</span>
+                    <span id="summarySubtotal">--</span>
+                </div>
+                <div class="summary-row">
+                    <span>Phí vận chuyển:</span>
+                    <span id="summaryShippingFee" style="color: #2563eb; font-weight: 600;">15.000₫</span>
+                </div>
+                <div class="summary-row total">
+                    <span>Tổng cộng:</span>
+                    <span id="summaryTotal">0₫</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let selectedPaymentMethod = 'cash';
+        let selectedShippingMethod = 'STANDARD';
+        let currentShippingFee = 15000;
+        let baseTotal = 0;
+
+        function showPopup(message, options = {}) {
+            const { title = 'Thông báo' } = options;
+            let modal = document.getElementById('appPopup');
+            if (!modal) {
+                modal = document.createElement('div');
+                modal.id = 'appPopup';
+                modal.className = 'app-popup';
+                modal.setAttribute('aria-hidden', 'true');
+                modal.innerHTML = `
+                    <div class="app-popup-card" role="dialog" aria-modal="true">
+                        <div class="app-popup-header">
+                            <h3 id="appPopupTitle"></h3>
+                            <button type="button" id="appPopupClose" aria-label="Đóng">×</button>
+                        </div>
+                        <div id="appPopupMessage" class="app-popup-message"></div>
+                        <div class="app-popup-actions">
+                            <button type="button" id="appPopupOk">Đóng</button>
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(modal);
+
+                const closePopup = () => {
+                    modal.classList.remove('show');
+                    modal.setAttribute('aria-hidden', 'true');
+                };
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) {
+                        closePopup();
+                    }
+                });
+                modal.querySelector('#appPopupClose')?.addEventListener('click', closePopup);
+                modal.querySelector('#appPopupOk')?.addEventListener('click', closePopup);
+            }
+
+            const titleEl = modal.querySelector('#appPopupTitle');
+            const messageEl = modal.querySelector('#appPopupMessage');
+            if (titleEl) titleEl.textContent = title;
+            if (messageEl) messageEl.textContent = message || '';
+
+            modal.classList.add('show');
+            modal.setAttribute('aria-hidden', 'false');
+        }
+
+        function formatPrice(price) {
+            return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
+        }
+
+        function selectShipping(element, method, fee) {
+            document.querySelectorAll('#shippingMethods .method-option').forEach(el => el.classList.remove('active'));
+            element.classList.add('active');
+            selectedShippingMethod = method;
+            currentShippingFee = fee;
+            document.getElementById('summaryShippingFee').textContent = formatPrice(fee);
+            updateFinalTotal();
+        }
+
+        function selectPayment(element, method) {
+            document.querySelectorAll('#paymentMethods .method-option').forEach(el => {
+                el.classList.remove('active');
+            });
+            element.classList.add('active');
+            selectedPaymentMethod = method;
+            document.getElementById('transferSection').style.display = method === 'transfer' ? 'block' : 'none';
+        }
+
+        function updateFinalTotal() {
+            document.getElementById('summaryTotal').textContent = formatPrice(baseTotal + currentShippingFee);
+        }
+
+        function loadOrderSummary() {
+            const product = JSON.parse(localStorage.getItem('selectedProduct'));
+            const qty = parseInt(localStorage.getItem('orderQuantity')) || 1;
+            const subtotal = parseInt(localStorage.getItem('orderTotal')) || 0;
+            baseTotal = subtotal;
+
+            if (product) {
+                document.getElementById('summaryProduct').textContent = product.name + ' (x' + qty + ')';
+                document.getElementById('summarySubtotal').textContent = formatPrice(subtotal);
+                updateFinalTotal();
+            }
+        }
+
+        async function confirmPayment() {
+            const name = document.getElementById('shipReceiverName').value.trim();
+            const phone = document.getElementById('shipReceiverPhone').value.trim();
+            const addr = document.getElementById('shipReceiverAddress').value.trim();
+
+            if (!name || !phone || !addr) {
+                showPopup('⚠️ Vui lòng điền đầy đủ thông tin địa chỉ nhận hàng');
+                return;
+            }
+
+            const btn = document.querySelector('.btn-primary');
+            btn.disabled = true;
+            btn.textContent = 'Đang xử lý...';
+
+            try {
+                // 1. Thu thập dữ liệu đơn hàng từ localStorage
+                const product = JSON.parse(localStorage.getItem('selectedProduct'));
+                const qty = parseInt(localStorage.getItem('orderQuantity')) || 1;
+                const token = sessionStorage.getItem('accessToken');
+                const userId = localStorage.getItem('userId');
+                const customerId = localStorage.getItem('selectedCustomerId');
+
+                const orderPayload = {
+                    userId: userId ? parseInt(userId) : null,
+                    customerId: customerId ? parseInt(customerId) : null,
+                    paid: selectedPaymentMethod === 'cash',
+                    paymentMethod: selectedPaymentMethod.toUpperCase(),
+                    orderType: 'ONLINE', // Vì có shipping nên đánh dấu là ONLINE
+                    items: [{
+                        productId: product.id,
+                        quantity: qty,
+                        unitPrice: product.price
+                    }]
+                };
+
+                // 2. Gọi API tạo đơn hàng
+                const orderRes = await fetch('/api/orders', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + token
+                    },
+                    body: JSON.stringify(orderPayload)
+                });
+
+                if (!orderRes.ok) throw new Error('Không thể tạo đơn hàng');
+                const orderData = await orderRes.json();
+                const orderId = orderData.id;
+
+                // 3. Gọi API tạo vận chuyển (Shipment)
+                const shipmentPayload = {
+                    orderId: orderId,
+                    shippingMethod: selectedShippingMethod,
+                    shippingFee: currentShippingFee,
+                    receiverName: name,
+                    receiverPhone: phone,
+                    receiverAddress: addr,
+                    note: document.getElementById('orderNote').value
+                };
+
+                const shipRes = await fetch('/api/orders/shipments', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + token
+                    },
+                    body: JSON.stringify(shipmentPayload)
+                });
+
+                if (!shipRes.ok) throw new Error('Không thể tạo phiếu vận chuyển');
+                const shipData = await shipRes.json();
+
+                // 4. Thành công
+                showPopup('✅ Đặt hàng & Giao hàng thành công! \nMã vận đơn của bạn là: ' + shipData.shipmentNumber, {title: 'Thành công'});
+                
+                // Clear and redirect
+                setTimeout(() => {
+                    localStorage.removeItem('selectedProduct');
+                    localStorage.removeItem('orderQuantity');
+                    localStorage.removeItem('orderTotal');
+                    localStorage.removeItem('selectedCustomerId');
+                    window.location.href = '/pages/employee-dashboard.html';
+                }, 3000);
+
+            } catch (e) {
+                showPopup('❌ Lỗi: ' + e.message);
+                btn.disabled = false;
+                btn.textContent = 'Đặt Hàng (Xác Nhận)';
+            }
+        }
+
+        function logout() {
+            if (confirm('Bạn có chắc muốn đăng xuất?')) {
+                localStorage.clear();
+                window.location.href = '/pages/index.html';
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const role = localStorage.getItem('role');
+            if (!role) {
+                window.location.href = '/pages/index.html';
+            }
+            loadOrderSummary();
+        });
+    </script>
+</body>
+</html>

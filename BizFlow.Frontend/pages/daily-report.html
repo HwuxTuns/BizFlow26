@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BizFlow POS - Báo cáo theo ngày</title>
+    <link rel="stylesheet" href="../assets/css/employee-dashboard.css">
+    <link rel="stylesheet" href="../assets/css/daily-report.css">
+</head>
+<body class="pos-body">
+    <header class="pos-header">
+        <div class="header-left">
+            <button class="icon-btn" type="button" aria-label="Quay lại" onclick="window.location.href='/pages/employee-dashboard.html'">
+                <svg viewBox="0 0 24 24" class="icon-svg" aria-hidden="true">
+                    <path d="M15 6l-6 6 6 6" />
+                </svg>
+            </button>
+            <div class="logo-mark" aria-label="BizFlow">BizFlow POS</div>
+            <span class="app-icon app-teal app-badge">BC</span>
+            <div class="page-title">Báo cáo theo ngày</div>
+        </div>
+        <div class="header-actions">
+            <div class="store">TRƯỜNG CHINH</div>
+            <div class="user-chip">
+                <span id="userInitial">E</span>
+                <span id="userName">Nhân viên</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="daily-report">
+        <section class="report-filters">
+            <div class="filter-group">
+                <label for="reportDate">Ngày</label>
+                <input id="reportDate" type="date">
+            </div>
+            <div class="filter-group">
+                <label for="cashierFilter">Thu ngân</label>
+                <select id="cashierFilter">
+                    <option>Tất cả thu ngân</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="sellerFilter">NVBH</label>
+                <select id="sellerFilter">
+                    <option>Tất cả NVBH</option>
+                </select>
+            </div>
+            <div class="filter-range">
+                <span id="reportTimeRange">--/--/---- 00:00 - --/--/---- 23:59</span>
+                <button class="ghost-btn" type="button" id="todayBtn">Hôm nay</button>
+            </div>
+        </section>
+
+        <section class="report-grid">
+            <article class="report-card">
+                <div class="card-header">
+                    <h3>TỔNG (1) - (2)</h3>
+                    <div class="card-value" id="netTotal">0</div>
+                </div>
+                <div class="card-section">
+                    <div class="section-title">Thu (1)</div>
+                    <div class="report-row">
+                        <span>Tiền mặt</span>
+                        <strong id="incomeCash">0</strong>
+                    </div>
+                    <div class="report-row">
+                        <span>Thẻ</span>
+                        <strong id="incomeCard">0</strong>
+                    </div>
+                    <div class="report-row">
+                        <span>Chuyển khoản</span>
+                        <strong id="incomeTransfer">0</strong>
+                    </div>
+                    <div class="report-row">
+                        <span>Voucher</span>
+                        <strong id="incomeVoucher">0</strong>
+                    </div>
+                    <div class="report-total">
+                        <span>Tổng thu</span>
+                        <strong id="incomeTotal">0</strong>
+                    </div>
+                </div>
+
+                <div class="card-section">
+                    <div class="section-title">Chi (2)</div>
+                    <div class="report-row">
+                        <span>Tiền mặt</span>
+                        <strong id="expenseCash">0</strong>
+                    </div>
+                    <div class="report-row">
+                        <span>Thẻ</span>
+                        <strong id="expenseCard">0</strong>
+                    </div>
+                    <div class="report-row">
+                        <span>Chuyển khoản</span>
+                        <strong id="expenseTransfer">0</strong>
+                    </div>
+                    <div class="report-total">
+                        <span>Tổng chi</span>
+                        <strong id="expenseTotal">0</strong>
+                    </div>
+                </div>
+
+                <div class="card-section">
+                    <div class="section-title">Công nợ (3)</div>
+                    <div class="report-row">
+                        <span>Ghi nợ</span>
+                        <strong id="debtIncrease">0</strong>
+                    </div>
+                    <div class="report-row">
+                        <span>Giảm nợ</span>
+                        <strong id="debtDecrease">0</strong>
+                    </div>
+                    <div class="report-total">
+                        <span>Còn lại</span>
+                        <strong id="debtTotal">0</strong>
+                    </div>
+                </div>
+            </article>
+
+            <article class="report-card">
+                <div class="card-header">
+                    <h3>HÀNG BÁN</h3>
+                </div>
+                <div class="card-section">
+                    <div class="report-row">
+                        <span>Số lượng</span>
+                        <strong id="salesQty">0</strong>
+                    </div>
+                    <div class="report-row">
+                        <span>Giá trị</span>
+                        <strong id="salesValue">0</strong>
+                    </div>
+                </div>
+
+                <div class="card-header">
+                    <h3>HÀNG TRẢ</h3>
+                </div>
+                <div class="card-section">
+                    <div class="report-row">
+                        <span>Số lượng</span>
+                        <strong id="returnQty">0</strong>
+                    </div>
+                    <div class="report-row">
+                        <span>Giá trị</span>
+                        <strong id="returnValue">0</strong>
+                    </div>
+                </div>
+
+                <div class="card-header">
+                    <h3>KHÁC</h3>
+                </div>
+                <div class="card-section list-section">
+                    <div class="report-row">
+                        <span>Tổng SL hóa đơn</span>
+                        <strong id="totalInvoices">0</strong>
+                    </div>
+                    <div class="report-row">
+                        <span>SL hóa đơn bán hàng</span>
+                        <strong id="salesInvoices">0</strong>
+                    </div>
+                    <div class="report-row">
+                        <span>SL hóa đơn đổi trả</span>
+                        <strong id="returnInvoices">0</strong>
+                    </div>
+                    <div class="report-row">
+                        <span>SL hóa đơn đổi trả, mua thêm</span>
+                        <strong id="exchangeInvoices">0</strong>
+                    </div>
+                    <div class="report-row">
+                        <span>SL Voucher</span>
+                        <strong id="voucherCount">0</strong>
+                    </div>
+                    <div class="report-row">
+                        <span>SL Mã ưu đãi</span>
+                        <strong id="discountCount">0</strong>
+                    </div>
+                    <div class="report-row">
+                        <span>SL Biên lai thanh toán thẻ</span>
+                        <strong id="cardPaymentsCount">0</strong>
+                    </div>
+                </div>
+            </article>
+
+            <article class="report-card handover-card">
+                <div class="card-header">
+                    <h3>BÀN GIAO TIỀN</h3>
+                </div>
+                <div class="card-section">
+                    <div class="report-row">
+                        <span>Số tiền bàn giao từ ban đầu</span>
+                        <input id="openingCashInput" type="number" min="0" step="1000" value="0">
+                    </div>
+                    <div class="report-row">
+                        <span>Nhận từ</span>
+                        <input id="receivedFrom" type="text" value="Nhân viên" readonly>
+                    </div>
+                </div>
+                <div class="card-section">
+                    <div class="section-title">Bàn giao</div>
+                    <div class="report-row">
+                        <span>Tiền bàn giao</span>
+                        <input id="handoverInput" type="number" min="0" step="1000" value="0">
+                    </div>
+                    <div class="report-row">
+                        <span>Chênh lệch</span>
+                        <strong id="handoverDiff">0</strong>
+                    </div>
+                </div>
+                <div class="card-section list-section">
+                    <div class="report-row">
+                        <span>Tổng SL hóa đơn</span>
+                        <strong id="handoverTotalInvoices">0</strong>
+                    </div>
+                    <div class="report-row">
+                        <span>SL hóa đơn bán hàng</span>
+                        <strong id="handoverSalesInvoices">0</strong>
+                    </div>
+                    <div class="report-row">
+                        <span>SL hóa đơn đổi trả</span>
+                        <strong id="handoverReturnInvoices">0</strong>
+                    </div>
+                    <div class="report-row">
+                        <span>SL hóa đơn đổi trả, mua thêm</span>
+                        <strong id="handoverExchangeInvoices">0</strong>
+                    </div>
+                    <div class="report-row">
+                        <span>SL Voucher</span>
+                        <strong id="handoverVoucherCount">0</strong>
+                    </div>
+                    <div class="report-row">
+                        <span>SL Mã ưu đãi</span>
+                        <strong id="handoverDiscountCount">0</strong>
+                    </div>
+                    <div class="report-row">
+                        <span>SL Biên lai thanh toán thẻ</span>
+                        <strong id="handoverCardPaymentsCount">0</strong>
+                    </div>
+                </div>
+                <div class="card-section">
+                    <div class="report-row">
+                        <span>Người nhận bàn giao</span>
+                        <input id="handoverReceiver" type="text" placeholder="Nhân viên">
+                    </div>
+                    <div class="report-row">
+                        <span>Ghi chú</span>
+                        <textarea id="handoverNote" rows="2" placeholder="Nhập ghi chú..."></textarea>
+                    </div>
+                </div>
+                <button class="primary-btn full" type="button" id="printHandoverBtn">In bàn giao</button>
+                <div class="handover-summary">
+                    <div>
+                        <span>Tiền mặt thu</span>
+                        <strong id="cashCollected">0</strong>
+                    </div>
+                    <div>
+                        <span>Tiền hoàn trả</span>
+                        <strong id="cashRefunded">0</strong>
+                    </div>
+                    <div>
+                        <span>Tiền mặt còn lại</span>
+                        <strong id="cashNet">0</strong>
+                    </div>
+                    <div>
+                        <span>Tiền bàn giao kỳ vọng</span>
+                        <strong id="expectedHandover">0</strong>
+                    </div>
+                </div>
+            </article>
+        </section>
+    </main>
+
+    <script>
+        const API_BASE = '/api';
+
+        function getAuthHeaders() {
+            const token = localStorage.getItem('token');
+            return {
+                'Content-Type': 'application/json',
+                'Authorization': token ? `Bearer ${token}` : ''
+            };
+        }
+
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('vi-VN', {
+                style: 'currency',
+                currency: 'VND'
+            }).format(amount || 0);
+        }
+
+        function setText(id, value) {
+            const el = document.getElementById(id);
+            if (el) {
+                el.textContent = value;
+            }
+        }
+
+        function getNumberValue(inputId) {
+            const el = document.getElementById(inputId);
+            if (!el) return 0;
+            return parseFloat(el.value || '0') || 0;
+        }
+
+        function updateHandoverDiff() {
+            const openingCash = getNumberValue('openingCashInput');
+            const handoverInput = getNumberValue('handoverInput');
+            const cashNetRaw = getNumberValue('cashNetRaw');
+            const expected = openingCash + cashNetRaw;
+            const expectedRaw = document.getElementById('expectedHandoverRaw');
+            if (expectedRaw) {
+                expectedRaw.value = expected;
+            }
+            setText('expectedHandover', formatCurrency(expected));
+            const diff = handoverInput - expected;
+            setText('handoverDiff', formatCurrency(diff));
+        }
+
+        function applyReportData(data) {
+            const summary = data.summary || {};
+            const income = summary.income || {};
+            const expense = summary.expense || {};
+            const debt = summary.debt || {};
+            const sales = data.sales || {};
+            const returns = data.returns || {};
+            const other = data.other || {};
+            const cash = data.cash || {};
+
+            setText('reportTimeRange', `${data.startTime || ''} - ${data.endTime || ''}`);
+
+            setText('netTotal', formatCurrency(summary.netTotal));
+            setText('incomeCash', formatCurrency(income.cash));
+            setText('incomeCard', formatCurrency(income.card));
+            setText('incomeTransfer', formatCurrency(income.transfer));
+            setText('incomeVoucher', formatCurrency(income.voucher));
+            setText('incomeTotal', formatCurrency(income.total));
+
+            setText('expenseCash', formatCurrency(expense.cash));
+            setText('expenseCard', formatCurrency(expense.card));
+            setText('expenseTransfer', formatCurrency(expense.transfer));
+            setText('expenseTotal', formatCurrency(expense.total));
+
+            setText('debtIncrease', formatCurrency(debt.increase));
+            setText('debtDecrease', formatCurrency(debt.decrease));
+            setText('debtTotal', formatCurrency(debt.total));
+
+            setText('salesQty', sales.quantity || 0);
+            setText('salesValue', formatCurrency(sales.value));
+            setText('returnQty', returns.quantity || 0);
+            setText('returnValue', formatCurrency(returns.value));
+
+            setText('totalInvoices', other.totalInvoices || 0);
+            setText('salesInvoices', other.salesInvoices || 0);
+            setText('returnInvoices', other.returnInvoices || 0);
+            setText('exchangeInvoices', other.exchangeInvoices || 0);
+            setText('voucherCount', other.voucherCount || 0);
+            setText('discountCount', other.discountCount || 0);
+            setText('cardPaymentsCount', other.cardPaymentCount || 0);
+
+            setText('handoverTotalInvoices', other.totalInvoices || 0);
+            setText('handoverSalesInvoices', other.salesInvoices || 0);
+            setText('handoverReturnInvoices', other.returnInvoices || 0);
+            setText('handoverExchangeInvoices', other.exchangeInvoices || 0);
+            setText('handoverVoucherCount', other.voucherCount || 0);
+            setText('handoverDiscountCount', other.discountCount || 0);
+            setText('handoverCardPaymentsCount', other.cardPaymentCount || 0);
+
+            setText('cashCollected', formatCurrency(cash.cashCollected));
+            setText('cashRefunded', formatCurrency(cash.cashRefunded));
+            setText('cashNet', formatCurrency(cash.cashNet));
+            setText('expectedHandover', formatCurrency(cash.expectedHandover));
+
+            const openingInput = document.getElementById('openingCashInput');
+            if (openingInput && openingInput.dataset.bound !== 'true') {
+                openingInput.value = cash.openingCash || 0;
+                openingInput.dataset.bound = 'true';
+            }
+
+            const expectedRaw = document.getElementById('expectedHandoverRaw');
+            if (expectedRaw) {
+                expectedRaw.value = cash.expectedHandover || 0;
+            }
+
+            const cashNetRaw = document.getElementById('cashNetRaw');
+            if (cashNetRaw) {
+                cashNetRaw.value = cash.cashNet || 0;
+            }
+
+            const handoverInput = document.getElementById('handoverInput');
+            if (handoverInput && handoverInput.dataset.bound !== 'true') {
+                handoverInput.value = cash.expectedHandover || 0;
+                handoverInput.dataset.bound = 'true';
+            }
+            updateHandoverDiff();
+        }
+
+        async function loadDailyReport(date) {
+            try {
+                const url = new URL(`${API_BASE}/reports/daily`);
+                if (date) {
+                    url.searchParams.set('date', date);
+                }
+                const res = await fetch(url.toString(), {
+                    headers: getAuthHeaders()
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    applyReportData(data);
+                }
+            } catch (err) {
+                console.error('Error loading daily report:', err);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const username = sessionStorage.getItem('username');
+            const userInitial = (username ? username[0] : 'E').toUpperCase();
+            document.getElementById('userInitial').textContent = userInitial;
+            document.getElementById('userName').textContent = username || 'Nhân viên';
+            const receivedFrom = document.getElementById('receivedFrom');
+            if (receivedFrom) {
+                receivedFrom.value = username || 'Nhân viên';
+            }
+
+            const today = new Date();
+            const dateInput = document.getElementById('reportDate');
+            if (dateInput) {
+                dateInput.value = today.toISOString().split('T')[0];
+                dateInput.addEventListener('change', () => {
+                    loadDailyReport(dateInput.value);
+                });
+            }
+
+            const todayBtn = document.getElementById('todayBtn');
+            if (todayBtn) {
+                todayBtn.addEventListener('click', () => {
+                    const value = new Date().toISOString().split('T')[0];
+                    if (dateInput) {
+                        dateInput.value = value;
+                    }
+                    loadDailyReport(value);
+                });
+            }
+
+            ['openingCashInput', 'handoverInput'].forEach((id) => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.addEventListener('input', updateHandoverDiff);
+                }
+            });
+
+            const printBtn = document.getElementById('printHandoverBtn');
+            if (printBtn) {
+                printBtn.addEventListener('click', () => {
+                    alert('Chức năng in bàn giao đang được cập nhật.');
+                });
+            }
+
+            loadDailyReport(dateInput ? dateInput.value : null);
+        });
+    </script>
+    <script src="../assets/js/app-shell.js"></script>
+    <input type="hidden" id="expectedHandoverRaw" value="0">
+    <input type="hidden" id="cashNetRaw" value="0">
+</body>
+</html>
+

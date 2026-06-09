@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BizFlow - Chọn Số Lượng</title>
+    <script src="https://cdn.jsdelivr.net/npm/heroicons@2.0.18/16/solid/index.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .navbar h1 {
+            font-size: 24px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .app-badge {
+            width: 32px;
+            height: 32px;
+            border-radius: 12px;
+            display: grid;
+            place-items: center;
+            font-weight: 700;
+            font-size: 12px;
+            color: #fff;
+            background: #4c6fff;
+        }
+
+        .navbar .btn {
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h2 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .product-summary {
+            background: #f9f9f9;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .product-summary h3 {
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .summary-row:last-child {
+            border-bottom: none;
+        }
+
+        .summary-row label {
+            color: #666;
+        }
+
+        .summary-row strong {
+            color: #4CAF50;
+        }
+
+        .quantity-section {
+            margin-bottom: 30px;
+        }
+
+        .quantity-section label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .quantity-input {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .qty-btn {
+            width: 40px;
+            height: 40px;
+            border: 2px solid #4CAF50;
+            background: white;
+            color: #4CAF50;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .qty-btn:hover {
+            background: #4CAF50;
+            color: white;
+        }
+
+        #quantity {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 4px;
+            font-size: 16px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .quantity-info {
+            background: linear-gradient(135deg, rgba(76, 175, 80, 0.1) 0%, rgba(69, 160, 73, 0.05) 100%);
+            border-left: 4px solid #4CAF50;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+
+        .price-calculation {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+
+        .price-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            font-size: 16px;
+        }
+
+        .price-row.total {
+            border-top: 2px solid #ddd;
+            padding-top: 15px;
+            font-size: 20px;
+            font-weight: 700;
+            color: #4CAF50;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-secondary {
+            background: #e0e0e0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #d0d0d0;
+        }
+
+        .btn-primary {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #45a049;
+        }
+
+        .app-popup {
+            position: fixed;
+            inset: 0;
+            background: rgba(22, 26, 38, 0.45);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 70;
+            padding: 16px;
+        }
+
+        .app-popup.show {
+            display: flex;
+        }
+
+        .app-popup-card {
+            background: #ffffff;
+            border-radius: 12px;
+            width: min(360px, 90vw);
+            box-shadow: 0 20px 50px rgba(12, 20, 36, 0.2);
+            padding: 16px;
+            display: grid;
+            gap: 12px;
+        }
+
+        .app-popup-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .app-popup-header h3 {
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .app-popup-message {
+            font-size: 13px;
+            color: #4b5366;
+            line-height: 1.5;
+        }
+
+        .app-popup-actions {
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 12px;
+            }
+
+            .navbar {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 10px;
+                padding: 12px 16px;
+            }
+
+            .navbar h1 {
+                font-size: 20px;
+                justify-content: center;
+                text-align: center;
+            }
+
+            .navbar .btn {
+                width: 100%;
+            }
+
+            .header {
+                padding: 20px;
+            }
+
+            .header h2 {
+                font-size: 24px;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .btn-group {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .quantity-input {
+                flex-direction: column;
+            }
+
+            .qty-btn {
+                width: 100%;
+            }
+
+            .summary-row,
+            .price-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 6px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header h2 {
+                font-size: 22px;
+            }
+
+            .content {
+                padding: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <h1><span class="app-badge">BH</span> BizFlow - Chọn Số Lượng</h1>
+        <button class="btn" onclick="logout()">Đăng Xuất</button>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h2>Xác Định Số Lượng</h2>
+            <p>Nhập số lượng sản phẩm muốn mua</p>
+        </div>
+
+        <div class="content">
+            <div class="product-summary">
+                <h3>📦 Thông Tin Sản Phẩm</h3>
+                <div class="summary-row">
+                    <label>Tên sản phẩm:</label>
+                    <strong id="productName">--</strong>
+                </div>
+                <div class="summary-row">
+                    <label>Giá đơn vị:</label>
+                    <strong id="productPrice">--</strong>
+                </div>
+                <div class="summary-row">
+                    <label>Tồn kho:</label>
+                    <strong id="stockInfo">--</strong>
+                </div>
+            </div>
+
+            <div class="quantity-section">
+                <label>💯 Nhập Số Lượng</label>
+                <div class="quantity-input">
+                    <button type="button" class="qty-btn" onclick="decrementQty()">−</button>
+                    <input type="number" id="quantity" value="1" min="1" max="100">
+                    <button type="button" class="qty-btn" onclick="incrementQty()">+</button>
+                </div>
+            </div>
+
+            <div class="quantity-info">
+                <strong>💡 Tip:</strong> Có thể nhập trực tiếp số lượng hoặc dùng nút +/−
+            </div>
+
+            <div class="price-calculation">
+                <div class="price-row">
+                    <span>Giá đơn vị:</span>
+                    <span id="unitPrice">0₫</span>
+                </div>
+                <div class="price-row">
+                    <span>Số lượng:</span>
+                    <span id="qtyDisplay">1</span>
+                </div>
+                <div class="price-row total">
+                    <span>💰 Tổng tiền:</span>
+                    <span id="totalPrice">0₫</span>
+                </div>
+            </div>
+
+            <div class="btn-group">
+                <button class="btn btn-secondary" onclick="window.location.href='/pages/search-product.html'">← Quay Lại</button>
+                <button class="btn btn-primary" onclick="proceedToPayment()">Thanh Toán →</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let product = null;
+
+        function showPopup(message, options = {}) {
+            const { title = 'Thông báo' } = options;
+            let modal = document.getElementById('appPopup');
+            if (!modal) {
+                modal = document.createElement('div');
+                modal.id = 'appPopup';
+                modal.className = 'app-popup';
+                modal.setAttribute('aria-hidden', 'true');
+                modal.innerHTML = `
+                    <div class="app-popup-card" role="dialog" aria-modal="true">
+                        <div class="app-popup-header">
+                            <h3 id="appPopupTitle"></h3>
+                            <button type="button" id="appPopupClose" aria-label="Đóng">×</button>
+                        </div>
+                        <div id="appPopupMessage" class="app-popup-message"></div>
+                        <div class="app-popup-actions">
+                            <button type="button" id="appPopupOk">Đóng</button>
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(modal);
+
+                const closePopup = () => {
+                    modal.classList.remove('show');
+                    modal.setAttribute('aria-hidden', 'true');
+                };
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) {
+                        closePopup();
+                    }
+                });
+                modal.querySelector('#appPopupClose')?.addEventListener('click', closePopup);
+                modal.querySelector('#appPopupOk')?.addEventListener('click', closePopup);
+            }
+
+            const titleEl = modal.querySelector('#appPopupTitle');
+            const messageEl = modal.querySelector('#appPopupMessage');
+            if (titleEl) titleEl.textContent = title;
+            if (messageEl) messageEl.textContent = message || '';
+
+            modal.classList.add('show');
+            modal.setAttribute('aria-hidden', 'false');
+        }
+
+        function formatPrice(price) {
+            return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
+        }
+
+        function loadProduct() {
+            product = JSON.parse(localStorage.getItem('selectedProduct'));
+            if (!product) {
+                showPopup('⚠️ Vui lòng chọn sản phẩm');
+                window.location.href = '/pages/search-product.html';
+                return;
+            }
+
+            document.getElementById('productName').textContent = product.name;
+            document.getElementById('productPrice').textContent = formatPrice(product.price);
+            document.getElementById('unitPrice').textContent = formatPrice(product.price);
+            document.getElementById('stockInfo').textContent = '50 cái';
+            updateTotal();
+        }
+
+        function incrementQty() {
+            const qty = document.getElementById('quantity');
+            qty.value = parseInt(qty.value) + 1;
+            updateTotal();
+        }
+
+        function decrementQty() {
+            const qty = document.getElementById('quantity');
+            if (parseInt(qty.value) > 1) {
+                qty.value = parseInt(qty.value) - 1;
+                updateTotal();
+            }
+        }
+
+        function updateTotal() {
+            const qty = parseInt(document.getElementById('quantity').value) || 1;
+            const total = product.price * qty;
+            
+            document.getElementById('qtyDisplay').textContent = qty;
+            document.getElementById('totalPrice').textContent = formatPrice(total);
+            
+            localStorage.setItem('orderQuantity', qty);
+            localStorage.setItem('orderTotal', total);
+        }
+
+        function proceedToPayment() {
+            const qty = parseInt(document.getElementById('quantity').value) || 1;
+            if (qty < 1) {
+                showPopup('⚠️ Số lượng phải lớn hơn 0');
+                return;
+            }
+            window.location.href = '/pages/payment.html';
+        }
+
+        function logout() {
+            if (confirm('Bạn có chắc muốn đăng xuất?')) {
+                localStorage.clear();
+                window.location.href = '/pages/index.html';
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const role = localStorage.getItem('role');
+            if (!role) {
+                window.location.href = '/pages/index.html';
+            }
+            loadProduct();
+        });
+
+        document.getElementById('quantity').addEventListener('change', updateTotal);
+    </script>
+</body>
+</html>

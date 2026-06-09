@@ -1,0 +1,46 @@
+@import url('/assets/css/login.css');
+.register-form-panel {
+    background: linear-gradient(180deg, #d8d9df 0%, #e6e8ef 100%);
+}
+
+.register-form {
+    max-width: 660px;
+}
+
+.register-form .form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px 18px;
+}
+
+.register-form .form-grid .full-width {
+    grid-column: 1 / -1;
+}
+
+.register-form .form-group {
+    margin-bottom: 0;
+}
+
+.alert-success {
+    background: #eefaf3;
+    color: #1f7a4f;
+    border-left: 4px solid #1f7a4f;
+    padding: 10px 12px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    font-size: 13px;
+}
+
+.register-footer {
+    align-items: flex-start;
+}
+
+.register-footer .link-secondary-right {
+    max-width: 240px;
+    line-height: 1.4;
+}
+@media (max-width: 720px) {
+    .register-form .form-grid {
+        grid-template-columns: 1fr;
+    }
+}

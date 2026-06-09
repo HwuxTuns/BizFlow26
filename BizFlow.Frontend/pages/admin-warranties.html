@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BizFlow Admin - Quản lý Bảo hành</title>
+    <meta name="description" content="Quản lý yêu cầu bảo hành sản phẩm - BizFlow Admin">
+    <link rel="stylesheet" href="../assets/css/admin-base.css?v=20260420">
+    <style>
+        .status-filter-row { display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:16px; }
+        .filter-chip { padding:8px 18px; border-radius:24px; border:1px solid var(--border); background:#fff; color:var(--muted); font-size:13px; font-weight:600; cursor:pointer; transition:all .2s; display:inline-flex; align-items:center; gap:6px; }
+        .filter-chip:hover { background:#f9fafb; color:var(--text); }
+        .filter-chip.active { background:var(--accent-soft); border-color:rgba(var(--accent-rgb),0.3); color:var(--accent); }
+        .filter-chip .count { background:#f3f4f6; padding:1px 8px; border-radius:12px; font-size:11px; color:var(--text); }
+        .filter-chip.active .count { background:rgba(var(--accent-rgb),0.15); color:var(--accent); }
+
+        .warranty-card { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:20px; margin-bottom:12px; transition:all .2s; box-shadow:0 4px 6px rgba(0,0,0,0.02); cursor:pointer; }
+        .warranty-card:hover { border-color:rgba(var(--accent-rgb),0.4); box-shadow:0 10px 25px rgba(0,0,0,0.08); }
+        .warranty-card-header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:14px; gap:12px; }
+        .warranty-card-id { font-weight:700; font-size:15px; color:var(--accent); }
+        .warranty-card-date { font-size:12px; color:var(--muted); margin-top:4px; }
+
+        .badge { display:inline-flex; align-items:center; padding:5px 14px; border-radius:24px; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.3px; white-space:nowrap; }
+        .badge-pending { background:rgba(245,158,11,0.15); color:#b45309; border:1px solid rgba(245,158,11,0.3); }
+        .badge-approved { background:rgba(59,130,246,0.15); color:#1d4ed8; border:1px solid rgba(59,130,246,0.3); }
+        .badge-repairing { background:rgba(168,85,247,0.15); color:#7c3aed; border:1px solid rgba(168,85,247,0.3); }
+        .badge-completed { background:rgba(37,99,235,0.1); color:#2563eb; border:1px solid rgba(37,99,235,0.3); }
+        .badge-rejected { background:rgba(239,68,68,0.15); color:#b91c1c; border:1px solid rgba(239,68,68,0.3); }
+
+        .warranty-card-body { display:grid; grid-template-columns:1fr 1fr; gap:6px 16px; font-size:13px; }
+        .warranty-card-body .label { color:var(--muted); }
+        .warranty-card-body .value { color:var(--text); font-weight:500; }
+        .warranty-card-actions { display:flex; gap:8px; margin-top:14px; padding-top:14px; border-top:1px solid var(--border); flex-wrap:wrap; }
+        .warranty-card-actions button { padding:7px 16px; border-radius:10px; font-size:12px; font-weight:600; cursor:pointer; border:1px solid var(--border); background:#fff; color:var(--text); transition:all .2s; }
+        .warranty-card-actions button:hover { border-color:var(--accent); color:var(--accent); }
+        .warranty-card-actions .btn-approve { background:rgba(59,130,246,0.1); color:#1d4ed8; border-color:rgba(59,130,246,0.3); }
+        .warranty-card-actions .btn-repair { background:rgba(168,85,247,0.1); color:#7c3aed; border-color:rgba(168,85,247,0.3); }
+        .warranty-card-actions .btn-complete { background:rgba(37,99,235,0.1); color:#2563eb; border-color:rgba(37,99,235,0.3); }
+        .warranty-card-actions .btn-reject { background:rgba(239,68,68,0.1); color:#b91c1c; border-color:rgba(239,68,68,0.3); }
+
+        /* Modal Styles */
+        .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:1000; justify-content:center; align-items:center; }
+        .modal-overlay.show { display:flex; }
+        .modal-box { background:#fff; border-radius:16px; padding:24px; width:min(520px,90vw); max-height:80vh; overflow-y:auto; box-shadow:0 20px 60px rgba(0,0,0,0.2); }
+        .modal-box h3 { margin-bottom:16px; font-size:18px; color: #1f2937; }
+        .modal-box .field { margin-bottom:14px; }
+        .modal-box label { display:block; font-size:13px; color:var(--muted); margin-bottom:6px; font-weight:600; }
+        .modal-box textarea, .modal-box input { width:100%; padding:10px; border:1px solid var(--border); border-radius:10px; font-size:13px; }
+        .modal-box textarea { min-height:80px; resize:vertical; }
+        .modal-actions { display:flex; gap:10px; justify-content:flex-end; margin-top:16px; }
+        .modal-actions button { padding:10px 20px; border-radius:10px; font-size:13px; font-weight:600; cursor:pointer; }
+        .btn-cancel { background:#f3f4f6; border:1px solid var(--border); color:var(--text); }
+        .btn-confirm { background:var(--accent); border:none; color:#fff; }
+
+        .stat-row { display:flex; gap:16px; margin-bottom:24px; flex-wrap:wrap; }
+        .stat-card { flex:1; min-width:150px; background:#fff; border:1px solid #e5e7eb; border-radius:12px; padding:16px 20px; }
+        .stat-card .stat-value { font-size:24px; font-weight:700; color:#111827; }
+        .stat-card .stat-label { font-size:12px; color:#6b7280; margin-top:4px; text-transform:uppercase; letter-spacing:0.02em; }
+
+        .history-section { margin-top:20px; padding-top:20px; border-top:1px dashed var(--border); }
+        .history-title { font-size:13px; font-weight:700; margin-bottom:12px; color:var(--text); }
+        .timeline { position:relative; padding-left:24px; }
+        .timeline::before { content:''; position:absolute; left:7px; top:5px; bottom:5px; width:2px; background:#e5e7eb; }
+        .timeline-item { position:relative; margin-bottom:16px; font-size:12px; }
+        .timeline-item::before { content:''; position:absolute; left:-21px; top:4px; width:10px; height:10px; border-radius:50%; background:#fff; border:2px solid var(--accent); z-index:1; }
+        .timeline-header { display:flex; justify-content:space-between; margin-bottom:2px; }
+        .timeline-status { font-weight:700; color:var(--accent); }
+        .timeline-date { color:var(--muted); font-size:11px; }
+        .timeline-note { color:var(--text); line-height:1.4; background:#f9fafb; padding:6px 10px; border-radius:6px; margin-top:4px; }
+        
+        .empty-state { text-align:center; padding:60px 20px; color:var(--muted); font-size:14px; }
+        .evidence-grid { display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; }
+        .evidence-grid img { width:80px; height:80px; object-fit:cover; border-radius:8px; border:1px solid var(--border); cursor:pointer; }
+    </style>
+</head>
+<body data-admin-page="warranties">
+    <div class="layout">
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="brand-mark">BF</div>
+                <div>
+                    <div class="brand-title">BizFlow</div>
+                    <div class="brand-subtitle">Admin Control</div>
+                </div>
+            </div>
+
+            <div class="nav-group">
+                <div class="nav-title">Tổng quan</div>
+                <a class="nav-item" data-page="home" href="admin-home.html"><span class="icon" data-icon="H"></span><span>Trang chủ</span></a>
+                <a class="nav-item" data-page="users" href="admin-users.html"><span class="icon" data-icon="U"></span><span>Người dùng</span></a>
+                <a class="nav-item" data-page="products" href="admin-products.html"><span class="icon" data-icon="P"></span><span>Sản phẩm</span></a>
+                <a class="nav-item" data-page="orders" href="admin-orders.html"><span class="icon" data-icon="O"></span><span>Đơn hàng</span></a>
+                <a class="nav-item" data-page="returns" href="admin-returns.html"><span class="icon" data-icon="R"></span><span>Đổi/Trả hàng</span></a>
+                <a class="nav-item active" data-page="warranties" href="admin-warranties.html"><span class="icon" data-icon="W"></span><span>Bảo hành</span></a>
+                <a class="nav-item" data-page="shipping" href="admin-orders.html?filter=shipping"><span class="icon" data-icon="S"></span><span>Vận chuyển</span></a>
+            </div>
+
+            <div class="nav-group">
+                <div class="nav-title">Hệ thống</div>
+                <a class="nav-item" data-page="reports" href="admin-reports.html"><span class="icon" data-icon="B"></span><span>Báo cáo</span></a>
+            </div>
+
+            <div class="sidebar-footer">
+                <div>Trạng thái hệ thống: Online</div>
+                <div>Cập nhật: <span id="sidebarTime">--:--</span></div>
+            </div>
+        </aside>
+
+        <div class="content">
+            <header class="topbar">
+                <div class="top-left">
+                    <div class="page-title">🛡️ Quản lý Bảo hành</div>
+                    <div class="search">
+                        <span>🔍</span>
+                        <input id="searchInput" type="text" placeholder="Tìm theo mã HĐ, tên KH, SĐT, tên SP..." />
+                    </div>
+                </div>
+                <div class="top-right">
+                    <span class="pill">ADMIN</span>
+                    <div class="user-chip">
+                        <div class="avatar" id="userAvatar">AD</div>
+                        <div>
+                            <div id="userGreeting">Admin</div>
+                            <small>Quản trị viên</small>
+                        </div>
+                        <button class="icon-btn" title="Đăng xuất" onclick="adminLayout.logout()">⎋</button>
+                    </div>
+                </div>
+            </header>
+
+            <main class="main">
+                <!-- Stats -->
+                <div class="stat-row" id="statsRow">
+                    <div class="stat-card"><div class="stat-value" id="statTotal">0</div><div class="stat-label">Tổng cộng</div></div>
+                    <div class="stat-card"><div class="stat-value" id="statPending" style="color:#2563eb;">0</div><div class="stat-label">Đang chờ</div></div>
+                    <div class="stat-card"><div class="stat-value" id="statRepairing" style="color:#7c3aed;">0</div><div class="stat-label">Sửa chữa</div></div>
+                    <div class="stat-card"><div class="stat-value" id="statCompleted" style="color:#10b981;">0</div><div class="stat-label">Hoàn tất</div></div>
+                </div>
+
+                <!-- Filter -->
+                <div class="status-filter-row" id="filterRow">
+                    <button class="filter-chip active" data-status="">Tất cả <span class="count" id="countAll">0</span></button>
+                    <button class="filter-chip" data-status="PENDING">⏳ Chờ xử lý <span class="count" id="countPending">0</span></button>
+                    <button class="filter-chip" data-status="APPROVED">✅ Đã duyệt <span class="count" id="countApproved">0</span></button>
+                    <button class="filter-chip" data-status="REPAIRING">🔧 Đang sửa <span class="count" id="countRepairing">0</span></button>
+                    <button class="filter-chip" data-status="COMPLETED">✅ Hoàn tất <span class="count" id="countCompleted">0</span></button>
+                    <button class="filter-chip" data-status="REJECTED">❌ Từ chối <span class="count" id="countRejected">0</span></button>
+                </div>
+
+                <!-- List -->
+                <div id="warrantyList">
+                    <div class="empty-state">Đang tải dữ liệu...</div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Detail / Action Modal -->
+    <div class="modal-overlay" id="actionModal">
+        <div class="modal-box">
+            <h3 id="modalTitle">Xử lý yêu cầu</h3>
+            <div id="modalDetail"></div>
+            
+            <div id="historyContainer" class="history-section" style="display:none;">
+                <div class="history-title">📜 Nhật ký xử lý</div>
+                <div id="historyList" class="timeline"></div>
+            </div>
+
+            <div id="actionFormSection" style="margin-top:20px;">
+                <div class="field">
+                    <label for="adminNote">Ghi chú xử lý</label>
+                    <textarea id="adminNote" placeholder="Ghi chú cho khách hàng..."></textarea>
+                </div>
+                <div class="modal-actions">
+                    <button class="btn-cancel" onclick="closeModal()">Hủy</button>
+                    <button class="btn-confirm" id="modalConfirmBtn">Xác nhận</button>
+                </div>
+            </div>
+            <div id="detailCloseSection" style="display:none; margin-top:20px;" class="modal-actions">
+                 <button class="btn-cancel" onclick="closeModal()">Đóng</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Image Viewer Modal -->
+    <div class="modal-overlay" id="imageModal" onclick="this.classList.remove('show')">
+        <img id="imageModalImg" src="" alt="Ảnh minh chứng" style="max-width:90vw;max-height:90vh;border-radius:12px;">
+    </div>
+
+    <script src="../assets/js/admin-layout.js"></script>
+    <script>
+    const API = '/api'; // Use relative path for gateway
+    let allRequests = [];
+    let currentFilter = '';
+
+    function getAuthHeaders() {
+        const token = sessionStorage.getItem('accessToken');
+        return token ? { 'Authorization': 'Bearer ' + token } : {};
+    }
+
+    async function loadWarrantyRequests() {
+        try {
+            const res = await fetch(`${API}/orders/warranty-requests`, { headers: getAuthHeaders() });
+            if (!res.ok) throw new Error('Lỗi tải dữ liệu');
+            allRequests = await res.json();
+            updateStats();
+            renderList();
+        } catch (err) {
+            console.error(err);
+            document.getElementById('warrantyList').innerHTML = '<div class="empty-state" style="color:red">Lỗi: ' + err.message + '</div>';
+        }
+    }
+
+    function updateStats() {
+        const counts = { PENDING:0, APPROVED:0, REPAIRING:0, COMPLETED:0, REJECTED:0 };
+        allRequests.forEach(r => { const s = (r.status||'').toUpperCase(); if (counts[s] !== undefined) counts[s]++; });
+        document.getElementById('statTotal').textContent = allRequests.length;
+        document.getElementById('statPending').textContent = counts.PENDING;
+        document.getElementById('statRepairing').textContent = counts.REPAIRING;
+        document.getElementById('statCompleted').textContent = counts.COMPLETED;
+    }
+
+    function renderList() {
+        const keyword = (document.getElementById('searchInput')?.value || '').toLowerCase().trim();
+        let filtered = allRequests.filter(r => {
+            const matchFilter = !currentFilter || (r.status||'').toUpperCase() === currentFilter;
+            const matchSearch = !keyword || 
+                (r.invoiceNumber||'').toLowerCase().includes(keyword) ||
+                (r.customerName||'').toLowerCase().includes(keyword) ||
+                (r.productName||'').toLowerCase().includes(keyword);
+            return matchFilter && matchSearch;
+        });
+
+        const container = document.getElementById('warrantyList');
+        if (filtered.length === 0) {
+            container.innerHTML = '<div class="empty-state">Không có yêu cầu phù hợp</div>';
+            return;
+        }
+
+        container.innerHTML = filtered.map(r => {
+            const status = (r.status||'').toUpperCase();
+            const badgeClass = 'badge-' + status.toLowerCase();
+
+            let actions = '';
+            if (status === 'PENDING') {
+                actions = `<button class="btn-approve" onclick="event.stopPropagation();openAction(${r.id},'APPROVED','Duyệt yêu cầu')">✅ Duyệt</button>
+                           <button class="btn-reject" onclick="event.stopPropagation();openAction(${r.id},'REJECTED','Từ chối')">❌ Từ chối</button>`;
+            } else if (status === 'APPROVED') {
+                actions = `<button class="btn-repair" onclick="event.stopPropagation();openAction(${r.id},'REPAIRING','Đang sửa')">🔧 Đang sửa</button>`;
+            } else if (status === 'REPAIRING') {
+                actions = `<button class="btn-complete" onclick="event.stopPropagation();openAction(${r.id},'COMPLETED','Hoàn tất')">✅ Hoàn tất</button>`;
+            }
+
+            return `
+            <div class="warranty-card" onclick="viewDetail(${r.id})">
+                <div class="warranty-card-header">
+                    <div>
+                        <div class="warranty-card-id">#${r.id} · ${r.invoiceNumber || 'Đơn #' + r.orderId}</div>
+                        <div class="warranty-card-date">${formatDate(r.createdAt)}</div>
+                    </div>
+                    <span class="badge ${badgeClass}">${formatStatus(status)}</span>
+                </div>
+                <div class="warranty-card-body">
+                    <span class="label">Sản phẩm</span><span class="value">${escapeHtml(r.productName || '')}</span>
+                    <span class="label">Khách hàng</span><span class="value">${escapeHtml(r.customerName || '')}</span>
+                    <span class="label">Hạn BH</span><span class="value">${formatDate(r.warrantyExpiry)}</span>
+                </div>
+                ${actions ? `<div class="warranty-card-actions">${actions}</div>` : ''}
+            </div>`;
+        }).join('');
+    }
+
+    async function viewDetail(id) {
+        const req = allRequests.find(r => r.id === id);
+        if (!req) return;
+        document.getElementById('modalTitle').textContent = 'Chi tiết #' + id;
+        document.getElementById('modalDetail').innerHTML = `<strong>KH:</strong> ${escapeHtml(req.customerName)}<br><strong>Lỗi:</strong> ${escapeHtml(req.description)}`;
+        document.getElementById('actionFormSection').style.display = 'none';
+        document.getElementById('detailCloseSection').style.display = 'flex';
+        await loadHistory(id);
+        document.getElementById('actionModal').classList.add('show');
+    }
+
+    async function loadHistory(id) {
+        try {
+            const list = document.getElementById('historyList');
+            document.getElementById('historyContainer').style.display = 'block';
+            list.innerHTML = 'Đang tải...';
+            const res = await fetch(`${API}/orders/warranty-requests/${id}/history`, { headers: getAuthHeaders() });
+            const data = await res.json();
+            list.innerHTML = data.map(h => `<div class="timeline-item"><strong>${formatStatus(h.status)}</strong> · ${formatDate(h.createdAt)}${h.note ? `<br>${escapeHtml(h.note)}` : ''}</div>`).join('');
+        } catch (e) {
+            document.getElementById('historyList').innerHTML = 'Không tải được lịch sử';
+        }
+    }
+
+    function openAction(id, status, title) {
+        pendingAction = { id, status };
+        document.getElementById('modalTitle').textContent = title;
+        document.getElementById('adminNote').value = '';
+        document.getElementById('historyContainer').style.display = 'none';
+        document.getElementById('actionFormSection').style.display = 'block';
+        document.getElementById('detailCloseSection').style.display = 'none';
+        document.getElementById('actionModal').classList.add('show');
+    }
+
+    function closeModal() { document.getElementById('actionModal').classList.remove('show'); }
+
+    async function confirmAction() {
+        const btn = document.getElementById('modalConfirmBtn');
+        btn.disabled = true;
+        try {
+            const res = await fetch(`${API}/orders/warranty-requests/${pendingAction.id}/status`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json', ...getAuthHeaders() },
+                body: JSON.stringify({ status: pendingAction.status, adminNote: document.getElementById('adminNote').value })
+            });
+            if (!res.ok) throw new Error('Cập nhật thất bại');
+            closeModal();
+            await loadWarrantyRequests();
+        } catch (err) { alert(err.message); } finally { btn.disabled = false; }
+    }
+
+    function formatDate(d) { return d ? new Date(d).toLocaleString('vi-VN') : '-'; }
+    function formatStatus(s) { const m = { PENDING:'Chờ', APPROVED:'Duyệt', REPAIRING:'Sửa', COMPLETED:'Xong', REJECTED:'Hủy' }; return m[s] || s; }
+    function escapeHtml(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        window.adminLayout.enforceAuth();
+        window.adminLayout.renderHeader();
+        window.adminLayout.setActiveNav();
+        loadWarrantyRequests();
+        document.getElementById('filterRow').addEventListener('click', e => {
+            if (e.target.classList.contains('filter-chip')) {
+                document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+                e.target.classList.add('active');
+                currentFilter = e.target.dataset.status;
+                renderList();
+            }
+        });
+        document.getElementById('searchInput').addEventListener('input', renderList);
+        document.getElementById('modalConfirmBtn').addEventListener('click', confirmAction);
+    });
+    </script>
+</body>
+</html>

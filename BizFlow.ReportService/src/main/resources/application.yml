@@ -1,0 +1,56 @@
+spring:
+  application:
+    name: bizflow-report-service
+
+  datasource:
+    url: jdbc:mysql://${DB_HOST:mysql-report}:3306/bizflow_auth_db?useSSL=false&serverTimezone=Asia/Ho_Chi_Minh&allowPublicKeyRetrieval=true&useUnicode=true&characterEncoding=utf8&connectionCollation=utf8mb4_unicode_ci
+    username: root
+    password: ${DB_PASSWORD:123456}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    open-in-view: false
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+        format_sql: true
+        enable_lazy_load_no_trans: true
+
+  cache:
+    type: none
+
+  mvc:
+    cors:
+      allowed-origins: "*"
+      allowed-methods: GET,POST,PUT,DELETE,OPTIONS
+      allowed-headers: "*"
+      allow-credentials: false
+      max-age: 3600
+
+server:
+  port: 8087
+  servlet:
+    context-path: /
+    encoding:
+      charset: UTF-8
+      force: true
+
+app:
+  sales:
+    base-url: ${SALES_SERVICE_URL:http://localhost:8081}
+  catalog:
+    base-url: ${CATALOG_SERVICE_URL:http://localhost:8083}
+  inventory:
+    base-url: ${INVENTORY_SERVICE_URL:http://localhost:8084}
+  customer:
+    base-url: ${CUSTOMER_SERVICE_URL:http://localhost:8085}
+  auth:
+    base-url: ${AUTH_SERVICE_URL:http://localhost:8086}
+
+logging:
+  level:
+    root: WARN
+    com.example.bizflow: WARN

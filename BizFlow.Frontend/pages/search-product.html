@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BizFlow - Tìm Sản Phẩm</title>
+    <script src="https://cdn.jsdelivr.net/npm/heroicons@2.0.18/16/solid/index.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .navbar h1 {
+            font-size: 24px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .app-badge {
+            width: 32px;
+            height: 32px;
+            border-radius: 12px;
+            display: grid;
+            place-items: center;
+            font-weight: 700;
+            font-size: 12px;
+            color: #fff;
+            background: #4c6fff;
+        }
+
+        .navbar .btn {
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .navbar .btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+            padding: 30px;
+        }
+
+        .header h2 {
+            font-size: 28px;
+            margin-bottom: 15px;
+        }
+
+        .search-box {
+            background: rgba(255,255,255,0.1);
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 6px;
+            padding: 12px;
+            color: white;
+            font-size: 16px;
+        }
+
+        .search-box::placeholder {
+            color: rgba(255,255,255,0.7);
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .filters {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .filter-btn {
+            padding: 8px 16px;
+            background: #f0f0f0;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .filter-btn.active {
+            background: #4CAF50;
+            color: white;
+            border-color: #4CAF50;
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .product-card {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            overflow: hidden;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .product-card:hover {
+            border-color: #4CAF50;
+            box-shadow: 0 4px 16px rgba(76, 175, 80, 0.2);
+            transform: translateY(-4px);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 150px;
+            background: linear-gradient(135deg, #e0f2f1 0%, #b2dfdb 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+        }
+
+        .product-info {
+            padding: 15px;
+        }
+
+        .product-name {
+            font-weight: 600;
+            font-size: 16px;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        .product-price {
+            color: #4CAF50;
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .product-stock {
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 10px;
+        }
+
+        .btn-select {
+            width: 100%;
+            padding: 8px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-select:hover {
+            background: #45a049;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            padding: 20px;
+            background: #f9f9f9;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .app-popup {
+            position: fixed;
+            inset: 0;
+            background: rgba(22, 26, 38, 0.45);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 70;
+            padding: 16px;
+        }
+
+        .app-popup.show {
+            display: flex;
+        }
+
+        .app-popup-card {
+            background: #ffffff;
+            border-radius: 12px;
+            width: min(360px, 90vw);
+            box-shadow: 0 20px 50px rgba(12, 20, 36, 0.2);
+            padding: 16px;
+            display: grid;
+            gap: 12px;
+        }
+
+        .app-popup-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .app-popup-header h3 {
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .app-popup-message {
+            font-size: 13px;
+            color: #4b5366;
+            line-height: 1.5;
+        }
+
+        .app-popup-actions {
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-secondary {
+            background: #e0e0e0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #d0d0d0;
+        }
+
+        .btn-primary {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #45a049;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 12px;
+            }
+
+            .navbar {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 10px;
+                padding: 12px 16px;
+            }
+
+            .navbar h1 {
+                font-size: 20px;
+                justify-content: center;
+                text-align: center;
+            }
+
+            .navbar .btn {
+                width: 100%;
+            }
+
+            .header {
+                padding: 20px;
+            }
+
+            .header h2 {
+                font-size: 24px;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .filters {
+                flex-wrap: wrap;
+            }
+
+            .filter-btn {
+                flex: 1 1 140px;
+                text-align: center;
+            }
+
+            .product-grid {
+                grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            }
+
+            .btn-group {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header h2 {
+                font-size: 22px;
+            }
+
+            .search-box {
+                font-size: 14px;
+            }
+
+            .product-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <h1><span class="app-badge">BH</span> BizFlow - Tìm Sản Phẩm</h1>
+        <button class="btn" onclick="logout()">Đăng Xuất</button>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h2>Tìm Kiếm Sản Phẩm</h2>
+            <input type="text" class="search-box" placeholder="🔍 Tìm kiếm theo tên sản phẩm..." id="searchInput" onkeyup="filterProducts()">
+        </div>
+
+        <div class="content">
+            <div class="filters">
+                <button class="filter-btn active" onclick="filterByCategory('all')">Tất Cả</button>
+                <button class="filter-btn" onclick="filterByCategory('electronics')">Điện Tử</button>
+                <button class="filter-btn" onclick="filterByCategory('clothing')">Quần Áo</button>
+                <button class="filter-btn" onclick="filterByCategory('food')">Thực Phẩm</button>
+            </div>
+
+            <div class="product-grid" id="productGrid">
+                <div class="product-card" onclick="selectProduct(1, 'iPhone 15', 25000000)">
+                    <div class="product-image">📱</div>
+                    <div class="product-info">
+                        <div class="product-name">iPhone 15</div>
+                        <div class="product-price">25,000,000₫</div>
+                        <div class="product-stock">Tồn: 12 cái</div>
+                        <button class="btn-select">Chọn</button>
+                    </div>
+                </div>
+
+                <div class="product-card" onclick="selectProduct(2, 'Samsung S24', 22000000)">
+                    <div class="product-image">📱</div>
+                    <div class="product-info">
+                        <div class="product-name">Samsung S24</div>
+                        <div class="product-price">22,000,000₫</div>
+                        <div class="product-stock">Tồn: 8 cái</div>
+                        <button class="btn-select">Chọn</button>
+                    </div>
+                </div>
+
+                <div class="product-card" onclick="selectProduct(3, 'Áo Thun Nam', 150000)">
+                    <div class="product-image">👕</div>
+                    <div class="product-info">
+                        <div class="product-name">Áo Thun Nam</div>
+                        <div class="product-price">150,000₫</div>
+                        <div class="product-stock">Tồn: 50 cái</div>
+                        <button class="btn-select">Chọn</button>
+                    </div>
+                </div>
+
+                <div class="product-card" onclick="selectProduct(4, 'Quần Jeans', 350000)">
+                    <div class="product-image">👖</div>
+                    <div class="product-info">
+                        <div class="product-name">Quần Jeans</div>
+                        <div class="product-price">350,000₫</div>
+                        <div class="product-stock">Tồn: 30 cái</div>
+                        <button class="btn-select">Chọn</button>
+                    </div>
+                </div>
+
+                <div class="product-card" onclick="selectProduct(5, 'Cà Phê Rang', 85000)">
+                    <div class="product-image">☕</div>
+                    <div class="product-info">
+                        <div class="product-name">Cà Phê Rang</div>
+                        <div class="product-price">85,000₫</div>
+                        <div class="product-stock">Tồn: 100 túi</div>
+                        <button class="btn-select">Chọn</button>
+                    </div>
+                </div>
+
+                <div class="product-card" onclick="selectProduct(6, 'Nước Cam Tự Nhiên', 45000)">
+                    <div class="product-image">🍊</div>
+                    <div class="product-info">
+                        <div class="product-name">Nước Cam</div>
+                        <div class="product-price">45,000₫</div>
+                        <div class="product-stock">Tồn: 80 chai</div>
+                        <button class="btn-select">Chọn</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="btn-group">
+            <button class="btn btn-secondary" onclick="window.location.href='/pages/create-order.html'">← Quay Lại</button>
+            <button class="btn btn-primary" onclick="proceedToQuantity()">Tiếp Theo (Số Lượng) →</button>
+        </div>
+    </div>
+
+    <script>
+        let selectedProduct = null;
+
+        function showPopup(message, options = {}) {
+            const { title = 'Thông báo' } = options;
+            let modal = document.getElementById('appPopup');
+            if (!modal) {
+                modal = document.createElement('div');
+                modal.id = 'appPopup';
+                modal.className = 'app-popup';
+                modal.setAttribute('aria-hidden', 'true');
+                modal.innerHTML = `
+                    <div class="app-popup-card" role="dialog" aria-modal="true">
+                        <div class="app-popup-header">
+                            <h3 id="appPopupTitle"></h3>
+                            <button type="button" id="appPopupClose" aria-label="Đóng">×</button>
+                        </div>
+                        <div id="appPopupMessage" class="app-popup-message"></div>
+                        <div class="app-popup-actions">
+                            <button type="button" id="appPopupOk">Đóng</button>
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(modal);
+
+                const closePopup = () => {
+                    modal.classList.remove('show');
+                    modal.setAttribute('aria-hidden', 'true');
+                };
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) {
+                        closePopup();
+                    }
+                });
+                modal.querySelector('#appPopupClose')?.addEventListener('click', closePopup);
+                modal.querySelector('#appPopupOk')?.addEventListener('click', closePopup);
+            }
+
+            const titleEl = modal.querySelector('#appPopupTitle');
+            const messageEl = modal.querySelector('#appPopupMessage');
+            if (titleEl) titleEl.textContent = title;
+            if (messageEl) messageEl.textContent = message || '';
+
+            modal.classList.add('show');
+            modal.setAttribute('aria-hidden', 'false');
+        }
+
+        function selectProduct(id, name, price) {
+            selectedProduct = { id, name, price };
+            localStorage.setItem('selectedProduct', JSON.stringify(selectedProduct));
+            showPopup(`✅ Đã chọn: ${name}`);
+        }
+
+        function proceedToQuantity() {
+            if (!selectedProduct) {
+                showPopup('⚠️ Vui lòng chọn sản phẩm trước');
+                return;
+            }
+            window.location.href = '/pages/select-quantity.html';
+        }
+
+        function filterProducts() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            // Filter logic would go here
+        }
+
+        function filterByCategory(category) {
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+        }
+
+        function logout() {
+            if (confirm('Bạn có chắc muốn đăng xuất?')) {
+                localStorage.clear();
+                window.location.href = '/pages/index.html';
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const role = localStorage.getItem('role');
+            if (!role) {
+                window.location.href = '/pages/index.html';
+            }
+        });
+    </script>
+</body>
+</html>

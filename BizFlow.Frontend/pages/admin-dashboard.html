@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BizFlow - Admin Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="../assets/css/admin-base.css?v=20260204">
+
+</head>
+<body data-admin-page="dashboard">
+    <div class="layout">
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="brand-mark">BF</div>
+                <div>
+                    <div class="brand-title">BizFlow</div>
+                    <div class="brand-subtitle">Admin Control</div>
+                </div>
+            </div>
+
+            <div class="nav-group">
+                <div class="nav-title">Tổng quan</div>
+                <a class="nav-item" data-page="home" href="admin-home.html"><span class="icon" data-icon="H"></span><span>Trang chủ</span></a>
+                <a class="nav-item" data-page="users" href="admin-users.html"><span class="icon" data-icon="U"></span><span>Người dùng</span></a>
+                <a class="nav-item" data-page="products" href="admin-products.html"><span class="icon" data-icon="P"></span><span>Sản phẩm</span></a>
+                <a class="nav-item" data-page="orders" href="admin-orders.html"><span class="icon" data-icon="O"></span><span>Đơn hàng</span></a>
+                <a class="nav-item" data-page="returns" href="admin-returns.html"><span class="icon" data-icon="R"></span><span>Đổi/Trả hàng</span></a>
+            </div>
+
+            <div class="nav-group">
+                <div class="nav-title">Hệ thống</div>
+                <a class="nav-item" data-page="reports" href="admin-reports.html"><span class="icon" data-icon="B"></span><span>Báo cáo</span></a>
+            </div>
+
+            <div class="sidebar-footer">
+                <div>Trạng thái hệ thống: Online</div>
+                <div>Cập nhật: <span id="sidebarTime">--:--</span></div>
+            </div>
+        </aside>
+
+        <div class="content">
+            <header class="topbar">
+                <div class="top-left">
+                    <div class="page-title">Quản trị hệ thống</div>
+                    <div class="search">
+                        <span>🔍</span>
+                        <input type="text" placeholder="Tìm nhanh người dùng, chi nhánh, cấu hình..." />
+                    </div>
+                </div>
+                <div class="top-right">
+                    <span class="pill">ADMIN</span>
+                    <div class="user-chip">
+                        <div class="avatar" id="userAvatar">AD</div>
+                        <div>
+                            <div id="userGreeting">Admin</div>
+                            <div style="font-size:12px;color:#6b7280;">Quản trị viên</div>
+                        </div>
+                        <button class="icon-btn" title="Đăng xuất" onclick="adminLayout.logout()">⎋</button>
+                    </div>
+                </div>
+            </header>
+
+            <main class="main">
+                <section class="cards">
+                    <div class="card">
+                        <div class="card-title">Tổng quan người dùng</div>
+                        <div class="card-subtitle">Số liệu sẽ được lấy từ hệ thống</div>
+                        <div class="status-row">
+                            <span>Tổng tài khoản</span>
+                            <strong id="totalUsers">--</strong>
+                        </div>
+                        <div class="status-row">
+                            <span>Nhân viên hoạt động</span>
+                            <strong id="activeEmployees">--</strong>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Chi nhánh</div>
+                        <div class="card-subtitle">Quản lý điểm bán</div>
+                        <div class="status-row">
+                            <span>Tổng chi nhánh</span>
+                            <strong id="totalBranches">--</strong>
+                        </div>
+                        <div class="status-row">
+                            <span>Chi nhánh đang mở</span>
+                            <strong id="openBranches">--</strong>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Danh mục dữ liệu</div>
+                        <div class="card-subtitle">Tổng quan kho dữ liệu</div>
+                        <div class="status-row">
+                            <span>Tổng sản phẩm</span>
+                            <strong id="totalProducts">--</strong>
+                        </div>
+                        <div class="status-row">
+                            <span>Tổng khách hàng</span>
+                            <strong id="totalCustomers">--</strong>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Thao tác nhanh</div>
+                        <div class="card-subtitle">Quản lý cấu hình quan trọng</div>
+                        <div class="actions">
+                            <button class="action-btn primary" type="button" onclick="document.getElementById('createUserCard').scrollIntoView({behavior: 'smooth'})">Tạo tài khoản</button>
+                            <button class="action-btn">Xem báo cáo</button>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="grid-2">
+                    <div class="card">
+                        <div class="card-title">Danh sách người dùng gần đây</div>
+                        <div class="card-subtitle">Cập nhật tài khoản mới nhất</div>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Username</th>
+                                    <th>Họ tên</th>
+                                    <th>Vai trò</th>
+                                    <th>Ngày tạo</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recentUsersBody">
+                                <tr>
+                                    <td colspan="4" class="empty-box">Chưa có dữ liệu người dùng gần đây.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Tình trạng hệ thống</div>
+                        <div class="card-subtitle">Nhật ký và cảnh báo mới</div>
+                        <div class="empty-box">Chưa có cảnh báo hệ thống.</div>
+                    </div>
+                </section>
+
+                <section class="card">
+                    <div class="card-title">Quản lý chi nhánh</div>
+                    <div class="card-subtitle">Theo dõi hoạt động theo từng điểm bán</div>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Tên chi nhánh</th>
+                                <th>Quản lý</th>
+                                <th>Trạng thái</th>
+                                <th>Ghi chú</th>
+                            </tr>
+                        </thead>
+                        <tbody id="branchTableBody">
+                            <tr>
+                                <td colspan="4" class="empty-box">Chưa có dữ liệu chi nhánh.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <section class="card" id="createUserCard">
+                    <div class="card-title">Tạo tài khoản nhân sự</div>
+                    <div class="card-subtitle">Admin tạo tài khoản cho Owner/Manager/Employee</div>
+                    <form id="adminCreateUserForm">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="adminFullName">Họ tên</label>
+                                <input id="adminFullName" name="fullName" type="text" placeholder="Nguyễn Văn A" required />
+                            </div>
+                            <div class="form-group">
+                                <label for="adminUsername">Username</label>
+                                <input id="adminUsername" name="username" type="text" placeholder="username" required />
+                            </div>
+                            <div class="form-group">
+                                <label for="adminEmail">Email</label>
+                                <input id="adminEmail" name="email" type="email" placeholder="email@bizflow.vn" required />
+                            </div>
+                            <div class="form-group">
+                                <label for="adminPhone">Số điện thoại</label>
+                                <input id="adminPhone" name="phoneNumber" type="tel" placeholder="0901234567" />
+                            </div>
+                            <div class="form-group">
+                                <label for="adminRole">Vai trò</label>
+                                <select id="adminRole" name="role">
+                                    <option value="OWNER">Owner</option>
+                                    <option value="MANAGER">Manager</option>
+                                    <option value="EMPLOYEE">Employee</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="adminPassword">Mật khẩu tạm</label>
+                                <div class="password-input-wrapper">
+                                    <input id="adminPassword" name="password" type="password" placeholder="Tối thiểu 6 ký tự" required />
+                                    <button type="button" class="toggle-password" id="toggleAdminPassword" aria-label="Ẩn/hiện mật khẩu">
+                                        <svg class="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                            <circle cx="12" cy="12" r="3"/>
+                                        </svg>
+                                        <svg class="eye-slash-icon" style="display:none;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 10.07 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+                                            <line x1="1" y1="1" x2="23" y2="23"/>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button class="action-btn primary" type="submit">Tạo tài khoản</button>
+                            <span id="adminUserStatus" class="status-message"></span>
+                        </div>
+                    </form>
+                </section>
+
+            </main>
+        </div>
+    </div>
+
+    <script src="../assets/js/admin-layout.js"></script>
+    <script>
+        const apiEndpoints = {
+            adminSummary: '/api/dashboard/admin-summary',
+            recentUsers: '/api/dashboard/recent-users',
+            branches: '/api/dashboard/branches',
+            createUser: '/api/users'
+        };
+
+        window.addEventListener('load', () => {
+            adminLayout.enforceAuth();
+            adminLayout.renderHeader();
+            adminLayout.setActiveNav();
+            loadAdminSummary();
+            loadRecentUsers();
+            loadBranches();
+            wireCreateUserForm();
+            wirePasswordToggle('adminPassword', 'toggleAdminPassword');
+        });
+
+        
+
+        async function loadAdminSummary() {
+            try {
+                const response = await fetch(apiEndpoints.adminSummary);
+                if (!response.ok) {
+                    throw new Error('Không thể tải dữ liệu tổng quan');
+                }
+                const data = await response.json();
+                document.getElementById('totalUsers').textContent = formatNumber(data.totalUsers);
+                document.getElementById('activeEmployees').textContent = formatNumber(data.totalEmployees);
+                document.getElementById('totalBranches').textContent = formatNumber(data.totalBranches);
+                document.getElementById('openBranches').textContent = formatNumber(data.activeBranches);
+                document.getElementById('totalProducts').textContent = formatNumber(data.totalProducts);
+                document.getElementById('totalCustomers').textContent = formatNumber(data.totalCustomers);
+            } catch (error) {
+                setTextContent('totalUsers', '--');
+                setTextContent('activeEmployees', '--');
+                setTextContent('totalBranches', '--');
+                setTextContent('openBranches', '--');
+                setTextContent('totalProducts', '--');
+                setTextContent('totalCustomers', '--');
+            }
+        }
+
+        async function loadRecentUsers() {
+            const body = document.getElementById('recentUsersBody');
+            try {
+                const response = await fetch(apiEndpoints.recentUsers);
+                if (!response.ok) {
+                    throw new Error('Không thể tải dữ liệu người dùng');
+                }
+                const users = await response.json();
+                body.innerHTML = '';
+                if (!users.length) {
+                    body.innerHTML = '<tr><td colspan="4" class="empty-box">Chưa có dữ liệu người dùng gần đây.</td></tr>';
+                    return;
+                }
+                users.forEach(user => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${escapeHtml(user.username || '-') }</td>
+                        <td>${escapeHtml(user.fullName || '-') }</td>
+                        <td>${escapeHtml(user.role || '-') }</td>
+                        <td>${formatTimestamp(user.createdAt) }</td>
+                    `;
+                    body.appendChild(row);
+                });
+            } catch (error) {
+                body.innerHTML = '<tr><td colspan="4" class="empty-box">Không thể tải dữ liệu người dùng.</td></tr>';
+            }
+        }
+
+        async function loadBranches() {
+            const body = document.getElementById('branchTableBody');
+            try {
+                const response = await fetch(apiEndpoints.branches);
+                if (!response.ok) {
+                    throw new Error('Không thể tải dữ liệu chi nhánh');
+                }
+                const branches = await response.json();
+                body.innerHTML = '';
+                if (!branches.length) {
+                    body.innerHTML = '<tr><td colspan="4" class="empty-box">Chưa có dữ liệu chi nhánh.</td></tr>';
+                    return;
+                }
+                branches.forEach(branch => {
+                    const statusText = branch.active ? 'Đang hoạt động' : 'Tạm ngưng';
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${escapeHtml(branch.name || '-') }</td>
+                        <td>${escapeHtml(branch.ownerName || '-') }</td>
+                        <td>${statusText}</td>
+                        <td>${escapeHtml(branch.note || '-')}</td>
+                    `;
+                    body.appendChild(row);
+                });
+            } catch (error) {
+                body.innerHTML = '<tr><td colspan="4" class="empty-box">Không thể tải dữ liệu chi nhánh.</td></tr>';
+            }
+        }
+
+        function wireCreateUserForm() {
+            const form = document.getElementById('adminCreateUserForm');
+            const status = document.getElementById('adminUserStatus');
+            form.addEventListener('submit', async event => {
+                event.preventDefault();
+                status.textContent = '';
+                status.className = 'status-message';
+                const data = Object.fromEntries(new FormData(form).entries());
+                const payload = {
+                    username: (data.username || '').trim(),
+                    password: data.password || '',
+                    email: (data.email || '').trim(),
+                    fullName: (data.fullName || '').trim(),
+                    phoneNumber: (data.phoneNumber || '').trim() || null,
+                    role: data.role
+                };
+
+                try {
+                    const response = await fetch(apiEndpoints.createUser, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    if (!response.ok) {
+                        const message = await response.text();
+                        throw new Error(message || 'Không thể tạo tài khoản');
+                    }
+                    status.textContent = 'Tạo tài khoản thành công.';
+                    status.classList.add('status-success');
+                    form.reset();
+                    await loadAdminSummary();
+                    await loadRecentUsers();
+                } catch (error) {
+                    status.textContent = error.message || 'Có lỗi xảy ra.';
+                    status.classList.add('status-error');
+                }
+            });
+        }
+
+        function wirePasswordToggle(inputId, buttonId) {
+            const input = document.getElementById(inputId);
+            const toggleBtn = document.getElementById(buttonId);
+            if (!input || !toggleBtn) {
+                return;
+            }
+            const eyeIcon = toggleBtn.querySelector('.eye-icon');
+            const eyeSlashIcon = toggleBtn.querySelector('.eye-slash-icon');
+            toggleBtn.addEventListener('click', () => {
+                const isPassword = input.type === 'password';
+                input.type = isPassword ? 'text' : 'password';
+                if (eyeIcon && eyeSlashIcon) {
+                    eyeIcon.style.display = isPassword ? 'none' : 'block';
+                    eyeSlashIcon.style.display = isPassword ? 'block' : 'none';
+                }
+            });
+        }
+
+        function formatNumber(value) {
+            if (value === null || value === undefined) {
+                return '--';
+            }
+            return new Intl.NumberFormat('vi-VN').format(value);
+        }
+
+        function formatTimestamp(value) {
+            if (!value) {
+                return '--';
+            }
+            const parsed = new Date(value);
+            if (Number.isNaN(parsed.getTime())) {
+                return value;
+            }
+            return parsed.toLocaleString('vi-VN', { hour12: false });
+        }
+
+        function setTextContent(id, value) {
+            const el = document.getElementById(id);
+            if (el) {
+                el.textContent = value;
+            }
+        }
+
+        function escapeHtml(value) {
+            return String(value).replace(/[&<>"']/g, match => ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#39;'
+            }[match]));
+        }
+    </script>
+</body>
+</html>
+
+

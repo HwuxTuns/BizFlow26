@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Test Vietnamese Address Search - Improved</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            max-width: 900px;
+            margin: 0 auto;
+            background: #f9f9f9;
+        }
+        h1 {
+            color: #333;
+            border-bottom: 3px solid #007bff;
+            padding-bottom: 10px;
+        }
+        .test-case {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin: 12px 0;
+            border-radius: 5px;
+            background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .test-input {
+            font-weight: bold;
+            color: #007bff;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+        .test-results {
+            margin-top: 10px;
+            padding: 10px;
+            background: #f5f5f5;
+            border-left: 4px solid #28a745;
+            border-radius: 3px;
+        }
+        .result-item {
+            padding: 8px 0;
+            color: #555;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .result-item:last-child {
+            border-bottom: none;
+        }
+        .success {
+            color: #28a745;
+            font-weight: bold;
+        }
+        .error {
+            color: #dc3545;
+            font-weight: bold;
+        }
+        .count {
+            color: #666;
+            font-style: italic;
+            margin-bottom: 8px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔍 Vietnamese Address Search - Test Suite</h1>
+    <div id="testResults"></div>
+
+    <script src="../assets/data/vietnamese-addresses-hcm.js"></script>
+    <script>
+        const testCases = [
+            { query: "178", description: "Street number only - should find 178 Gò Dầu" },
+            { query: "70", description: "Street number only - should find 70 Tô Ký" },
+            { query: "1", description: "Single digit - should find addresses starting with 1" },
+            { query: "70 tô ký", description: "Street number + street name" },
+            { query: "gò dầu", description: "Street name only - should find Gò Dầu addresses" },
+            { query: "tô ký", description: "Street name only - should find Tô Ký addresses" },
+            { query: "tân phú", description: "District name - should find Tân Phú addresses" },
+            { query: "178 gò dầu", description: "Complete street + name" },
+            { query: "50", description: "Street number with multiple matches" },
+            { query: "nguyễn huệ", description: "Famous street in District 1" },
+        ];
+
+        const resultsDiv = document.getElementById('testResults');
+
+        testCases.forEach((testCase, index) => {
+            const results = searchVietnameseAddresses(testCase.query);
+            const testDiv = document.createElement('div');
+            testDiv.className = 'test-case';
+
+            const inputDiv = document.createElement('div');
+            inputDiv.className = 'test-input';
+            inputDiv.innerHTML = `Test ${index + 1}: <code>"${testCase.query}"</code><br><small>${testCase.description}</small>`;
+            testDiv.appendChild(inputDiv);
+
+            const resultsDiv = document.createElement('div');
+            resultsDiv.className = 'test-results';
+
+            const countDiv = document.createElement('div');
+            countDiv.className = 'count';
+            countDiv.textContent = `Found ${results.length} result(s)`;
+            resultsDiv.appendChild(countDiv);
+
+            if (results.length > 0) {
+                const statusClass = results.length > 0 ? 'success' : 'error';
+                const statusDiv = document.createElement('div');
+                statusDiv.className = statusClass;
+                statusDiv.textContent = `✓ Results found`;
+                resultsDiv.appendChild(statusDiv);
+
+                results.forEach((result, idx) => {
+                    const itemDiv = document.createElement('div');
+                    itemDiv.className = 'result-item';
+                    itemDiv.textContent = `${idx + 1}. ${result}`;
+                    resultsDiv.appendChild(itemDiv);
+                });
+            } else {
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'error';
+                errorDiv.textContent = '✗ No results found';
+                resultsDiv.appendChild(errorDiv);
+            }
+
+            testDiv.appendChild(resultsDiv);
+            document.body.appendChild(testDiv);
+        });
+
+        // Log summary
+        console.log('=== Address Database Statistics ===');
+        console.log('Total addresses in database:', VIETNAMESE_ADDRESSES_HCM.length);
+        console.log('Sample addresses:', VIETNAMESE_ADDRESSES_HCM.slice(0, 5));
+        console.log('Tô Ký addresses:', VIETNAMESE_ADDRESSES_HCM.filter(a => a.includes('Tô Ký')));
+        console.log('Gò Dầu addresses:', VIETNAMESE_ADDRESSES_HCM.filter(a => a.includes('Gò Dầu')));
+    </script>
+</body>
+</html>

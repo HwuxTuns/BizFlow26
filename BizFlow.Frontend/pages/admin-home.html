@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BizFlow - Admin Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="../assets/css/admin-base.css?v=20260204">
+</head>
+<body data-admin-page="home">
+    <div class="layout">
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="brand-mark">BF</div>
+                <div>
+                    <div class="brand-title">BizFlow</div>
+                    <div class="brand-subtitle">Admin Control</div>
+                </div>
+            </div>
+
+            <div class="nav-group">
+                <div class="nav-title">Tổng quan</div>
+                <a class="nav-item" data-page="home" href="admin-home.html"><span class="icon" data-icon="H"></span><span>Trang chủ</span></a>
+                <a class="nav-item" data-page="users" href="admin-users.html"><span class="icon" data-icon="U"></span><span>Người dùng</span></a>
+                <a class="nav-item" data-page="products" href="admin-products.html"><span class="icon" data-icon="P"></span><span>Sản phẩm</span></a>
+                <a class="nav-item" data-page="orders" href="admin-orders.html"><span class="icon" data-icon="O"></span><span>Đơn hàng</span></a>
+                <a class="nav-item" data-page="returns" href="admin-returns.html"><span class="icon" data-icon="R"></span><span>Đổi/Trả hàng</span></a>
+                <a class="nav-item" data-page="warranties" href="admin-warranties.html"><span class="icon" data-icon="W"></span><span>Bảo hành</span></a>
+                <a class="nav-item" data-page="shipping" href="admin-orders.html?filter=shipping"><span class="icon" data-icon="S"></span><span>Vận chuyển</span></a>
+            </div>
+
+            <div class="nav-group">
+                <div class="nav-title">Hệ thống</div>
+                <a class="nav-item" data-page="reports" href="admin-reports.html"><span class="icon" data-icon="B"></span><span>Báo cáo</span></a>
+            </div>
+
+            <div class="sidebar-footer">
+                <div>Trạng thái hệ thống: Online</div>
+                <div>Cập nhật: <span id="sidebarTime">--:--</span></div>
+            </div>
+        </aside>
+
+        <div class="content">
+            <header class="topbar">
+                <div class="top-left">
+                    <div class="page-title">Quản trị hệ thống</div>
+                    <div class="search" style="position: relative;">
+                        <span>🔍</span>
+                        <input id="globalSearchInput" type="text" placeholder="Tìm kiếm người dùng..." autocomplete="off" />
+                        <div id="searchResults" style="display: none; position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid #ddd; border-radius: 4px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); max-height: 400px; overflow-y: auto; z-index: 1000; margin-top: 4px;"></div>
+                    </div>
+                </div>
+                <div class="top-right">
+                    <span class="pill">ADMIN</span>
+                    <div class="user-chip">
+                        <div class="avatar" id="userAvatar">AD</div>
+                        <div>
+                            <div id="userGreeting">Admin</div>
+                            <div style="font-size:12px;color:#6b7280;">Quản trị viên</div>
+                        </div>
+                        <button class="icon-btn" title="Đăng xuất" onclick="adminLayout.logout()">⎋</button>
+                    </div>
+                </div>
+            </header>
+
+            <main class="main">
+                <section class="cards">
+                    <div class="card">
+                        <div class="card-title">Tổng quan người dùng</div>
+                        <div class="card-subtitle">Số liệu sẽ được lấy từ hệ thống</div>
+                        <div class="status-row">
+                            <span>Tổng tài khoản</span>
+                            <strong id="totalUsers">--</strong>
+                        </div>
+                        <div class="status-row">
+                            <span>Nhân viên hoạt động</span>
+                            <strong id="activeEmployees">--</strong>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Chi nhánh</div>
+                        <div class="card-subtitle">Quản lý điểm bán</div>
+                        <div class="status-row">
+                            <span>Tổng chi nhánh</span>
+                            <strong id="totalBranches">--</strong>
+                        </div>
+                        <div class="status-row">
+                            <span>Chi nhánh đang mở</span>
+                            <strong id="openBranches">--</strong>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Danh mục dữ liệu</div>
+                        <div class="card-subtitle">Tổng quan kho dữ liệu</div>
+                        <div class="status-row">
+                            <span>Tổng sản phẩm</span>
+                            <strong id="totalProducts">--</strong>
+                        </div>
+                        <div class="status-row">
+                            <span>Tổng khách hàng</span>
+                            <strong id="totalCustomers">--</strong>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Thao tác nhanh</div>
+                        <div class="card-subtitle">Quản lý cấu hình quan trọng</div>
+                        <div class="actions">
+                            <button class="action-btn primary" type="button" onclick="document.getElementById('createUserCard').scrollIntoView({behavior: 'smooth'})">Tạo tài khoản</button>
+                            <button class="action-btn" onclick="location.href='admin-reports.html'">Xem báo cáo</button>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="grid-2">
+                    <div class="card">
+                        <div class="card-title">Danh sách người dùng gần đây</div>
+                        <div class="card-subtitle">Cập nhật tài khoản mới nhất</div>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Username</th>
+                                    <th>Họ tên</th>
+                                    <th>Vai trò</th>
+                                    <th>Ngày tạo</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recentUsersBody">
+                                <tr>
+                                    <td colspan="4" class="empty-box">Chưa có dữ liệu người dùng gần đây.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">Tình trạng hệ thống</div>
+                        <div class="card-subtitle">Nhật ký và cảnh báo mới</div>
+                        <div class="empty-box">Chưa có cảnh báo hệ thống.</div>
+                    </div>
+                </section>
+
+                <section class="card">
+                    <div class="card-title">Quản lý chi nhánh</div>
+                    <div class="card-subtitle">Theo dõi hoạt động theo từng điểm bán</div>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Tên chi nhánh</th>
+                                <th>Quản lý</th>
+                                <th>Trạng thái</th>
+                                <th>Ghi chú</th>
+                            </tr>
+                        </thead>
+                        <tbody id="branchTableBody">
+                            <tr>
+                                <td colspan="4" class="empty-box">Chưa có dữ liệu chi nhánh.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <section class="card" id="createUserCard">
+                    <div class="card-title">Tạo tài khoản nhân sự</div>
+                    <div class="card-subtitle">Admin tạo tài khoản cho Owner/Manager/Employee</div>
+                    <form id="adminCreateUserForm">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="adminFullName">Họ tên</label>
+                                <input id="adminFullName" name="fullName" type="text" placeholder="Nguyễn Văn A" required />
+                            </div>
+                            <div class="form-group">
+                                <label for="adminUsername">Username</label>
+                                <input id="adminUsername" name="username" type="text" placeholder="username" required />
+                            </div>
+                            <div class="form-group">
+                                <label for="adminEmail">Email</label>
+                                <input id="adminEmail" name="email" type="email" placeholder="email@bizflow.vn" required />
+                            </div>
+                            <div class="form-group">
+                                <label for="adminPhone">Số điện thoại</label>
+                                <input id="adminPhone" name="phoneNumber" type="tel" placeholder="0901234567" />
+                            </div>
+                            <div class="form-group">
+                                <label for="adminRole">Vai trò</label>
+                                <select id="adminRole" name="role">
+                                    <option value="OWNER">Owner</option>
+                                    <option value="MANAGER">Manager</option>
+                                    <option value="EMPLOYEE">Employee</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="adminPassword">Mật khẩu tạm</label>
+                                <div class="password-input-wrapper">
+                                    <input id="adminPassword" name="password" type="password" placeholder="Tối thiểu 6 ký tự" required />
+                                    <button type="button" class="toggle-password" id="toggleAdminPassword" aria-label="Ẩn/hiện mật khẩu">
+                                        <svg class="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                            <circle cx="12" cy="12" r="3"/>
+                                        </svg>
+                                        <svg class="eye-slash-icon" style="display:none;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 10.07 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+                                            <line x1="1" y1="1" x2="23" y2="23"/>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button class="action-btn primary" type="submit">Tạo tài khoản</button>
+                            <span id="adminUserStatus" class="status-message"></span>
+                        </div>
+                    </form>
+                </section>
+
+            </main>
+        </div>
+    </div>
+
+    <!-- User Detail Modal -->
+    <div id="userDetailModal" class="modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2000;">
+        <div class="modal-content" style="position: relative; background: white; margin: 5% auto; padding: 2rem; border-radius: 8px; max-width: 600px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+            <span class="close" onclick="closeUserModal()" style="position: absolute; top: 1rem; right: 1rem; font-size: 1.5rem; cursor: pointer; color: #999;">&times;</span>
+            <h2 style="margin: 0 0 1.5rem 0; font-size: 1.5rem; font-weight: 600;">Chi tiết người dùng</h2>
+            
+            <div id="userDetailContent">
+                <div style="display: grid; gap: 1rem;">
+                    <div style="display: grid; grid-template-columns: 150px 1fr; gap: 0.5rem; padding: 0.75rem; background: #f8f9fa; border-radius: 4px;">
+                        <strong>ID:</strong>
+                        <span id="detailId">-</span>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 150px 1fr; gap: 0.5rem; padding: 0.75rem; background: #f8f9fa; border-radius: 4px;">
+                        <strong>Username:</strong>
+                        <span id="detailUsername">-</span>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 150px 1fr; gap: 0.5rem; padding: 0.75rem; background: #f8f9fa; border-radius: 4px;">
+                        <strong>Họ tên:</strong>
+                        <span id="detailFullName">-</span>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 150px 1fr; gap: 0.5rem; padding: 0.75rem; background: #f8f9fa; border-radius: 4px;">
+                        <strong>Email:</strong>
+                        <span id="detailEmail">-</span>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 150px 1fr; gap: 0.5rem; padding: 0.75rem; background: #f8f9fa; border-radius: 4px;">
+                        <strong>Số điện thoại:</strong>
+                        <span id="detailPhone">-</span>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 150px 1fr; gap: 0.5rem; padding: 0.75rem; background: #f8f9fa; border-radius: 4px;">
+                        <strong>Vai trò:</strong>
+                        <span id="detailRole">-</span>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 150px 1fr; gap: 0.5rem; padding: 0.75rem; background: #f8f9fa; border-radius: 4px;">
+                        <strong>Chi nhánh:</strong>
+                        <span id="detailBranch">-</span>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 150px 1fr; gap: 0.5rem; padding: 0.75rem; background: #f8f9fa; border-radius: 4px;">
+                        <strong>Trạng thái:</strong>
+                        <span id="detailStatus">-</span>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 150px 1fr; gap: 0.5rem; padding: 0.75rem; background: #f8f9fa; border-radius: 4px;">
+                        <strong>Ngày tầo:</strong>
+                        <span id="detailCreatedAt">-</span>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 2rem; display: flex; gap: 1rem; justify-content: flex-end;">
+                    <button class="action-btn" onclick="closeUserModal()">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="../assets/js/admin-layout.js"></script>
+    <script>
+        // API Configuration - Use dashboard endpoints (Report Service via Gateway)
+        const API = '/api/dashboard';
+        let currentUser = null;
+        let searchTimeout = null;
+
+        async function fetchJsonWithRetry(url, attempts = 5, delayMs = 400) {
+            let lastErr;
+            for (let i = 1; i <= attempts; i++) {
+                try {
+                    const res = await fetch(url);
+                    if (!res.ok) {
+                        const retryable = [502, 503, 504].includes(res.status);
+                        if (!retryable || i === attempts) {
+                            throw new Error(`HTTP ${res.status} ${res.statusText}`);
+                        }
+                        await new Promise(r => setTimeout(r, delayMs));
+                        continue;
+                    }
+                    return await res.json();
+                } catch (e) {
+                    lastErr = e;
+                    if (i === attempts) break;
+                    await new Promise(r => setTimeout(r, delayMs));
+                }
+            }
+            throw lastErr || new Error('Request failed');
+        }
+
+        // Initialize page
+        window.addEventListener('load', () => {
+            adminLayout.enforceAuth();
+            adminLayout.renderHeader();
+            adminLayout.setActiveNav();
+            loadData();
+            initSearch();
+            wireCreateUserForm();
+            wirePasswordToggle('adminPassword', 'toggleAdminPassword');
+        });
+
+        // Load all data from backend
+        async function loadData() {
+            loadStats();
+            loadRecentUsers();
+            loadBranches();
+        }
+
+        // Initialize search
+        function initSearch() {
+            const input = document.getElementById('globalSearchInput');
+            const results = document.getElementById('searchResults');
+            
+            input.addEventListener('input', (e) => {
+                clearTimeout(searchTimeout);
+                const query = e.target.value.trim();
+                
+                if (query.length < 1) {
+                    results.style.display = 'none';
+                    return;
+                }
+                
+                searchTimeout = setTimeout(() => performSearch(query), 300);
+            });
+            
+            document.addEventListener('click', (e) => {
+                if (!input.contains(e.target) && !results.contains(e.target)) {
+                    results.style.display = 'none';
+                }
+            });
+        }
+
+        // Perform search - backend powered (avoid loading all users)
+        async function performSearch(query) {
+            const results = document.getElementById('searchResults');
+            try {
+                results.innerHTML = '<div style="padding: 1rem; text-align: center; color: #666;">Đang tìm kiếm...</div>';
+                results.style.display = 'block';
+
+                const usp = new URLSearchParams();
+                usp.set('q', query);
+                usp.set('limit', '10');
+                const users = await fetchJsonWithRetry(`${API}/users?${usp.toString()}`);
+                const filtered = Array.isArray(users) ? users : [];
+
+                if (!filtered.length) {
+                    results.innerHTML = '<div style="padding: 1rem; text-align: center; color: #666;">Không tìm thấy kết quả</div>';
+                    results.style.display = 'block';
+                    return;
+                }
+
+                results.innerHTML = filtered.map(user => `
+                    <div onclick="showUserDetail(${user.id})" style="padding: 0.75rem 1rem; border-bottom: 1px solid #eee; cursor: pointer;" onmouseover="this.style.background='#f8f9fa'" onmouseout="this.style.background='white'">
+                        <div style="font-weight: 600; margin-bottom: 0.25rem;">${esc(user.fullName || user.username)}</div>
+                        <div style="font-size: 0.875rem; color: #666;">
+                            ${esc(user.username)} • ${esc(user.email || '-')} • <span class="pill" style="font-size: 0.75rem;">${esc(user.role)}</span>
+                        </div>
+                    </div>
+                `).join('');
+
+                results.style.display = 'block';
+            } catch (err) {
+                console.error('Search error:', err);
+                results.innerHTML = '<div style="padding: 1rem; text-align: center; color: #666;">Lỗi tìm kiếm</div>';
+                results.style.display = 'block';
+            }
+        }
+
+        // Show user detail - fetch from backend
+        async function showUserDetail(userId) {
+            document.getElementById('searchResults').style.display = 'none';
+            document.getElementById('globalSearchInput').value = '';
+            
+            try {
+                const user = await fetch(`${API}/users/${userId}`).then(r => r.json());
+                displayUserModal(user);
+            } catch (err) {
+                console.error('Error:', err);
+                alert('Không thể tải thông tin người dùng');
+            }
+        }
+
+        // Display user in modal
+        function displayUserModal(user) {
+            currentUser = user;
+            document.getElementById('detailId').textContent = user.id || '-';
+            document.getElementById('detailUsername').textContent = user.username || '-';
+            document.getElementById('detailFullName').textContent = user.fullName || '-';
+            document.getElementById('detailEmail').textContent = user.email || '-';
+            document.getElementById('detailPhone').textContent = user.phoneNumber || '-';
+            document.getElementById('detailRole').textContent = user.role || '-';
+            document.getElementById('detailBranch').textContent = user.branchName || 'Chưa phân chi nhánh';
+            
+            const statusSpan = document.getElementById('detailStatus');
+            statusSpan.textContent = user.enabled ? 'Đã kích hoạt' : 'Đã vô hiệu hóa';
+            statusSpan.className = `pill ${user.enabled ? 'success' : 'danger'}`;
+            
+            document.getElementById('detailCreatedAt').textContent = fmt(user.createdAt);
+            document.getElementById('userDetailModal').style.display = 'block';
+        }
+
+        function closeUserModal() {
+            document.getElementById('userDetailModal').style.display = 'none';
+            currentUser = null;
+        }
+
+        // Load statistics - Backend aggregates all data
+        async function loadStats() {
+            try {
+                const stats = await fetchJsonWithRetry('/api/dashboard/admin-summary');
+                
+                document.getElementById('totalUsers').textContent = stats.totalUsers || 0;
+                document.getElementById('activeEmployees').textContent = stats.totalEmployees || 0;
+                document.getElementById('totalBranches').textContent = stats.totalBranches || 0;
+                document.getElementById('openBranches').textContent = stats.activeBranches || 0;
+                document.getElementById('totalProducts').textContent = stats.totalProducts || 0;
+                document.getElementById('totalCustomers').textContent = stats.totalCustomers || 0;
+            } catch (err) {
+                console.error('Stats error:', err);
+                // Set defaults on error
+                document.getElementById('totalUsers').textContent = '--';
+                document.getElementById('activeEmployees').textContent = '--';
+                document.getElementById('totalBranches').textContent = '--';
+                document.getElementById('openBranches').textContent = '--';
+                document.getElementById('totalProducts').textContent = '--';
+                document.getElementById('totalCustomers').textContent = '--';
+            }
+        }
+
+        // Load recent users - Backend provides processed data
+        async function loadRecentUsers() {
+            try {
+                const users = await fetchJsonWithRetry('/api/dashboard/recent-users');
+                const tbody = document.getElementById('recentUsersBody');
+                
+                if (!users?.length) {
+                    tbody.innerHTML = '<tr><td colspan="4" class="empty-box">Chưa có dữ liệu</td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = users.map(u => `
+                    <tr>
+                        <td>${esc(u.username)}</td>
+                        <td>${esc(u.fullName)}</td>
+                        <td>${esc(u.role)}</td>
+                        <td>${fmt(u.createdAt)}</td>
+                    </tr>
+                `).join('');
+            } catch (err) {
+                document.getElementById('recentUsersBody').innerHTML = '<tr><td colspan="4" class="empty-box">Lỗi tải dữ liệu</td></tr>';
+            }
+        }
+
+        // Load branches - Backend provides processed data
+        async function loadBranches() {
+            try {
+                const branches = await fetchJsonWithRetry('/api/dashboard/branches');
+                const tbody = document.getElementById('branchTableBody');
+                
+                if (!branches?.length) {
+                    tbody.innerHTML = '<tr><td colspan="4" class="empty-box">Chưa có dữ liệu</td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = branches.map(b => `
+                    <tr>
+                        <td>${esc(b.name)}</td>
+                        <td>${esc(b.ownerName || '-')}</td>
+                        <td>${b.isActive ? 'Đang hoạt động' : 'Tạm ngưng'}</td>
+                        <td>${esc(b.address || '-')}</td>
+                    </tr>
+                `).join('');
+            } catch (err) {
+                document.getElementById('branchTableBody').innerHTML = '<tr><td colspan="4" class="empty-box">Lỗi tải dữ liệu</td></tr>';
+            }
+        }
+
+
+
+        // Create user form
+        function wireCreateUserForm() {
+            document.getElementById('adminCreateUserForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const status = document.getElementById('adminUserStatus');
+                status.textContent = '';
+                status.className = 'status-message';
+
+                const fd = new FormData(e.target);
+                const data = {
+                    username: fd.get('username').trim(),
+                    password: fd.get('password'),
+                    email: fd.get('email').trim(),
+                    fullName: fd.get('fullName').trim(),
+                    phoneNumber: fd.get('phoneNumber').trim() || null,
+                    role: fd.get('role'),
+                    enabled: true
+                };
+
+                try {
+                    const res = await fetch('/api/users', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(data)
+                    });
+
+                    if (!res.ok) throw new Error(await res.text() || 'Lỗi tạo tài khoản');
+
+                    status.textContent = 'Tạo tài khoản thành công';
+                    status.classList.add('status-success');
+                    e.target.reset();
+                    loadData();
+                } catch (err) {
+                    status.textContent = err.message;
+                    status.classList.add('status-error');
+                }
+            });
+        }
+
+
+        // Utility functions
+        function wirePasswordToggle(inputId, btnId) {
+            const input = document.getElementById(inputId);
+            const btn = document.getElementById(btnId);
+            if (!input || !btn) return;
+
+            btn.addEventListener('click', () => {
+                const isPass = input.type === 'password';
+                input.type = isPass ? 'text' : 'password';
+                const eye = btn.querySelector('.eye-icon');
+                const slash = btn.querySelector('.eye-slash-icon');
+                if (eye && slash) {
+                    eye.style.display = isPass ? 'none' : 'block';
+                    slash.style.display = isPass ? 'block' : 'none';
+                }
+            });
+        }
+
+        function fmt(val) {
+            return val ? new Date(val).toLocaleString('vi-VN', { hour12: false }) : '-';
+        }
+
+        function esc(txt) {
+            const div = document.createElement('div');
+            div.textContent = txt || '-';
+            return div.innerHTML;
+        }
+
+        // Close modal on outside click
+        window.onclick = (e) => {
+            const modal = document.getElementById('userDetailModal');
+            if (e.target === modal) closeUserModal();
+        }
+    </script>
+</body>
+</html>

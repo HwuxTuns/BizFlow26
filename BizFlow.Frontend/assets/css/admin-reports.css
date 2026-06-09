@@ -1,0 +1,95 @@
+/* Page-specific styles for admin-reports.html */
+
+.report-panels {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+}
+
+.report-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.report-panel .panel-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.panel-header .panel-title {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 220px;
+}
+
+.panel-header .panel-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+}
+
+.kpi {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px;
+    background: #f8fafc;
+}
+
+.kpi-label {
+    font-size: 12px;
+    color: var(--muted);
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+}
+
+.kpi-value {
+    margin-top: 6px;
+    font-size: 18px;
+    font-weight: 800;
+}
+
+.kpi-sub {
+    margin-top: 4px;
+    font-size: 12px;
+    color: var(--muted);
+}
+
+.table-wrap {
+    width: 100%;
+    overflow-x: auto;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+}
+
+.table-wrap .table {
+    margin: 0;
+}
+
+.help-text {
+    font-size: 13px;
+    color: var(--muted);
+}
+
+.inline-link {
+    color: var(--accent);
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.inline-link:hover {
+    text-decoration: underline;
+}
+

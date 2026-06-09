@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test AI Combo Promotion</title>
+    <link rel="stylesheet" href="../assets/css/combo-promotion-ai.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+        }
+        
+        .test-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .test-section h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+        
+        .test-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        
+        .btn-test {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-test:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-clear {
+            background: #e0e0e0;
+            color: #666;
+        }
+        
+        .result-box {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+            margin-top: 15px;
+        }
+        
+        .result-box h3 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        
+        .result-box pre {
+            background: #f1f3f5;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+        
+        .status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+        
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .mock-cart {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .cart-item-mock {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border: 2px solid #e0e0e0;
+        }
+        
+        .cart-item-mock.gift {
+            border-color: #ff6b9d;
+            background: linear-gradient(90deg, #fff5e6 0%, #ffe6f0 100%);
+        }
+        
+        .item-name {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        
+        .item-qty {
+            color: #666;
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Test AI Combo Promotion</h1>
+        <p class="subtitle">Test các API và UI components cho tính năng combo khuyến mãi tự động</p>
+        
+        <!-- Test 1: Check Product Promotions -->
+        <div class="test-section">
+            <h2>📦 Test 1: Kiểm tra khuyến mãi sản phẩm</h2>
+            <p style="color: #666; margin-bottom: 15px;">
+                Click vào sản phẩm để xem có combo khuyến mãi không
+            </p>
+            <div class="test-buttons">
+                <button class="btn-test" onclick="testCheckProductPromo(123)">
+                    <i class="fas fa-water"></i> Kiểm tra Aquafina (ID: 123)
+                </button>
+                <button class="btn-test" onclick="testCheckProductPromo(456)">
+                    <i class="fas fa-wine-bottle"></i> Kiểm tra Coca Cola (ID: 456)
+                </button>
+                <button class="btn-clear" onclick="clearResults('result1')">
+                    <i class="fas fa-eraser"></i> Xóa kết quả
+                </button>
+            </div>
+            <div id="result1"></div>
+        </div>
+        
+        <!-- Test 2: Analyze Cart - Eligible -->
+        <div class="test-section">
+            <h2>🎉 Test 2: Phân tích giỏ hàng - ĐỦ ĐIỀU KIỆN</h2>
+            <p style="color: #666; margin-bottom: 15px;">
+                Giỏ có 3 Aquafina → Được tặng 1 chai
+            </p>
+            <div class="test-buttons">
+                <button class="btn-test" onclick="testAnalyzeCartEligible()">
+                    <i class="fas fa-shopping-cart"></i> Test giỏ đủ điều kiện
+                </button>
+                <button class="btn-test" onclick="showNotificationDemo('success')">
+                    <i class="fas fa-bell"></i> Xem thông báo
+                </button>
+                <button class="btn-clear" onclick="clearResults('result2')">
+                    <i class="fas fa-eraser"></i> Xóa kết quả
+                </button>
+            </div>
+            <div id="result2"></div>
+        </div>
+        
+        <!-- Test 3: Analyze Cart - Upsell -->
+        <div class="test-section">
+            <h2>💡 Test 3: Phân tích giỏ hàng - GỢI Ý MUA THÊM</h2>
+            <p style="color: #666; margin-bottom: 15px;">
+                Giỏ có 2 Aquafina → Gợi ý mua thêm 1 để nhận quà
+            </p>
+            <div class="test-buttons">
+                <button class="btn-test" onclick="testAnalyzeCartUpsell()">
+                    <i class="fas fa-chart-line"></i> Test giỏ gần đủ
+                </button>
+                <button class="btn-test" onclick="showUpsellDemo()">
+                    <i class="fas fa-lightbulb"></i> Xem modal gợi ý
+                </button>
+                <button class="btn-clear" onclick="clearResults('result3')">
+                    <i class="fas fa-eraser"></i> Xóa kết quả
+                </button>
+            </div>
+            <div id="result3"></div>
+        </div>
+        
+        <!-- Test 4: Multiple Combos -->
+        <div class="test-section">
+            <h2>🎁 Test 4: Nhiều combo cùng lúc</h2>
+            <p style="color: #666; margin-bottom: 15px;">
+                Giỏ có 6 Aquafina → Được tặng 2 chai
+            </p>
+            <div class="test-buttons">
+                <button class="btn-test" onclick="testMultipleCombos()">
+                    <i class="fas fa-gifts"></i> Test nhiều combo
+                </button>
+                <button class="btn-clear" onclick="clearResults('result4')">
+                    <i class="fas fa-eraser"></i> Xóa kết quả
+                </button>
+            </div>
+            <div id="result4"></div>
+        </div>
+        
+        <!-- Test 5: UI Components -->
+        <div class="test-section">
+            <h2>🎨 Test 5: UI Components</h2>
+            <p style="color: #666; margin-bottom: 15px;">
+                Test các component giao diện
+            </p>
+            <div class="test-buttons">
+                <button class="btn-test" onclick="showNotificationDemo('success')">
+                    <i class="fas fa-check-circle"></i> Thông báo Success
+                </button>
+                <button class="btn-test" onclick="showNotificationDemo('info')">
+                    <i class="fas fa-info-circle"></i> Thông báo Info
+                </button>
+                <button class="btn-test" onclick="showNotificationDemo('warning')">
+                    <i class="fas fa-exclamation-triangle"></i> Thông báo Warning
+                </button>
+                <button class="btn-test" onclick="showUpsellDemo()">
+                    <i class="fas fa-window-maximize"></i> Modal Upsell
+                </button>
+                <button class="btn-test" onclick="showMockCart()">
+                    <i class="fas fa-shopping-basket"></i> Giỏ hàng mẫu
+                </button>
+            </div>
+            <div id="mockCartContainer"></div>
+        </div>
+        
+        <!-- Health Check -->
+        <div class="test-section">
+            <h2>🏥 AI Service Health Check</h2>
+            <div class="test-buttons">
+                <button class="btn-test" onclick="checkAIHealth()">
+                    <i class="fas fa-heartbeat"></i> Kiểm tra kết nối
+                </button>
+            </div>
+            <div id="healthResult"></div>
+        </div>
+    </div>
+    
+    <script src="../assets/js/combo-promotion-ai.js"></script>
+    <script>
+        // Mock data
+        const mockPromotions = [
+            {
+                id: 1,
+                code: "COMBO-AQUA-JAN26",
+                name: "Combo Aquafina - Mua 3 Tặng 1",
+                discount_type: "BUNDLE",
+                discount_value: 0,
+                active: true,
+                bundle_items: [
+                    {
+                        bundle_id: 1,
+                        main_product_id: 123,
+                        main_product_name: "Nước suối Aquafina 500ml",
+                        gift_product_id: 123,
+                        gift_product_name: "Nước suối Aquafina 500ml",
+                        main_quantity: 3,
+                        gift_quantity: 1
+                    }
+                ]
+            }
+        ];
+        
+        // Test functions
+        async function testCheckProductPromo(productId) {
+            showLoading('result1');
+            try {
+                const result = await ComboPromotionAI.checkProductPromotions(productId, mockPromotions);
+                showResult('result1', result, 'success');
+                
+                if (result.has_combo) {
+                    ComboPromotionUI.showNotification(result.combos[0].message, 'info');
+                }
+            } catch (error) {
+                showResult('result1', { error: error.message }, 'error');
+            }
+        }
+        
+        async function testAnalyzeCartEligible() {
+            showLoading('result2');
+            const cartItems = [
+                { product_id: 123, product_name: "Nước suối Aquafina 500ml", quantity: 3, price: 5000 }
+            ];
+            
+            try {
+                const result = await ComboPromotionAI.analyzeCart(cartItems, mockPromotions);
+                showResult('result2', result, 'success');
+                
+                if (result.suggestions.length > 0) {
+                    ComboPromotionUI.displaySuggestions(result.suggestions, (suggestion) => {
+                        console.log('Add more:', suggestion);
+                    });
+                }
+            } catch (error) {
+                showResult('result2', { error: error.message }, 'error');
+            }
+        }
+        
+        async function testAnalyzeCartUpsell() {
+            showLoading('result3');
+            const cartItems = [
+                { product_id: 123, product_name: "Nước suối Aquafina 500ml", quantity: 2, price: 5000 }
+            ];
+            
+            try {
+                const result = await ComboPromotionAI.analyzeCart(cartItems, mockPromotions);
+                showResult('result3', result, 'success');
+                
+                if (result.suggestions.length > 0) {
+                    ComboPromotionUI.displaySuggestions(result.suggestions, (suggestion) => {
+                        console.log('Add more:', suggestion);
+                        alert(`Sẽ tăng số lượng lên ${suggestion.required_quantity}`);
+                    });
+                }
+            } catch (error) {
+                showResult('result3', { error: error.message }, 'error');
+            }
+        }
+        
+        async function testMultipleCombos() {
+            showLoading('result4');
+            const cartItems = [
+                { product_id: 123, product_name: "Nước suối Aquafina 500ml", quantity: 6, price: 5000 }
+            ];
+            
+            try {
+                const result = await ComboPromotionAI.analyzeCart(cartItems, mockPromotions);
+                showResult('result4', result, 'success');
+                
+                if (result.suggestions.length > 0) {
+                    ComboPromotionUI.showNotification(result.suggestions[0].message, 'success');
+                }
+            } catch (error) {
+                showResult('result4', { error: error.message }, 'error');
+            }
+        }
+        
+        function showNotificationDemo(type) {
+            const messages = {
+                success: "🎉 Bạn được tặng 1 Nước suối Aquafina 500ml! (Mua 3 tặng 1)",
+                info: "ℹ️ Sản phẩm này có combo khuyến mãi mua 3 tặng 1",
+                warning: "⚠️ Combo này sắp hết hạn, nhanh tay đặt hàng!"
+            };
+            ComboPromotionUI.showNotification(messages[type], type);
+        }
+        
+        function showUpsellDemo() {
+            const mockSuggestion = {
+                promotion_id: 1,
+                promotion_name: "Combo Aquafina - Mua 3 Tặng 1",
+                main_product_name: "Nước suối Aquafina 500ml",
+                gift_product_name: "Nước suối Aquafina 500ml",
+                required_quantity: 3,
+                current_quantity: 2,
+                gift_quantity: 1,
+                message: "💡 Mua thêm 1 Nước suối Aquafina 500ml để nhận 1 chai miễn phí!"
+            };
+            
+            ComboPromotionUI.showUpsellModal(mockSuggestion, (suggestion) => {
+                alert(`Đã thêm ${suggestion.required_quantity - suggestion.current_quantity} sản phẩm!`);
+            });
+        }
+        
+        function showMockCart() {
+            const mockCart = [
+                { name: "Aquafina 500ml", quantity: 3, price: 5000, isGift: false },
+                { name: "Aquafina 500ml", quantity: 1, price: 0, isGift: true }
+            ];
+            
+            let html = '<div class="mock-cart">';
+            mockCart.forEach(item => {
+                html += `
+                    <div class="cart-item-mock ${item.isGift ? 'gift' : ''}">
+                        ${item.isGift ? '<span class="gift-badge">🎁 TẶNG</span>' : ''}
+                        <div class="item-name">${item.name}</div>
+                        <div class="item-qty">SL: ${item.quantity} | Giá: ${item.price.toLocaleString('vi-VN')}đ</div>
+                    </div>
+                `;
+            });
+            html += '</div>';
+            
+            document.getElementById('mockCartContainer').innerHTML = html;
+        }
+        
+        async function checkAIHealth() {
+            showLoading('healthResult');
+            try {
+                const isHealthy = await ComboPromotionAI.checkHealth();
+                const result = {
+                    status: isHealthy ? 'OK' : 'ERROR',
+                    message: isHealthy ? 'AI Service đang hoạt động bình thường' : 'Không thể kết nối AI Service',
+                    timestamp: new Date().toISOString()
+                };
+                showResult('healthResult', result, isHealthy ? 'success' : 'error');
+            } catch (error) {
+                showResult('healthResult', { error: error.message }, 'error');
+            }
+        }
+        
+        // Helper functions
+        function showLoading(resultId) {
+            document.getElementById(resultId).innerHTML = `
+                <div class="result-box">
+                    <div class="combo-loading"></div> Đang xử lý...
+                </div>
+            `;
+        }
+        
+        function showResult(resultId, data, status) {
+            const statusClass = status === 'success' ? 'success' : 'error';
+            const statusText = status === 'success' ? 'Thành công' : 'Lỗi';
+            
+            document.getElementById(resultId).innerHTML = `
+                <div class="result-box">
+                    <h3>Kết quả <span class="status ${statusClass}">${statusText}</span></h3>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                </div>
+            `;
+        }
+        
+        function clearResults(resultId) {
+            document.getElementById(resultId).innerHTML = '';
+        }
+        
+        // Auto health check on load
+        window.addEventListener('load', () => {
+            checkAIHealth();
+        });
+    </script>
+</body>
+</html>

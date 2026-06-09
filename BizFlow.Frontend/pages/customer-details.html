@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chi tiết khách hàng - BizFlow</title>
+    <link rel="stylesheet" href="../styles/common.css">
+    <link rel="stylesheet" href="../styles/customer-details.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <button class="back-btn" onclick="history.back()">← Quay lại</button>
+            <h1>Chi tiết khách hàng</h1>
+        </div>
+
+        <div class="customer-detail-modal">
+            <div class="modal-header">
+                <div class="customer-title-section">
+                    <h2 id="customerName">Khách hàng: <span class="customer-name-value">-</span></h2>
+                    <button class="close-btn" onclick="history.back()">×</button>
+                </div>
+            </div>
+
+            <div class="tabs-container">
+                <div class="tabs-nav">
+                    <button class="tab-btn active" data-tab="overview">Tổng quan</button>
+                    <button class="tab-btn" data-tab="info">Thông tin</button>
+                    <button class="tab-btn" data-tab="history">Lịch sử mua hàng</button>
+                    <button class="tab-btn" data-tab="business">Công nợ</button>
+                </div>
+
+                <!-- Tab Tổng quan -->
+                <div class="tab-content active" id="overview">
+                    <div class="overview-grid">
+                        <div class="info-card">
+                            <h3>Thông tin cơ bản</h3>
+                            <div class="info-row">
+                                <span class="label">Mã khách hàng</span>
+                                <span class="value" id="overviewCustomerId">-</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="label">Số điện thoại</span>
+                                <span class="value" id="overviewPhone">-</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="label">CCCD</span>
+                                <span class="value" id="overviewCccd">-</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="label">Email</span>
+                                <span class="value" id="overviewEmail">-</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="label">Ngày sinh</span>
+                                <span class="value" id="overviewDob">-</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="label">Giới tính</span>
+                                <span class="value" id="overviewGender">-</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="label">Địa chỉ</span>
+                                <span class="value" id="overviewAddress">-</span>
+                            </div>
+                        </div>
+
+                        <div class="info-card">
+                            <h3>Thông tin thẻ thành viên</h3>
+                            <div class="info-row">
+                                <span class="label">Mã thẻ Lomas</span>
+                                <span class="value" id="overviewLomasId">-</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="label">Hạng thẻ Lomas</span>
+                                <span class="value badge" id="overviewTier">-</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="label">Nhóm KH</span>
+                                <span class="value" id="overviewGroup">-</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="label">Nhân viên phụ trách</span>
+                                <span class="value" id="overviewAssignee">-</span>
+                            </div>
+                        </div>
+
+                        <div class="info-card">
+                            <h3>Thông tin công ty</h3>
+                            <div class="info-row">
+                                <span class="label">Công ty</span>
+                                <span class="value" id="overviewCompany">-</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="label">Ghi chú</span>
+                                <span class="value" id="overviewNote">-</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="label">Mã số thuế</span>
+                                <span class="value" id="overviewTaxCode">-</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab Thông tin -->
+                <div class="tab-content" id="info">
+                    <div class="info-section">
+                        <h3>Thông tin cơ bản</h3>
+                        <div class="form-grid">
+                            <div class="form-field">
+                                <label>Mã khách hàng</label>
+                                <input type="text" id="infoCustomerId" readonly>
+                            </div>
+                            <div class="form-field">
+                                <label>Tên khách hàng</label>
+                                <input type="text" id="infoCustomerName">
+                            </div>
+                            <div class="form-field">
+                                <label>Số điện thoại</label>
+                                <input type="text" id="infoPhone">
+                            </div>
+                            <div class="form-field">
+                                <label>Email</label>
+                                <input type="email" id="infoEmail">
+                            </div>
+                            <div class="form-field">
+                                <label>CCCD</label>
+                                <input type="text" id="infoCccd">
+                            </div>
+                            <div class="form-field">
+                                <label>Ngày sinh</label>
+                                <input type="date" id="infoDob">
+                            </div>
+                            <div class="form-field">
+                                <label>Giới tính</label>
+                                <select id="infoGender">
+                                    <option value="">Chưa có thông tin</option>
+                                    <option value="Nam">Nam</option>
+                                    <option value="Nữ">Nữ</option>
+                                </select>
+                            </div>
+                            <div class="form-field full-width">
+                                <label>Địa chỉ</label>
+                                <input type="text" id="infoAddress">
+                            </div>
+                        </div>
+                        <button class="primary-btn" id="saveInfoBtn" style="display: none;">Lưu thay đổi</button>
+                    </div>
+                </div>
+
+                <!-- Tab Lịch sử mua hàng -->
+                <div class="tab-content" id="history">
+                    <div class="history-header">
+                        <h3>Lịch sử mua hàng</h3>
+                        <div class="history-stats">
+                            <div class="stat-item">
+                                <span class="stat-label">Tổng hóa đơn:</span>
+                                <span class="stat-value" id="totalOrders">0</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Tổng thanh toán:</span>
+                                <span class="stat-value" id="totalSpent">0đ</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="table-container">
+                        <table class="orders-table">
+                            <thead>
+                                <tr>
+                                    <th>Ngày hóa đơn</th>
+                                    <th>Số hóa đơn</th>
+                                    <th>Tên cửa hàng</th>
+                                    <th>Trạng thái</th>
+                                    <th>Tổng thanh toán</th>
+                                    <th>Ghi chú</th>
+                                </tr>
+                            </thead>
+                            <tbody id="ordersTableBody">
+                                <tr class="empty-row">
+                                    <td colspan="6">Chưa có lịch sử mua hàng</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="pagination" id="paginationControls" style="display: none;">
+                        <button class="page-btn" id="prevPage">‹</button>
+                        <span id="pageInfo">1/1 kết quả</span>
+                        <button class="page-btn" id="nextPage">›</button>
+                    </div>
+                </div>
+
+                <!-- Tab Công nợ -->
+                <div class="tab-content" id="business">
+                    <div class="business-section">
+                        <h3>Công nợ</h3>
+                        <div class="info-row">
+                            <span class="label">Tổng công nợ</span>
+                            <span class="value" id="totalDebt">0đ</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="label">Số dư tài khoản</span>
+                            <span class="value" id="accountBalance">0đ</span>
+                        </div>
+                        <p class="empty-text">Chức năng đang phát triển</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="action-buttons">
+            <button class="ghost-btn" id="closeBtn">Đóng</button>
+            <button class="primary-btn" id="editBtn">Sửa</button>
+        </div>
+    </div>
+
+    <script src="../assets/js/customer-details.js"></script>
+</body>
+</html>

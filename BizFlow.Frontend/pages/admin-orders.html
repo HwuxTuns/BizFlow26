@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BizFlow - Quản lý Đơn hàng (Admin)</title>
+    <link rel="stylesheet" href="../assets/css/admin-base.css?v=20260204">
+    <style>
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.45);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 18px;
+            z-index: 1000;
+        }
+
+        .modal-backdrop.open {
+            display: flex;
+        }
+
+        .modal {
+            width: min(720px, 100%);
+            background: #0f172a;
+            border: 1px solid rgba(255,255,255,.08);
+            border-radius: 14px;
+            box-shadow: 0 18px 60px rgba(0,0,0,.55);
+            overflow: hidden;
+            color: #e2e8f0;
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 16px;
+            border-bottom: 1px solid rgba(255,255,255,.06);
+        }
+
+        .modal-title {
+            font-weight: 700;
+            letter-spacing: .2px;
+            color: #e2e8f0;
+        }
+
+        .modal-body {
+            padding: 16px;
+            color: #e2e8f0;
+        }
+
+        .kv-grid {
+            display: grid;
+            grid-template-columns: 180px 1fr;
+            gap: 10px 14px;
+        }
+
+        .modal-section {
+            margin-top: 14px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(255,255,255,.06);
+        }
+
+        .modal-section-title {
+            font-weight: 700;
+            letter-spacing: .2px;
+            margin-bottom: 10px;
+        }
+
+        .modal-table {
+            width: 100%;
+            border-collapse: collapse;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,.08);
+        }
+
+        .modal-table th,
+        .modal-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid rgba(255,255,255,.06);
+            vertical-align: top;
+        }
+
+        .modal-table th {
+            font-size: 12px;
+            text-transform: uppercase;
+            opacity: .75;
+            letter-spacing: .2px;
+            background: rgba(255,255,255,.04);
+        }
+
+        .modal-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .mono {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+            font-size: 12px;
+            opacity: .9;
+        }
+
+        .kv-key { opacity: .78; }
+        .kv-val { font-weight: 600; color: #e2e8f0; }
+
+        .row-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .mini-select {
+            padding: 8px 10px;
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,.12);
+            background: rgba(255,255,255,.06);
+            color: #e2e8f0;
+        }
+
+        .action-btn.sm {
+            padding: 8px 10px;
+            border-radius: 10px;
+        }
+
+        .muted { opacity: .75; }
+
+        /* Status Pills */
+        .pill {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: inline-block;
+        }
+        .pill[data-status="PENDING"] { background: rgba(245, 158, 11, 0.15); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.3); }
+        .pill[data-status="CONFIRMED"] { background: rgba(59, 130, 246, 0.15); color: #3b82f6; border: 1px solid rgba(59, 130, 246, 0.3); }
+        .pill[data-status="PROCESSING"], .pill[data-status="PACKING"] { background: rgba(139, 92, 246, 0.15); color: #8b5cf6; border: 1px solid rgba(139, 92, 246, 0.3); }
+        .pill[data-status="SHIPPED"], .pill[data-status="SHIPPING"] { background: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3); }
+        .pill[data-status="DELIVERED"], .pill[data-status="RECEIVED"] { background: rgba(5, 150, 105, 0.15); color: #059669; border: 1px solid rgba(5, 150, 105, 0.3); }
+        .pill[data-status="RETURNED"] { background: rgba(236, 72, 153, 0.15); color: #ec4899; border: 1px solid rgba(236, 72, 153, 0.3); }
+        .pill[data-status="CANCELLED"] { background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); }
+        .pill[data-status="PAID"] { background: rgba(79, 70, 229, 0.2); color: #818cf8; border: 1px solid rgba(99, 102, 241, 0.4); }
+        .pill[data-status="UNPAID"] { background: rgba(100, 116, 139, 0.15); color: #94a3b8; border: 1px solid rgba(100, 116, 139, 0.3); }
+    </style>
+</head>
+<body data-admin-page="orders">
+    <div class="layout">
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="brand-mark">BF</div>
+                <div>
+                    <div class="brand-title">BizFlow</div>
+                    <div class="brand-subtitle">Admin Control</div>
+                </div>
+            </div>
+
+            <div class="nav-group">
+                <div class="nav-title">Tổng quan</div>
+                <a class="nav-item" data-page="home" href="admin-home.html"><span class="icon" data-icon="H"></span><span>Trang chủ</span></a>
+                <a class="nav-item" data-page="users" href="admin-users.html"><span class="icon" data-icon="U"></span><span>Người dùng</span></a>
+                <a class="nav-item" data-page="products" href="admin-products.html"><span class="icon" data-icon="P"></span><span>Sản phẩm</span></a>
+                <a class="nav-item" data-page="orders" href="admin-orders.html"><span class="icon" data-icon="O"></span><span>Đơn hàng</span></a>
+                <a class="nav-item" data-page="shipments" href="admin-shipments.html"><span class="icon" data-icon="S"></span><span>Vận chuyển</span></a>
+                <a class="nav-item" data-page="returns" href="admin-returns.html"><span class="icon" data-icon="R"></span><span>Đổi/Trả hàng</span></a>
+                <a class="nav-item" data-page="warranties" href="admin-warranties.html"><span class="icon" data-icon="W"></span><span>Bảo hành</span></a>
+            </div>
+
+            <div class="nav-group">
+                <div class="nav-title">Hệ thống</div>
+                <a class="nav-item" data-page="reports" href="admin-reports.html"><span class="icon" data-icon="B"></span><span>Báo cáo</span></a>
+            </div>
+
+            <div class="sidebar-footer">
+                <div>Trạng thái hệ thống: Online</div>
+                <div>Cập nhật: <span id="sidebarTime">--:--</span></div>
+            </div>
+        </aside>
+
+        <div class="content">
+            <header class="topbar">
+                <div class="top-left">
+                    <div class="page-title">Quản lý Đơn hàng</div>
+                    <div class="search">
+                        <span>🔍</span>
+                        <input id="searchInput" type="text" placeholder="Tìm đơn hàng theo mã, khách hàng..." />
+                    </div>
+                </div>
+                <div class="top-right">
+                    <span class="pill">ADMIN</span>
+                    <div class="user-chip">
+                        <div class="avatar" id="userAvatar">AD</div>
+                        <div>
+                            <div id="userGreeting">Admin</div>
+                            <small>Quản trị viên</small>
+                        </div>
+                        <button class="icon-btn" title="Đăng xuất" onclick="adminLayout.logout()">⎋</button>
+                    </div>
+                </div>
+            </header>
+
+            <main class="main">
+                <section class="card">
+                    <div class="card-title">Danh sách đơn hàng</div>
+                    <div class="card-subtitle">Dữ liệu lấy từ microservice Đơn hàng.</div>
+                    <div class="actions">
+                        <button class="action-btn" type="button" onclick="location.href='admin-home.html'">Quay lại</button>
+                        <button class="action-btn" style="background:var(--success); color:white; border:none;" type="button" onclick="location.href='admin-shipments.html'">🚚 Quản lý Vận chuyển</button>
+                        
+                        <div style="flex: 1;"></div>
+                        <select id="statusFilter" class="mini-select" aria-label="Lọc theo trạng thái">
+                            <option value="">Tất cả trạng thái</option>
+                            <option value="PENDING">Chờ xác nhận</option>
+                            <option value="PROCESSING">Đang đóng gói</option>
+                            <option value="SHIPPED">Đang giao hàng</option>
+                            <option value="DELIVERED">Đã giao hàng</option>
+                            <option value="RECEIVED">Đã nhận hàng</option>
+                            <option value="CANCELLED">Đã hủy</option>
+                            <option value="RETURNED">Đã trả hàng</option>
+                        </select>
+                        <select id="pageSize" class="mini-select" aria-label="Số dòng mỗi trang">
+                            <option value="10">10 / trang</option>
+                            <option value="20" selected>20 / trang</option>
+                            <option value="50">50 / trang</option>
+                            <option value="100">100 / trang</option>
+                        </select>
+                    </div>
+                    <div class="muted" style="margin-top: 10px; display:flex; align-items:center; justify-content: space-between; gap: 10px; flex-wrap: wrap;">
+                        <div id="ordersMeta">—</div>
+                        <div style="display:flex; align-items:center; gap: 10px; flex-wrap: wrap;">
+                            <button class="action-btn sm" type="button" id="prevPageBtn" onclick="goPrevPage()">◀ Trước</button>
+                            <span id="pageInfo">Trang 1/1</span>
+                            <button class="action-btn sm" type="button" id="nextPageBtn" onclick="goNextPage()">Sau ▶</button>
+                        </div>
+                    </div>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Mã đơn</th>
+                                <th>Khách hàng</th>
+                                <th>Tổng tiền</th>
+                                <th>Phương thức</th>
+                                <th>Thanh toán</th>
+                                <th>Trạng thái</th>
+                                <th>Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ordersBody">
+                            <tr>
+                                <td colspan="6" class="empty-box">Đang tải dữ liệu...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <div id="orderModalBackdrop" class="modal-backdrop" role="dialog" aria-modal="true" aria-hidden="true" onclick="closeOrderModal(event)">
+        <div class="modal" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <div class="modal-title" id="orderModalTitle">Chi tiết đơn hàng</div>
+                <button class="icon-btn" type="button" title="Đóng" onclick="closeOrderModal()">✕</button>
+            </div>
+            <div class="modal-body">
+                <div id="orderModalContent" class="kv-grid"></div>
+                <div style="margin-top: 20px; display: flex; flex-direction: column; gap: 12px; background: #1e293b; padding: 15px; border-radius: 12px; border: 1px solid #334155; color: #fff;">
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <span style="font-weight: 700; font-size: 13px; min-width: 90px; color: #94a3b8;">Trạng thái:</span>
+                        <select id="orderModalStatus" class="mini-select" style="flex: 1; background: #0f172a; color: #fff; border: 1px solid #334155;"></select>
+                    </div>
+                    <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                        <input id="orderModalNote" type="text" placeholder="Ghi chú xác nhận / cập nhật..." class="mini-select" style="flex: 1; min-width: 200px; background: #0f172a; color: #fff; border: 1px solid #334155;">
+                        <button id="orderModalUpdateBtn" class="action-btn primary" type="button" onclick="updateOrderStatusFromModal()" style="white-space: nowrap; height: 38px;">Cập nhật</button>
+                    </div>
+                </div>
+                <div id="orderModalHint" class="muted" style="margin-top:10px;"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../assets/js/admin-layout.js"></script>
+    <script>
+        const API_BASE_URL = '/api/admin/orders';
+        const ORDER_STATUS_LABELS = {
+            'PENDING': 'Chờ xác nhận',
+            'CONFIRMED': 'Đã xác nhận',
+            'PACKING': 'Đang đóng gói',
+            'PROCESSING': 'Đang đóng gói',
+            'SHIPPING': 'Đang giao hàng',
+            'SHIPPED': 'Đang giao hàng',
+            'DELIVERED': 'Giao hàng thành công',
+            'RECEIVED': 'Hoàn tất',
+            'CANCELLED': 'Đã hủy',
+            'RETURNED': 'Đã trả hàng',
+            'PAID': 'Đã xác nhận (Sẵn sàng đóng gói)',
+            'UNPAID': 'Đơn mới'
+        };
+
+        const PAYMENT_STATUS_LABELS = {
+            'PAID': 'Đã thanh toán',
+            'UNPAID': 'Thanh toán khi nhận hàng (COD)',
+            'REFUNDED': 'Đã hoàn tiền'
+        };
+
+        const METHOD_LABELS = {
+            'CASH': 'Tiền mặt',
+            'BANK_TRANSFER': 'Chuyển khoản',
+            'TRANSFER': 'Chuyển khoản',
+            'MOMO': 'Ví MoMo',
+            'VNPAY': 'Ví VNPAY'
+        };
+
+        let allOrders = [];
+        let ordersById = {};
+        let currentQuery = '';
+        let currentStatus = '';
+        let currentPage = 1;
+        let currentPageSize = 20;
+        let totalCount = 0;
+        let totalPages = 1;
+        let currentModalOrderId = null;
+
+        function formatCurrency(v) { return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(v || 0); }
+        function escapeHtml(t) { const d = document.createElement('div'); d.textContent = String(t || ''); return d.innerHTML; }
+        function safeUpper(t) { return String(t || '').toUpperCase(); }
+        function formatDateTime(v) { if(!v) return '—'; try { return new Date(v).toLocaleString('vi-VN'); } catch { return '—'; } }
+        function pick(o, ...ks) { for(const k of ks) { if(o && o[k] != null && o[k] !== '') return o[k]; } return null; }
+
+        function getSmartPaymentStatus(method, orderStatus) {
+            const m = safeUpper(method);
+            const s = safeUpper(orderStatus);
+            // Handle digital payments
+            if (['BANK_TRANSFER', 'MOMO', 'VNPAY', 'TRANSFER', 'QR'].some(x => m.includes(x))) return 'PAID';
+            // Handle successful deliveries
+            if (['DELIVERED', 'RECEIVED'].includes(s)) return 'PAID';
+            // Handle cash or undefined as unpaid until delivered
+            return 'UNPAID';
+        }
+
+        function getStatusOptionsHtml(current) {
+            const s = safeUpper(current);
+            if (s === 'DELIVERED') return `<option value="RECEIVED">Hoàn tất</option>`;
+            if (['RECEIVED', 'CANCELLED', 'RETURNED'].includes(s)) return `<option value="${s}">${ORDER_STATUS_LABELS[s] || s}</option>`;
+            
+            // Removed PENDING from selectable list to "skip" it
+            const list = ['CONFIRMED', 'PROCESSING', 'SHIPPING', 'DELIVERED', 'CANCELLED'];
+            return list.map(status => {
+                const label = ORDER_STATUS_LABELS[status] || status;
+                return `<option value="${status}" ${status === s ? 'selected' : ''}>${label}</option>`;
+            }).join('');
+        }
+
+        async function fetchOrders() {
+            const tbody = document.getElementById('ordersBody');
+            try {
+                const params = new URLSearchParams({
+                    page: Math.max(0, currentPage - 1),
+                    size: currentPageSize,
+                    q: currentQuery,
+                    status: currentStatus
+                });
+                const res = await fetch(`${API_BASE_URL}?${params}`);
+                if (!res.ok) throw new Error('Lỗi tải dữ liệu');
+                
+                totalCount = Number(res.headers.get('X-Total-Count')) || 0;
+                totalPages = Number(res.headers.get('X-Total-Pages')) || 1;
+                allOrders = await res.json();
+                renderOrdersTable();
+            } catch (err) {
+                tbody.innerHTML = `<tr><td colspan="6" class="empty-box" style="color:red">Lỗi: ${err.message}</td></tr>`;
+            }
+        }
+
+        function renderOrdersTable() {
+            const tbody = document.getElementById('ordersBody');
+            tbody.innerHTML = '';
+            allOrders.forEach(o => {
+                ordersById[o.id] = o;
+                const s = safeUpper(o.status);
+                const method = pick(o, 'paymentMethod', 'payment_method', 'payment');
+                const p = getSmartPaymentStatus(method, s);
+                const row = document.createElement('tr');
+                
+                row.innerHTML = `
+                    <td><strong>${escapeHtml(o.invoiceNumber || o.id)}</strong></td>
+                    <td>${escapeHtml(o.customerName || '—')}</td>
+                    <td>${formatCurrency(o.totalAmount)}</td>
+                    <td>${METHOD_LABELS[safeUpper(method)] || 'Tiền mặt'}</td>
+                    <td><span class="pill" data-status="${p}">${PAYMENT_STATUS_LABELS[p]}</span></td>
+                    <td><span class="pill" data-status="${s}">${ORDER_STATUS_LABELS[s] || s}</span></td>
+                    <td><button class="action-btn sm" onclick="viewOrder(${o.id})">Xem</button></td>
+                `;
+                tbody.appendChild(row);
+            });
+            renderPagination();
+        }
+
+        function renderPagination() {
+            document.getElementById('pageInfo').textContent = `Trang ${currentPage}/${totalPages}`;
+            document.getElementById('ordersMeta').textContent = `Hiển thị ${allOrders.length} / ${totalCount} đơn`;
+            document.getElementById('prevPageBtn').disabled = currentPage <= 1;
+            document.getElementById('nextPageBtn').disabled = currentPage >= totalPages;
+        }
+
+        async function viewOrder(id) {
+            try {
+                const res = await fetch(`${API_BASE_URL}/${id}`);
+                const o = await res.json();
+                openOrderModal(o);
+            } catch (err) { alert('Lỗi tải chi tiết'); }
+        }
+
+        function openOrderModal(o) {
+            currentModalOrderId = o.id;
+            const content = document.getElementById('orderModalContent');
+            const status = safeUpper(o.status);
+            const method = pick(o, 'paymentMethod', 'payment_method', 'payment');
+            const p = getSmartPaymentStatus(method, status);
+            
+            content.innerHTML = `
+                <div class="kv-key">Mã đơn</div><div class="kv-val">${o.invoiceNumber || o.id}</div>
+                <div class="kv-key">Khách hàng</div><div class="kv-val">${escapeHtml(o.customerName || '—')}</div>
+                <div class="kv-key">Tổng tiền</div><div class="kv-val" style="color:var(--primary)">${formatCurrency(o.totalAmount)}</div>
+                <div class="kv-key">Trạng thái</div><div class="kv-val"><span class="pill" data-status="${status}">${ORDER_STATUS_LABELS[status] || status}</span></div>
+                <div class="kv-key">Thanh toán</div><div class="kv-val">${METHOD_LABELS[safeUpper(method)] || 'Tiền mặt'} (<span class="pill" data-status="${p}" style="transform:scale(0.9)">${PAYMENT_STATUS_LABELS[p]}</span>)</div>
+                <div class="kv-key">Địa chỉ</div><div class="kv-val">${escapeHtml(o.address || o.shippingAddress || '—')}</div>
+                <div class="kv-key">Vận chuyển</div><div class="kv-val"><strong>${escapeHtml(o.shippingMethod || '—')}</strong> ${o.trackingNumber ? `(${escapeHtml(o.trackingNumber)})` : ''}</div>
+                <div class="kv-key">Sản phẩm</div><div class="kv-val">${(o.items||[]).map(i => `${escapeHtml(i.productName)} (x${i.quantity})`).join('<br>')}</div>
+            `;
+            
+            const sel = document.getElementById('orderModalStatus');
+            sel.innerHTML = getStatusOptionsHtml(status);
+            const isFinal = ['DELIVERED', 'RECEIVED', 'CANCELLED', 'RETURNED'].includes(status);
+            sel.disabled = isFinal;
+            document.getElementById('orderModalUpdateBtn').disabled = isFinal;
+            
+            document.getElementById('orderModalBackdrop').classList.add('open');
+        }
+
+        function closeOrderModal() { document.getElementById('orderModalBackdrop').classList.remove('open'); }
+
+        async function updateOrderStatusFromModal() {
+            const btn = document.getElementById('orderModalUpdateBtn');
+            const status = document.getElementById('orderModalStatus').value;
+            const note = document.getElementById('orderModalNote').value;
+            btn.disabled = true;
+            try {
+                const res = await fetch(`${API_BASE_URL}/${currentModalOrderId}/status`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status, note })
+                });
+                if (!res.ok) throw new Error('Cập nhật thất bại');
+                closeOrderModal();
+                fetchOrders();
+            } catch (err) { alert(err.message); }
+            finally { btn.disabled = false; }
+        }
+
+        window.goPrevPage = () => { if(currentPage > 1) { currentPage--; fetchOrders(); } };
+        window.goNextPage = () => { if(currentPage < totalPages) { currentPage++; fetchOrders(); } };
+
+        window.addEventListener('load', () => {
+            adminLayout.enforceAuth();
+            adminLayout.renderHeader();
+            adminLayout.setActiveNav();
+            
+            document.getElementById('searchInput').addEventListener('input', (e) => {
+                currentQuery = e.target.value;
+                currentPage = 1;
+                clearTimeout(window.st);
+                window.st = setTimeout(fetchOrders, 500);
+            });
+
+            document.getElementById('statusFilter').addEventListener('change', (e) => {
+                currentStatus = e.target.value;
+                currentPage = 1;
+                fetchOrders();
+            });
+
+            fetchOrders();
+        });
+    </script>
+</body>
+</html>

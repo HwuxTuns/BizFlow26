@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BizFlow - Báo cáo doanh thu</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2f3a8f;
+            --primary-dark: #1f2a66;
+            --accent: #4c6fff;
+            --highlight: #7dd3fc;
+            --bg: #f3f4f8;
+            --card: #ffffff;
+            --text: #1f2937;
+            --muted: #6b7280;
+            --border: #e5e7eb;
+            --shadow: 0 10px 30px rgba(31, 41, 55, 0.08);
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+        .layout {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            min-height: 100vh;
+        }
+        .sidebar {
+            background: linear-gradient(180deg, var(--primary-dark), var(--primary));
+            color: #e5e7eb;
+            padding: 18px 0;
+            display: flex;
+            flex-direction: column;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+        }
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 20px 14px;
+            margin-bottom: 6px;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+        .brand-mark {
+            width: 38px; height: 38px;
+            border-radius: 10px;
+            display: grid; place-items: center;
+            background: rgba(255,255,255,0.15);
+            color: #fff; font-weight: 700;
+        }
+        .brand-name { font-weight: 700; }
+        .brand-sub { font-size: 12px; color: #c7d2fe; }
+        .nav {
+            display: flex;
+            flex-direction: column;
+            padding: 8px 0;
+            gap: 2px;
+        }
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 11px 18px;
+            margin: 0 10px;
+            border-radius: 10px;
+            color: #e5e7eb;
+            text-decoration: none;
+            border-left: 3px solid transparent;
+            transition: all 0.2s ease;
+        }
+        .nav-item:hover { background: rgba(255,255,255,0.06); }
+        .nav-item.active {
+            background: rgba(255,255,255,0.1);
+            border-left-color: var(--highlight);
+            color: #fff;
+        }
+        .nav-item.drawer-active {
+            background: rgba(255,255,255,0.1);
+            border-left-color: var(--highlight);
+            color: #fff;
+        }
+        .nav-item .icon { width: 18px; text-align: center; }
+        .content { padding: 24px; }
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+        .page-title { font-size: 24px; font-weight: 700; }
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 20px;
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+        }
+        .card-title {
+            font-weight: 700;
+            font-size: 16px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        .stat-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        .stat-label {
+            font-size: 14px;
+            color: var(--muted);
+            margin-top: 4px;
+        }
+        .stat-change {
+            font-size: 12px;
+            margin-top: 8px;
+            padding: 4px 8px;
+            border-radius: 20px;
+            display: inline-block;
+        }
+        .stat-change.positive { background: #d1fae5; color: #059669; }
+        .stat-change.negative { background: #fee2e2; color: #dc2626; }
+        .tab-buttons {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+        .tab-btn {
+            padding: 10px 20px;
+            border: 1px solid var(--border);
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        .tab-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        .tab-btn:hover:not(.active) { background: #f3f4f6; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+        th {
+            background: #f9fafb;
+            font-weight: 600;
+            color: var(--muted);
+            font-size: 13px;
+        }
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--muted);
+        }
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+        .btn-primary:hover { background: var(--primary-dark); }
+        .date-range {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+        .date-range input {
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        .alert-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .alert-badge.critical { background: #fee2e2; color: #dc2626; }
+        .alert-badge.warning { background: #fef3c7; color: #d97706; }
+        .alert-badge.normal { background: #d1fae5; color: #059669; }
+            body.in-drawer .sidebar {
+            display: none;
+        }
+        body.in-drawer .layout {
+            grid-template-columns: 1fr;
+        }
+        body.in-drawer .purchase-backdrop,
+        body.in-drawer .purchase-drawer {
+            display: none;
+        }        .purchase-backdrop {
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 250px;
+            right: 0;
+            width: calc(100% - 250px);
+            background: rgba(15, 23, 42, 0.45);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease;
+            z-index: 999;
+        }
+        .purchase-drawer {
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 250px;
+            right: 0;
+            width: calc(100% - 250px);
+            height: 100vh;
+            background: #0f172a;
+            box-shadow: -10px 0 30px rgba(15, 23, 42, 0.35);
+            transform: translateX(100%);
+            transition: transform 0.25s ease;
+            z-index: 1000;
+        }
+        .purchase-frame {
+            width: 100%;
+            height: 100%;
+            border: 0;
+            display: block;
+            background: #0f172a;
+        }
+        .purchase-close {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            border: none;
+            background: rgba(255, 255, 255, 0.12);
+            color: #fff;
+            font-size: 18px;
+            cursor: pointer;
+            z-index: 1001;
+        }
+        body.purchase-open {
+            overflow: hidden;
+        }
+        body.purchase-open .purchase-backdrop {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        body.purchase-open .purchase-drawer {
+            transform: translateX(0);
+        }
+        .nav-item.drawer-active {
+            background: rgba(255,255,255,0.1);
+            border-left-color: var(--highlight);
+            color: #fff;
+        }
+        body.in-drawer .sidebar {
+            display: none;
+        }
+        body.in-drawer .layout {
+            grid-template-columns: 1fr;
+        }
+        body.in-drawer .purchase-backdrop,
+        body.in-drawer .purchase-drawer {
+            display: none;
+        }</style>
+</head>
+<body>
+    <div class="layout">
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="brand-mark">BF</div>
+                <div>
+                    <div class="brand-name">BizFlow</div>
+                    <div class="brand-sub">Owner Center</div>
+                </div>
+            </div>
+            <nav class="nav">
+                <a class="nav-item" href="owner-dashboard.html">
+                    <span class="icon">🏠</span><span>Tổng quan</span>
+                </a>
+                <a class="nav-item active" href="owner-reports.html">
+                    <span class="icon">📊</span><span>Báo cáo doanh thu</span>
+                </a>
+                <a class="nav-item" href="owner-products.html">
+                    <span class="icon">🛍️</span><span>Sản phẩm</span>
+                </a>
+                <a class="nav-item" href="owner-categories.html">
+                    <span class="icon">📁</span><span>Danh mục</span>
+                </a>
+                <a class="nav-item" href="owner-inventory.html">
+                    <span class="icon">📦</span><span>Quản lý kho</span>
+                </a>
+                <a class="nav-item" href="javascript:void(0)" data-purchase-href="owner-purchase.html" data-purchase-link="true" onclick="return window.openPurchaseDrawer ? window.openPurchaseDrawer(event) : false;">
+                    <span class="icon">🚚</span><span>Nhập hàng & Giá vốn</span>
+                </a>
+                <a class="nav-item" href="owner-users.html">
+                    <span class="icon">👤</span><span>Quản lý nhân viên</span>
+                </a>
+                <a class="nav-item" href="owner-promotions.html">
+                    <span class="icon">🎯</span><span>Khuyến mãi</span>
+                </a>
+                <a class="nav-item" href="owner-customer-support.html">
+                    <span class="icon">📞</span><span>Chăm sóc khách hàng</span>
+                </a>
+                <a class="nav-item" href="owner-inventory-alerts.html">
+                    <span class="icon">🔔</span><span>Thông báo Tồn kho</span>
+                </a>
+                <a class="nav-item" href="owner-reviews.html">
+                    <span class="icon">⭐</span><span>Đánh giá</span>
+                </a>
+                <a class="nav-item" href="display-settings.html">
+                    <span class="icon">⚙️</span><span>Thiết lập</span>
+                </a>
+            </nav>
+        </aside>
+
+        <div class="content">
+            <div class="page-header">
+                <h1 class="page-title">📊 Báo cáo Doanh thu & Lợi nhuận</h1>
+                <div class="date-range">
+                    <input type="date" id="startDate">
+                    <span>đến</span>
+                    <input type="date" id="endDate">
+                    <button class="btn btn-primary" onclick="loadCustomReport()">Xem báo cáo</button>
+                </div>
+            </div>
+
+            <!-- Stats Overview -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="todayRevenue">--</div>
+                    <div class="stat-label">Doanh thu hôm nay</div>
+                    <div class="stat-change positive" id="todayChange">↑ 0%</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="weeklyRevenue">--</div>
+                    <div class="stat-label">Doanh thu tuần này</div>
+                    <div class="stat-change positive" id="weeklyChange">↑ 0%</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="monthlyRevenue">--</div>
+                    <div class="stat-label">Doanh thu tháng này</div>
+                    <div class="stat-change positive" id="monthlyChange">↑ 0%</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="profitMargin">--%</div>
+                    <div class="stat-label">Biên lợi nhuận</div>
+                    <div class="stat-change positive" id="marginChange">↑ 0%</div>
+                </div>
+            </div>
+
+            <!-- Tab Navigation -->
+            <div class="tab-buttons">
+                <button class="tab-btn active" onclick="showTab('revenue')">💰 Doanh thu</button>
+                <button class="tab-btn" onclick="showTab('topProducts')">🏆 Top sản phẩm</button>
+                <button class="tab-btn" onclick="showTab('lowStock')">⚠️ Cảnh báo tồn kho</button>
+            </div>
+
+            <!-- Revenue Tab -->
+            <div id="revenueTab" class="card">
+                <div class="card-title">📅 Chi tiết doanh thu theo ngày</div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Ngày</th>
+                            <th>Doanh thu</th>
+                            <th>Chi phí</th>
+                            <th>Lợi nhuận</th>
+                            <th>Biên lợi nhuận</th>
+                        </tr>
+                    </thead>
+                    <tbody id="revenueTableBody">
+                        <tr><td colspan="5" class="loading">Đang tải...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Top Products Tab -->
+            <div id="topProductsTab" class="card" style="display:none;">
+                <div class="card-title">🏆 Top sản phẩm bán chạy</div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Sản phẩm</th>
+                            <th>Số lượng bán</th>
+                            <th>Doanh thu</th>
+                            <th>Lợi nhuận</th>
+                        </tr>
+                    </thead>
+                    <tbody id="topProductsTableBody">
+                        <tr><td colspan="5" class="loading">Đang tải...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Low Stock Tab -->
+            <div id="lowStockTab" class="card" style="display:none;">
+                <div class="card-title">⚠️ Cảnh báo tồn kho thấp</div>
+                <div id="lowStockSummary" style="margin-bottom: 16px;"></div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Sản phẩm</th>
+                            <th>Mã sản phẩm</th>
+                            <th>Tồn kho hiện tại</th>
+                            <th>Ngưỡng cảnh báo</th>
+                            <th>Trạng thái</th>
+                        </tr>
+                    </thead>
+                    <tbody id="lowStockTableBody">
+                        <tr><td colspan="5" class="loading">Đang tải...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = '/api';
+        
+        function getAuthHeaders() {
+            const token = localStorage.getItem('token');
+            return {
+                'Content-Type': 'application/json',
+                'Authorization': token ? `Bearer ${token}` : ''
+            };
+        }
+
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('vi-VN', { 
+                style: 'currency', 
+                currency: 'VND' 
+            }).format(amount || 0);
+        }
+
+        function formatStatChange(change) {
+            const val = parseFloat(change) || 0;
+            const isPositive = val >= 0;
+            const icon = isPositive ? '↑' : '↓';
+            const className = isPositive ? 'positive' : 'negative';
+            return `<div class="stat-change ${className}">${icon} ${Math.abs(val).toFixed(1)}%</div>`;
+        }
+
+        function showTab(tabName) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('[id$="Tab"]').forEach(tab => tab.style.display = 'none');
+            
+            event.target.classList.add('active');
+            document.getElementById(tabName + 'Tab').style.display = 'block';
+
+            if (tabName === 'topProducts') loadTopProducts();
+            if (tabName === 'lowStock') loadLowStock();
+        }
+
+        async function loadRevenueComparison() {
+            try {
+                const res = await fetch(`${API_BASE}/reports/revenue/comparison`, {
+                    headers: getAuthHeaders()
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    
+                    // Today
+                    document.getElementById('todayRevenue').textContent = formatCurrency(data.todayRevenue);
+                    document.getElementById('todayChange').innerHTML = formatStatChange(data.todayChange).match(/<div[^>]*>(.*?)<\/div>/)[1];
+                    document.getElementById('todayChange').className = `stat-change ${parseFloat(data.todayChange) >= 0 ? 'positive' : 'negative'}`;
+                    
+                    // Weekly  
+                    document.getElementById('weeklyRevenue').textContent = formatCurrency(data.weeklyRevenue);
+                    document.getElementById('weeklyChange').innerHTML = formatStatChange(data.weeklyChange).match(/<div[^>]*>(.*?)<\/div>/)[1];
+                    document.getElementById('weeklyChange').className = `stat-change ${parseFloat(data.weeklyChange) >= 0 ? 'positive' : 'negative'}`;
+                    
+                    // Monthly
+                    document.getElementById('monthlyRevenue').textContent = formatCurrency(data.monthlyRevenue);
+                    document.getElementById('monthlyChange').innerHTML = formatStatChange(data.monthlyChange).match(/<div[^>]*>(.*?)<\/div>/)[1];
+                    document.getElementById('monthlyChange').className = `stat-change ${parseFloat(data.monthlyChange) >= 0 ? 'positive' : 'negative'}`;
+                    
+                    // Profit Margin
+                    const margin = parseFloat(data.monthlyMargin) || 0;
+                    document.getElementById('profitMargin').textContent = margin.toFixed(1) + '%';
+                    const marginChange = parseFloat(data.marginChange) || 0;
+                    const marginIcon = marginChange >= 0 ? '↑' : '↓';
+                    document.getElementById('marginChange').innerHTML = `${marginIcon} ${Math.abs(marginChange).toFixed(1)}%`;
+                    document.getElementById('marginChange').className = `stat-change ${marginChange >= 0 ? 'positive' : 'negative'}`;
+                }
+            } catch (e) {
+                console.error('Error loading revenue comparison:', e);
+                // Fallback to individual calls
+                loadTodayRevenue();
+                loadWeeklyRevenue();
+                loadMonthlyRevenue();
+            }
+        }
+
+        async function loadTodayRevenue() {
+            try {
+                const res = await fetch(`${API_BASE}/reports/revenue/today`, {
+                    headers: getAuthHeaders()
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    document.getElementById('todayRevenue').textContent = formatCurrency(data.totalRevenue);
+                    document.getElementById('profitMargin').textContent = (data.profitMargin || 0).toFixed(1) + '%';
+                }
+            } catch (e) {
+                console.error('Error loading today revenue:', e);
+            }
+        }
+
+        async function loadWeeklyRevenue() {
+            try {
+                const res = await fetch(`${API_BASE}/reports/revenue/weekly`, {
+                    headers: getAuthHeaders()
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    document.getElementById('weeklyRevenue').textContent = formatCurrency(data.totalRevenue);
+                    renderRevenueTable(data.dailyBreakdown || []);
+                }
+            } catch (e) {
+                console.error('Error loading weekly revenue:', e);
+            }
+        }
+
+        async function loadMonthlyRevenue() {
+            try {
+                const res = await fetch(`${API_BASE}/reports/revenue/monthly`, {
+                    headers: getAuthHeaders()
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    document.getElementById('monthlyRevenue').textContent = formatCurrency(data.totalRevenue);
+                }
+            } catch (e) {
+                console.error('Error loading monthly revenue:', e);
+            }
+        }
+
+        async function loadCustomReport() {
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+            if (!startDate || !endDate) {
+                alert('Vui lòng chọn khoảng thời gian');
+                return;
+            }
+            try {
+                const res = await fetch(`${API_BASE}/reports/revenue/custom?startDate=${startDate}&endDate=${endDate}`, {
+                    headers: getAuthHeaders()
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    renderRevenueTable(data.dailyBreakdown || []);
+                }
+            } catch (e) {
+                console.error('Error loading custom report:', e);
+            }
+        }
+
+        function renderRevenueTable(items) {
+            const tbody = document.getElementById('revenueTableBody');
+            if (!items.length) {
+                tbody.innerHTML = '<tr><td colspan="5" class="loading">Không có dữ liệu</td></tr>';
+                return;
+            }
+            tbody.innerHTML = items.map(item => {
+                const margin = item.margin != null ? item.margin : 0;
+                const marginColor = margin >= 30 ? '#059669' : (margin >= 15 ? '#d97706' : '#dc2626');
+                return `
+                    <tr>
+                        <td>${item.date}</td>
+                        <td style="font-weight:600;color:var(--primary)">${formatCurrency(item.revenue)}</td>
+                        <td style="color:var(--danger)">${formatCurrency(item.cost)}</td>
+                        <td style="font-weight:600;color:${item.profit >= 0 ? 'var(--success)' : 'var(--danger)'}">${formatCurrency(item.profit)}</td>
+                        <td style="font-weight:600;color:${marginColor}">${margin.toFixed(1)}%</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        async function loadTopProducts() {
+            try {
+                const res = await fetch(`${API_BASE}/reports/top-products/monthly?limit=20`, {
+                    headers: getAuthHeaders()
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    const tbody = document.getElementById('topProductsTableBody');
+                    if (!data.length) {
+                        tbody.innerHTML = '<tr><td colspan="5" class="loading">Không có dữ liệu</td></tr>';
+                        return;
+                    }
+                    tbody.innerHTML = data.map((item, idx) => {
+                        const profitColor = (item.profit || 0) >= 0 ? 'var(--success)' : 'var(--danger)';
+                        return `
+                            <tr>
+                                <td><strong>${idx + 1}</strong></td>
+                                <td>
+                                    <div style="font-weight:600">${item.productName}</div>
+                                    <small style="color:var(--muted)">${item.productCode || ''}</small>
+                                </td>
+                                <td style="font-weight:600">${item.quantitySold}</td>
+                                <td style="font-weight:600;color:var(--primary)">${formatCurrency(item.revenue)}</td>
+                                <td style="font-weight:600;color:${profitColor}">${formatCurrency(item.profit)}</td>
+                            </tr>
+                        `;
+                    }).join('');
+                }
+            } catch (e) {
+                console.error('Error loading top products:', e);
+            }
+        }
+
+        async function loadLowStock() {
+            try {
+                // Load summary
+                const summaryRes = await fetch(`${API_BASE}/reports/low-stock/summary`, {
+                    headers: getAuthHeaders()
+                });
+                if (summaryRes.ok) {
+                    const summary = await summaryRes.json();
+                    document.getElementById('lowStockSummary').innerHTML = `
+                        <span class="alert-badge critical">🔴 Nghiêm trọng: ${summary.critical || 0}</span>
+                        <span class="alert-badge warning">⚠️ Cảnh báo: ${summary.warning || 0}</span>
+                        <span class="alert-badge normal">✅ Bình thường: ${summary.normal || 0}</span>
+                    `;
+                }
+
+                // Load list
+                const res = await fetch(`${API_BASE}/reports/low-stock`, {
+                    headers: getAuthHeaders()
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    const tbody = document.getElementById('lowStockTableBody');
+                    if (!data.length) {
+                        tbody.innerHTML = '<tr><td colspan="5" class="loading">Không có sản phẩm tồn kho thấp 🎉</td></tr>';
+                        return;
+                    }
+                    tbody.innerHTML = data.map(item => `
+                        <tr>
+                            <td>${item.productName}</td>
+                            <td>${item.productCode || '-'}</td>
+                            <td><strong>${item.currentStock}</strong></td>
+                            <td>${item.threshold}</td>
+                            <td>
+                                <span class="alert-badge ${item.alertLevel === 'CRITICAL' ? 'critical' : 'warning'}">
+                                    ${item.alertLevel === 'CRITICAL' ? '🔴 Nghiêm trọng' : '⚠️ Cảnh báo'}
+                                </span>
+                            </td>
+                        </tr>
+                    `).join('');
+                }
+            } catch (e) {
+                console.error('Error loading low stock:', e);
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            // Set default dates
+            const today = new Date();
+            const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
+            document.getElementById('startDate').value = firstDay.toISOString().split('T')[0];
+            document.getElementById('endDate').value = today.toISOString().split('T')[0];
+
+            // Load data with comparisons
+            loadRevenueComparison();
+            loadWeeklyRevenue(); // For the table
+        });
+    </script>
+        
+        
+    <div id="purchaseBackdrop" class="purchase-backdrop"></div>
+    <aside id="purchaseDrawer" class="purchase-drawer" aria-hidden="true">
+        <button id="purchaseClose" class="purchase-close" type="button" aria-label="Đóng">✕</button>
+        <iframe id="purchaseFrame" class="purchase-frame" title="Nhập hàng & Giá vốn"></iframe>
+    </aside>
+    <script>
+        (function () {
+            const initDrawer = () => {
+                const links = document.querySelectorAll('[data-purchase-link="true"]');
+                const drawer = document.getElementById('purchaseDrawer');
+                const frame = document.getElementById('purchaseFrame');
+                const closeBtn = document.getElementById('purchaseClose');
+                const backdrop = document.getElementById('purchaseBackdrop');
+
+                if (!links.length || !drawer || !frame) return;
+
+                let previousActiveLink = null;
+
+                const openDrawer = (eventOrLink) => {
+                    const link = eventOrLink && eventOrLink.currentTarget ? eventOrLink.currentTarget : eventOrLink;
+                    if (eventOrLink && eventOrLink.preventDefault) {
+                        eventOrLink.preventDefault();
+                    }
+
+                    const url = (link && link.dataset && link.dataset.purchaseHref) ? link.dataset.purchaseHref : 'owner-purchase.html';
+                    frame.src = url;
+
+                    const allNavItems = document.querySelectorAll('.nav-item');
+                    for (let i = 0; i < allNavItems.length; i++) {
+                        if (allNavItems[i].classList.contains('active')) {
+                            previousActiveLink = allNavItems[i];
+                        }
+                        allNavItems[i].classList.remove('active');
+                    }
+                    if (link && link.classList) {
+                        link.classList.add('drawer-active');
+                    }
+
+                    document.body.classList.add('purchase-open');
+                    drawer.setAttribute('aria-hidden', 'false');
+                    return false;
+                };
+
+                const closeDrawer = () => {
+                    const activeDrawerLink = document.querySelector('.nav-item.drawer-active');
+                    if (activeDrawerLink) {
+                        activeDrawerLink.classList.remove('drawer-active');
+                    }
+                    if (previousActiveLink) {
+                        previousActiveLink.classList.add('active');
+                    }
+                    document.body.classList.remove('purchase-open');
+                    drawer.setAttribute('aria-hidden', 'true');
+                };
+
+                for (let i = 0; i < links.length; i++) {
+                    links[i].addEventListener('click', openDrawer);
+                }
+
+                window.openPurchaseDrawer = function(e){ return openDrawer(e); };
+                if (closeBtn) closeBtn.addEventListener('click', closeDrawer);
+                if (backdrop) backdrop.addEventListener('click', closeDrawer);
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape') closeDrawer();
+                });
+            };
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initDrawer);
+            } else {
+                initDrawer();
+            }
+        })();
+    </script>    <script>
+        if (window.self !== window.top) {
+            document.body.classList.add('in-drawer');
+        }
+    </script></body>
+</html>
+
+
+
+
+
+
+

@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BizFlow POS - Danh sách hóa đơn</title>
+    <link rel="stylesheet" href="../assets/css/employee-dashboard.css">
+    <link rel="stylesheet" href="../assets/css/invoice-list.css">
+</head>
+<body class="pos-body">
+    <header class="pos-header invoice-header">
+        <div class="header-left">
+            <button id="backToPos" class="icon-btn" title="Quay lại" aria-label="Quay lại">
+                <svg viewBox="0 0 24 24" class="icon-svg" aria-hidden="true">
+                    <path d="M15 6l-6 6 6 6" />
+                </svg>
+            </button>
+            <div class="logo-mark" id="goPosFromLogo" aria-label="BizFlow">
+                BizFlow POS
+            </div>
+            <span class="app-icon app-pink app-badge">HD</span>
+            <div class="page-title">Danh sách hóa đơn</div>
+        </div>
+        <div class="header-actions">
+            <div class="store">TRƯỜNG CHINH</div>
+            <div class="user-chip">
+                <span id="userInitial">E</span>
+                <span id="userName">Nhân viên</span>
+            </div>
+            <button id="logoutBtn" class="icon-btn" title="Đăng xuất" aria-label="Đăng xuất">
+                <svg viewBox="0 0 24 24" class="icon-svg" aria-hidden="true">
+                    <path d="M10 6H5v12h5" />
+                    <path d="M14 16l4-4-4-4" />
+                    <path d="M18 12H9" />
+                </svg>
+            </button>
+            <button id="appMenuBtn" class="icon-btn" title="Ứng dụng" aria-label="Ứng dụng">
+                <svg viewBox="0 0 24 24" class="icon-svg" aria-hidden="true">
+                    <circle cx="6" cy="6" r="1.5" />
+                    <circle cx="12" cy="6" r="1.5" />
+                    <circle cx="18" cy="6" r="1.5" />
+                    <circle cx="6" cy="12" r="1.5" />
+                    <circle cx="12" cy="12" r="1.5" />
+                    <circle cx="18" cy="12" r="1.5" />
+                </svg>
+            </button>
+        </div>
+    </header>
+
+    <main class="invoice-page">
+        <section class="invoice-toolbar">
+            <div class="toolbar-title">
+                <h2>Danh sách hóa đơn</h2>
+                <p>Quản lý hóa đơn theo chi nhánh</p>
+            </div>
+            <div class="toolbar-filters">
+                <div class="filter-group">
+                    <label for="datePreset">Ngày tạo</label>
+                    <select id="datePreset">
+                        <option value="" selected></option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="invoicePreset">Ngày hóa đơn</label>
+                    <select id="invoicePreset">
+                        <option value="today">Hôm nay</option>
+                        <option value="yesterday">Hôm qua</option>
+                        <option value="thisWeek">Tuần này</option>
+                        <option value="lastWeek">Tuần trước</option>
+                        <option value="thisMonth">Tháng này</option>
+                        <option value="lastMonth">Tháng trước</option>
+                        <option value="last3Months">Ba tháng trước</option>
+                        <option value="last6Months">Sáu tháng trước</option>
+                        <option value="custom">Khác</option>
+                    </select>
+                </div>
+                <div class="filter-group range-group" id="invoiceRangeGroup">
+                    <label>Khoảng ngày</label>
+                    <div class="range-inputs">
+                        <input id="invoiceDateFrom" type="date">
+                        <span>→</span>
+                        <input id="invoiceDateTo" type="date">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="invoice-table">
+            <div class="invoice-row header">
+                <span>Số hóa đơn</span>
+                <span>Ngày hóa đơn</span>
+                <span>Ngày tạo đơn</span>
+                <span>Mã ĐH trên sàn</span>
+                <span>Trạng thái</span>
+                <span>Mã khách hàng</span>
+                <span>Khách hàng</span>
+                <span>Số điện thoại</span>
+                <span>Tổng thanh toán</span>
+                <span>Ghi chú</span>
+                <span>NVBH</span>
+                <span>Thu ngân</span>
+            </div>
+            <div class="invoice-row filters">
+                <span><input id="filterInvoiceNo" type="text" placeholder="*"></span>
+                <span><input id="filterInvoiceDate" type="date"></span>
+                <span><input id="filterCreatedDate" type="date"></span>
+                <span><input id="filterOrderCode" type="text" placeholder="*"></span>
+                <span>
+                    <select id="filterStatus">
+                        <option value="">Tất cả</option>
+                        <option value="PAID">Đã thanh toán</option>
+                        <option value="UNPAID">Chưa thanh toán</option>
+                        <option value="RETURNED">Đổi trả</option>
+                    </select>
+                </span>
+                <span><input id="filterCustomerCode" type="text" placeholder="*"></span>
+                <span><input id="filterCustomerName" type="text" placeholder="*"></span>
+                <span><input id="filterCustomerPhone" type="text" placeholder="*"></span>
+                <span><input id="filterTotal" type="text" placeholder="<= 0"></span>
+                <span><input id="filterNote" type="text" placeholder="*"></span>
+                <span><input id="filterSales" type="text" placeholder="*"></span>
+                <span><input id="filterCashier" type="text" placeholder="*"></span>
+            </div>
+            <div id="invoiceList" class="invoice-body"></div>
+            <div id="invoiceEmpty" class="invoice-empty">Chưa có hóa đơn</div>
+        </section>
+
+        <section class="invoice-footer">
+            <div class="footer-summary">
+                <span>Tổng tiền:</span>
+                <strong id="invoiceTotal">0 đ</strong>
+            </div>
+            <div class="footer-right">
+                <div class="footer-pagination">
+                    <button class="pager-btn" type="button">«</button>
+                    <button class="pager-btn" type="button">‹</button>
+                    <button class="pager-btn active" type="button">1</button>
+                    <button class="pager-btn" type="button">›</button>
+                    <button class="pager-btn" type="button">»</button>
+                    <select class="page-size" id="pageSize">
+                        <option value="50">50</option>
+                        <option value="100" selected>100</option>
+                        <option value="200">200</option>
+                    </select>
+                </div>
+                <div class="footer-count" id="invoiceCount">0 kết quả</div>
+            </div>
+        </section>
+    </main>
+
+    <div class="modal" id="invoiceDetailModal" aria-hidden="true">
+        <div class="modal-content invoice-detail">
+            <div class="modal-header">
+                <h3>Hóa đơn thanh toán</h3>
+                <button id="closeInvoiceDetail" class="icon-btn small" type="button" aria-label="Đóng">×</button>
+            </div>
+            <div class="invoice-detail-code">
+                Số: <span id="detailInvoiceNumber">-</span>
+            </div>
+            <div class="invoice-detail-info">
+                <div><strong>Nhân viên:</strong> <span id="detailEmployee">-</span></div>
+                <div><strong>Thu ngân:</strong> <span id="detailCashier">-</span></div>
+                <div><strong>Khách hàng:</strong> <span id="detailCustomer">-</span></div>
+            </div>
+            <div class="invoice-detail-table">
+                <div class="detail-row header">
+                    <span>Tên hàng hóa</span>
+                    <span>Đơn vị tính</span>
+                    <span>Số lượng</span>
+                    <span>Đơn giá</span>
+                    <span>Thành tiền</span>
+                    <span>Thuế suất</span>
+                </div>
+                <div id="invoiceDetailItems"></div>
+            </div>
+            <div class="invoice-detail-actions">
+                <button class="ghost-btn" id="printInvoiceDetailBtn" type="button">In lại hóa đơn</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal side" id="appMenuModal" aria-hidden="true">
+        <div class="modal-content app-menu">
+            <div class="modal-header">
+                <h3>Ứng dụng</h3>
+                <button id="closeAppMenu" class="icon-btn small" type="button" aria-label="Đóng">×</button>
+            </div>
+            <div class="app-menu-grid">
+                <button class="app-tile" data-app="pos">
+                    <span class="app-icon app-blue">BH</span>
+                    <span>Bán hàng</span>
+                </button>
+                <button class="app-tile" data-app="invoices">
+                    <span class="app-icon app-pink">HD</span>
+                    <span>DS hóa đơn</span>
+                </button>
+                <button class="app-tile" data-app="returns">
+                    <span class="app-icon app-orange">ĐR</span>
+                    <span>Đổi trả hàng</span>
+                </button>
+                <button class="app-tile" data-app="print">
+                    <span class="app-icon app-orange">IN</span>
+                    <span>Máy in - Mẫu in</span>
+                </button>
+                <button class="app-tile" data-app="daily-report">
+                    <span class="app-icon app-teal">BC</span>
+                    <span>Báo cáo theo ngày</span>
+                </button>
+                <button class="app-tile" data-app="access-log">
+                    <span class="app-icon app-gray">NK</span>
+                    <span>Nhật ký truy cập</span>
+                </button>
+                <button class="app-tile" data-app="management">
+                    <span class="app-icon app-indigo">QL</span>
+                    <span>Trang quản lý</span>
+                </button>
+                <button class="app-tile" data-app="guide">
+                    <span class="app-icon app-purple">HD</span>
+                    <span>Hướng dẫn</span>
+                </button>
+                <button class="app-tile" data-app="intro">
+                    <span class="app-icon app-orange">GT</span>
+                    <span>Giới thiệu</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../assets/js/invoice-list.js"></script>
+    <script src="../assets/js/app-shell.js"></script>
+</body>
+</html>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+         https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.example</groupId>
+    <artifactId>bizflow-parent</artifactId>
+    <version>1.0.0</version>
+    <packaging>pom</packaging>
+    <name>BizFlow Parent</name>
+
+    <modules>
+        <module>BizFlow.AdminHomeService</module>
+        <module>BizFlow.AdminOrderService</module>
+        <module>BizFlow.AdminProductService</module>
+        <module>BizFlow.AdminReportService</module>
+        <module>BizFlow.AdminUserService</module>
+        <module>BizFlow.Gateway</module>
+        <module>BizFlow.SalesService</module>
+        <module>BizFlow.CatalogService</module>
+        <module>BizFlow.InventoryService</module>
+        <module>BizFlow.CustomerService</module>
+        <module>BizFlow.AuthenticationService</module>
+        <module>BizFlow.ReportService</module>
+        <module>BizFlow.PromotionService</module>
+    </modules>
+</project>

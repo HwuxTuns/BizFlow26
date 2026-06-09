@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BizFlow - Quản lý đánh giá</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2f3a8f;
+            --primary-dark: #1f2a66;
+            --accent: #4c6fff;
+            --highlight: #7dd3fc;
+            --bg: #f3f4f8;
+            --card: #ffffff;
+            --text: #1f2937;
+            --muted: #6b7280;
+            --border: #e5e7eb;
+            --shadow: 0 10px 30px rgba(31, 41, 55, 0.08);
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+        .layout {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            min-height: 100vh;
+        }
+        .sidebar {
+            background: linear-gradient(180deg, var(--primary-dark), var(--primary));
+            color: #e5e7eb;
+            padding: 18px 0;
+            display: flex;
+            flex-direction: column;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+        }
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 20px 14px;
+            margin-bottom: 6px;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+        .brand-mark {
+            width: 38px; height: 38px;
+            border-radius: 10px;
+            display: grid; place-items: center;
+            background: rgba(255,255,255,0.15);
+            color: #fff; font-weight: 700;
+        }
+        .brand-name { font-weight: 700; }
+        .brand-sub { font-size: 12px; color: #c7d2fe; }
+        .nav {
+            display: flex;
+            flex-direction: column;
+            padding: 8px 0;
+            gap: 2px;
+        }
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 11px 18px;
+            margin: 0 10px;
+            border-radius: 10px;
+            color: #e5e7eb;
+            text-decoration: none;
+            border-left: 3px solid transparent;
+            transition: all 0.2s ease;
+        }
+        .nav-item:hover { background: rgba(255,255,255,0.06); }
+        .nav-item.active {
+            background: rgba(255,255,255,0.1);
+            border-left-color: var(--highlight);
+            color: #fff;
+        }
+        .nav-item .icon { width: 18px; text-align: center; }
+        .content {
+            padding: 24px;
+            overflow-y: auto;
+        }
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 28px;
+        }
+        .page-title {
+            font-size: 28px;
+            font-weight: 700;
+        }
+        .reviews-container {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .review-card {
+            background: var(--card);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid var(--border);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            display: grid;
+            grid-template-columns: 100px 1fr;
+            gap: 16px;
+            transition: all 0.2s ease;
+        }
+        .review-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+            border-color: var(--accent);
+        }
+        .product-image {
+            width: 100px;
+            height: 100px;
+            border-radius: 8px;
+            object-fit: cover;
+            background: #f0f0f0;
+            border: 1px solid var(--border);
+        }
+        .review-content {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+        .review-info {
+            flex: 1;
+        }
+        .review-product {
+            font-size: 13px;
+            color: var(--muted);
+            margin-bottom: 4px;
+            font-weight: 500;
+        }
+        .review-user {
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 4px;
+            font-size: 15px;
+        }
+        .review-rating {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 0;
+        }
+        .review-stars {
+            font-size: 18px;
+            color: #ffc107;
+            letter-spacing: 1px;
+        }
+        .rating-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: linear-gradient(135deg, #ffc107, #ffb700);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 12px;
+        }
+        .review-date {
+            font-size: 12px;
+            color: var(--muted);
+            margin-left: auto;
+            white-space: nowrap;
+        }
+        .review-comment {
+            background: #f9fafb;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            line-height: 1.5;
+            color: var(--text);
+            border-left: 3px solid var(--accent);
+        }
+        .review-comment:empty::before {
+            content: "(Không có bình luận)";
+            color: var(--muted);
+            font-style: italic;
+        }
+        .review-reply {
+            background: #f0f7ff;
+            border-left: 3px solid var(--accent);
+            padding: 12px;
+            border-radius: 8px;
+        }
+        .reply-label {
+            font-weight: 600;
+            color: var(--accent);
+            font-size: 12px;
+            margin-bottom: 6px;
+        }
+        .reply-text {
+            font-size: 13px;
+            line-height: 1.5;
+            color: var(--text);
+        }
+        .review-actions {
+            display: flex;
+            gap: 8px;
+        }
+        .btn {
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+        }
+        .btn-primary:hover {
+            background: #3d55e8;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(76, 111, 255, 0.3);
+        }
+        .btn-secondary {
+            background: var(--border);
+            color: var(--text);
+        }
+        .btn-secondary:hover {
+            background: #d1d5db;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            place-items: center;
+        }
+        .modal.show {
+            display: grid;
+        }
+        .modal-content {
+            background: var(--card);
+            border-radius: 12px;
+            padding: 24px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: var(--shadow);
+        }
+        .modal-header {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: var(--text);
+        }
+        .form-group {
+            margin-bottom: 16px;
+        }
+        .form-label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 6px;
+            color: var(--text);
+        }
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 13px;
+        }
+        .form-control:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(76, 111, 255, 0.1);
+        }
+        textarea.form-control {
+            resize: vertical;
+            min-height: 100px;
+        }
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 60px 40px;
+            color: var(--muted);
+        }
+        .empty-icon {
+            font-size: 64px;
+            margin-bottom: 12px;
+        }
+        .empty-text {
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="layout">
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="brand-mark">BF</div>
+                <div>
+                    <div class="brand-name">BizFlow</div>
+                    <div class="brand-sub">Owner Center</div>
+                </div>
+            </div>
+            <nav class="nav">
+                <a class="nav-item" href="owner-dashboard.html">
+                    <span class="icon">🏠</span><span>Tổng quan</span>
+                </a>
+                <a class="nav-item" href="owner-reports.html">
+                    <span class="icon">📊</span><span>Báo cáo doanh thu</span>
+                </a>
+                <a class="nav-item" href="owner-products.html">
+                    <span class="icon">🛍️</span><span>Sản phẩm</span>
+                </a>
+                <a class="nav-item" href="owner-categories.html">
+                    <span class="icon">📁</span><span>Danh mục</span>
+                </a>
+                <a class="nav-item" href="owner-inventory.html">
+                    <span class="icon">📦</span><span>Quản lý kho</span>
+                </a>
+                <a class="nav-item" href="javascript:void(0)" data-purchase-href="owner-purchase.html" data-purchase-link="true" onclick="return window.openPurchaseDrawer ? window.openPurchaseDrawer(event) : false;">
+                    <span class="icon">🚚</span><span>Nhập hàng & Giá vốn</span>
+                </a>
+                <a class="nav-item" href="owner-users.html">
+                    <span class="icon">👤</span><span>Quản lý nhân viên</span>
+                </a>
+                <a class="nav-item" href="owner-promotions.html">
+                    <span class="icon">🎯</span><span>Khuyến mãi</span>
+                </a>
+                <a class="nav-item" href="owner-customer-support.html">
+                    <span class="icon">📞</span><span>Chăm sóc khách hàng</span>
+                </a>
+                <a class="nav-item" href="owner-inventory-alerts.html">
+                    <span class="icon">🔔</span><span>Thông báo Tồn kho</span>
+                </a>
+                <a class="nav-item active" href="owner-reviews.html">
+                    <span class="icon">⭐</span><span>Đánh giá</span>
+                </a>
+                <a class="nav-item" href="display-settings.html">
+                    <span class="icon">⚙️</span><span>Thiết lập</span>
+                </a>
+            </nav>
+        </aside>
+
+        <div class="content">
+            <div class="page-header">
+                <h1 class="page-title">Quản lý đánh giá</h1>
+            </div>
+
+            <div class="reviews-container" id="reviewsContainer">
+                <div class="empty-state">
+                    <div class="empty-icon">⭐</div>
+                    <p>Đang tải đánh giá...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reply Modal -->
+    <div class="modal" id="replyModal">
+        <div class="modal-content">
+            <div class="modal-header">Trả lời đánh giá</div>
+            <div class="form-group">
+                <label class="form-label">Sản phẩm</label>
+                <div style="padding: 10px; background: #f9f9f9; border-radius: 8px; font-size: 13px;" id="replyProductName">-</div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Từ khách hàng</label>
+                <div style="padding: 10px; background: #f9f9f9; border-radius: 8px; font-size: 13px;" id="replyCustomerName">-</div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Nội dung trả lời</label>
+                <textarea class="form-control" id="replyContent" placeholder="Nhập nội dung trả lời..."></textarea>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" onclick="closeReplyModal()">Hủy</button>
+                <button class="btn btn-primary" onclick="submitReply()">Gửi trả lời</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:8000/api';
+        let currentReplyReviewId = null;
+
+        async function loadReviews() {
+            try {
+                const allReviews = JSON.parse(localStorage.getItem('bizflow_reviews') || '[]');
+                const container = document.getElementById('reviewsContainer');
+
+                if (!allReviews || allReviews.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-icon">⭐</div>
+                            <p class="empty-text">Chưa có đánh giá nào</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                const ratingLabels = ['', 'Rất tệ', 'Tệ', 'Bình thường', 'Tốt', 'Rất tốt'];
+                
+                // Fetch product details
+                const productDetails = {};
+                for (const review of allReviews) {
+                    const productIds = review.productIds || [];
+                    for (const pid of productIds) {
+                        if (!productDetails[pid]) {
+                            try {
+                                const response = await fetch(`${API_BASE}/products/${pid}`, {
+                                    headers: getAuthHeaders()
+                                });
+                                if (response.ok) {
+                                    const data = await response.json();
+                                    const product = data.data || data;
+                                    productDetails[pid] = {
+                                        name: product.name || `Sản phẩm #${pid}`,
+                                        image: product.image || product.thumbnail || null
+                                    };
+                                } else {
+                                    productDetails[pid] = {
+                                        name: `Sản phẩm #${pid}`,
+                                        image: null
+                                    };
+                                }
+                            } catch (e) {
+                                console.warn(`Failed to fetch product ${pid}`, e);
+                                productDetails[pid] = {
+                                    name: `Sản phẩm #${pid}`,
+                                    image: null
+                                };
+                            }
+                        }
+                    }
+                }
+
+                const html = allReviews.map((r, idx) => {
+                    const stars = '★'.repeat(r.rating) + '☆'.repeat(5 - r.rating);
+                    const ratingLabel = ratingLabels[r.rating] || 'Không xác định';
+                    const date = r.createdAt ? new Date(r.createdAt).toLocaleDateString('vi-VN') : 'N/A';
+                    const username = r.username || 'Khách hàng';
+                    const comment = r.comment || '';
+                    const productIds = r.productIds || [];
+                    
+                    // Get first product for display
+                    const firstProductId = productIds[0];
+                    const productInfo = productDetails[firstProductId] || { name: `Sản phẩm #${firstProductId}`, image: null };
+                    const productImage = productInfo.image ? `<img src="${productInfo.image}" alt="${productInfo.name}" class="product-image" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Crect fill=%22%23f0f0f0%22 width=%22100%22 height=%22100%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dy=%22.3em%22 font-family=%22Arial%22 font-size=%2214%22 fill=%22%23999%22%3ENo Image%3C/text%3E%3C/svg%3E'">` : `<div class="product-image" style="display:grid;place-items:center;background:#f0f0f0;color:#999;font-size:12px;font-weight:500;">📦</div>`;
+                    
+                    const reply = r.reply ? `
+                        <div class="review-reply">
+                            <div class="reply-label">💬 Trả lời từ quản trị viên</div>
+                            <div class="reply-text">${escapeHtml(r.reply)}</div>
+                        </div>
+                    ` : '';
+
+                    return `
+                        <div class="review-card">
+                            ${productImage}
+                            <div class="review-content">
+                                <div class="review-header">
+                                    <div class="review-info">
+                                        <div class="review-product">${productIds.length > 1 ? `📦 ${escapeHtml(productInfo.name)} + ${productIds.length - 1} sản phẩm khác` : `📦 ${escapeHtml(productInfo.name)}`}</div>
+                                        <div class="review-user">${escapeHtml(username)}</div>
+                                        <div class="review-rating">
+                                            <span class="review-stars">${stars}</span>
+                                            <div class="rating-badge">${ratingLabel}</div>
+                                            <span class="review-date">${date}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                ${comment ? `<div class="review-comment">${escapeHtml(comment)}</div>` : ''}
+                                ${reply}
+                                <div class="review-actions">
+                                    <button class="btn btn-primary" onclick="openReplyModal(${idx}, '${escapeHtml(productInfo.name).replace(/'/g, "\\'")}', '${escapeHtml(username).replace(/'/g, "\\'")}')">Trả lời</button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+                container.innerHTML = html;
+            } catch (e) {
+                console.warn('Failed to load reviews', e);
+                const container = document.getElementById('reviewsContainer');
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">❌</div>
+                        <p class="empty-text">Lỗi khi tải đánh giá</p>
+                    </div>
+                `;
+            }
+        }
+
+        function getAuthHeaders() {
+            const token = sessionStorage.getItem('accessToken');
+            return {
+                'Content-Type': 'application/json',
+                ...(token && { 'Authorization': `Bearer ${token}` })
+            };
+        }
+
+        function openReplyModal(reviewIdx, productIds, username) {
+            currentReplyReviewId = reviewIdx;
+            document.getElementById('replyProductName').textContent = productIds || '-';
+            document.getElementById('replyCustomerName').textContent = username || '-';
+            document.getElementById('replyContent').value = '';
+            document.getElementById('replyModal').classList.add('show');
+        }
+
+        function closeReplyModal() {
+            document.getElementById('replyModal').classList.remove('show');
+            currentReplyReviewId = null;
+        }
+
+        function submitReply() {
+            if (currentReplyReviewId === null) {
+                alert('Vui lòng chọn đánh giá để trả lời');
+                return;
+            }
+
+            const replyContent = document.getElementById('replyContent').value.trim();
+            if (!replyContent) {
+                alert('Vui lòng nhập nội dung trả lời');
+                return;
+            }
+
+            try {
+                const allReviews = JSON.parse(localStorage.getItem('bizflow_reviews') || '[]');
+                if (allReviews[currentReplyReviewId]) {
+                    allReviews[currentReplyReviewId].reply = replyContent;
+                    allReviews[currentReplyReviewId].replyAt = new Date().toISOString();
+                    localStorage.setItem('bizflow_reviews', JSON.stringify(allReviews));
+                    alert('Trả lời đã được lưu!');
+                    closeReplyModal();
+                    loadReviews();
+                }
+            } catch (e) {
+                console.warn('Failed to save reply', e);
+                alert('Lỗi khi lưu trả lời');
+            }
+        }
+
+        function escapeHtml(text) {
+            const map = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            };
+            return String(text).replace(/[&<>"']/g, m => map[m]);
+        }
+
+        // Close modal on background click
+        document.getElementById('replyModal').addEventListener('click', (e) => {
+            if (e.target.id === 'replyModal') closeReplyModal();
+        });
+
+        // Load reviews on page load
+        window.addEventListener('DOMContentLoaded', loadReviews);
+    </script>
+</body>
+</html>

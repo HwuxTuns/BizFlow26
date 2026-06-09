@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BizFlow - Báo cáo (Admin)</title>
+    <link rel="stylesheet" href="../assets/css/admin-base.css?v=20260204">
+    <link rel="stylesheet" href="../assets/css/admin-reports.css?v=20260204">
+</head>
+<body data-admin-page="reports">
+    <div class="layout">
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="brand-mark">BF</div>
+                <div>
+                    <div class="brand-title">BizFlow</div>
+                    <div class="brand-subtitle">Admin Control</div>
+                </div>
+            </div>
+
+            <div class="nav-group">
+                <div class="nav-title">Tổng quan</div>
+                <a class="nav-item" data-page="home" href="admin-home.html"><span class="icon" data-icon="H"></span><span>Trang chủ</span></a>
+                <a class="nav-item" data-page="users" href="admin-users.html"><span class="icon" data-icon="U"></span><span>Người dùng</span></a>
+                <a class="nav-item" data-page="products" href="admin-products.html"><span class="icon" data-icon="P"></span><span>Sản phẩm</span></a>
+                <a class="nav-item" data-page="orders" href="admin-orders.html"><span class="icon" data-icon="O"></span><span>Đơn hàng</span></a>
+                <a class="nav-item" data-page="returns" href="admin-returns.html"><span class="icon" data-icon="R"></span><span>Đổi/Trả hàng</span></a>
+                <a class="nav-item" data-page="warranties" href="admin-warranties.html"><span class="icon" data-icon="W"></span><span>Bảo hành</span></a>
+                <a class="nav-item" data-page="shipping" href="admin-orders.html?filter=shipping"><span class="icon" data-icon="S"></span><span>Vận chuyển</span></a>
+            </div>
+
+            <div class="nav-group">
+                <div class="nav-title">Hệ thống</div>
+                <a class="nav-item" data-page="reports" href="admin-reports.html"><span class="icon" data-icon="B"></span><span>Báo cáo</span></a>
+            </div>
+
+            <div class="sidebar-footer">
+                <div>Trạng thái hệ thống: Online</div>
+                <div>Cập nhật: <span id="sidebarTime">--:--</span></div>
+            </div>
+        </aside>
+
+        <div class="content">
+            <header class="topbar">
+                <div class="top-left">
+                    <div class="page-title">Báo cáo</div>
+                    <div class="search">
+                        <span>🔍</span>
+                        <input type="text" placeholder="Tìm báo cáo theo dịch vụ, khoảng thời gian..." />
+                    </div>
+                </div>
+                <div class="top-right">
+                    <span class="pill">ADMIN</span>
+                    <div class="user-chip">
+                        <div class="avatar" id="userAvatar">AD</div>
+                        <div>
+                            <div id="userGreeting">Admin</div>
+                            <small>Quản trị viên</small>
+                        </div>
+                        <button class="icon-btn" title="Đăng xuất" onclick="adminLayout.logout()">⎋</button>
+                    </div>
+                </div>
+            </header>
+
+            <main class="main">
+                <section class="report-panels">
+                    <section class="card report-panel" aria-label="Báo cáo doanh thu">
+                        <div class="panel-header">
+                            <div class="panel-title">
+                                <div class="card-title">Báo cáo doanh thu</div>
+                                <div class="card-subtitle">Xuất dữ liệu doanh thu theo thời gian và xem nhanh thống kê.</div>
+                            </div>
+
+                            <div class="panel-actions">
+                                <div class="form-group" style="min-width: 150px;">
+                                    <label for="salesFrom">Từ ngày</label>
+                                    <input id="salesFrom" type="date" />
+                                </div>
+                                <div class="form-group" style="min-width: 150px;">
+                                    <label for="salesTo">Đến ngày</label>
+                                    <input id="salesTo" type="date" />
+                                </div>
+
+                                <button class="action-btn primary" type="button" id="salesLoadBtn">Xem báo cáo</button>
+                                <button class="action-btn" type="button" id="salesExportCsv">Xuất CSV</button>
+                                <button class="action-btn" type="button" id="salesExportPdf">Xuất PDF</button>
+                                <button class="action-btn" type="button" id="salesExportXlsx">Xuất Excel</button>
+                            </div>
+                        </div>
+
+ 
+
+                        <div class="kpi-grid" id="salesKpis">
+                            <div class="kpi"><div class="kpi-label">Tổng số đơn</div><div class="kpi-value">—</div></div>
+                            <div class="kpi"><div class="kpi-label">Đã thanh toán</div><div class="kpi-value">—</div></div>
+                            <div class="kpi"><div class="kpi-label">Doanh thu</div><div class="kpi-value">—</div></div>
+                            <div class="kpi"><div class="kpi-label">Giá trị TB/đơn</div><div class="kpi-value">—</div></div>
+                        </div>
+
+                        <div class="table-wrap" aria-label="Bảng doanh thu theo ngày">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Ngày</th>
+                                        <th>Số đơn</th>
+                                        <th>Doanh thu</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="salesDailyBody">
+                                    <tr><td colspan="3" class="empty-box">Chưa tải dữ liệu.</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+
+                    <section class="card report-panel" aria-label="Báo cáo tồn kho và đơn hàng">
+                        <div class="panel-header">
+                            <div class="panel-title">
+                                <div class="card-title">Báo cáo tồn kho & đơn hàng</div>
+                                <div class="card-subtitle">Giám sát kho (tồn kho thấp) và điều hướng sang quản lý đơn hàng.</div>
+                            </div>
+
+                            <div class="panel-actions">
+                                <div class="form-group" style="min-width: 140px;">
+                                    <label for="lowStockThreshold">Ngưỡng tồn kho</label>
+                                    <input id="lowStockThreshold" type="number" min="0" step="1" value="10" />
+                                </div>
+                                <div class="form-group" style="min-width: 140px;">
+                                    <label for="lowStockLimit">Giới hạn</label>
+                                    <input id="lowStockLimit" type="number" min="1" step="1" value="50" />
+                                </div>
+
+                                <button class="action-btn primary" type="button" id="lowStockLoadBtn">Xem tồn kho thấp</button>
+                                <button class="action-btn" type="button" id="lowStockExportCsv">Xuất CSV</button>
+                                <button class="action-btn" type="button" id="lowStockExportPdf">Xuất PDF</button>
+                                <button class="action-btn" type="button" id="lowStockExportXlsx">Xuất Excel</button>
+                            </div>
+                        </div>
+
+ 
+
+                        <div class="table-wrap" aria-label="Bảng tồn kho thấp">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Mã SP</th>
+                                        <th>Tên sản phẩm</th>
+                                        <th>Tồn kho</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="lowStockBody">
+                                    <tr><td colspan="3" class="empty-box">Chưa tải dữ liệu.</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <script src="../assets/js/admin-layout.js"></script>
+    <script>
+        // API Configuration (through Nginx -> Gateway)
+        const API_ANALYTICS_BASE_URL = '/api/admin/reports/analytics';
+        const API_EXPORT_BASE_URL = '/api/admin/reports/export';
+
+        function escapeHtml(text) {
+            if (text === null || text === undefined) return '';
+            const div = document.createElement('div');
+            div.textContent = String(text);
+            return div.innerHTML;
+        }
+
+        function formatDateTime(value) {
+            if (!value) return '—';
+            try {
+                const d = new Date(value);
+                if (Number.isNaN(d.getTime())) return '—';
+                return d.toLocaleString('vi-VN');
+            } catch {
+                return '—';
+            }
+        }
+
+        function setButtonLoading(btn, isLoading, textWhenLoading) {
+            if (!btn) return;
+            btn.disabled = !!isLoading;
+            btn.dataset.originalText = btn.dataset.originalText || btn.textContent;
+            btn.textContent = isLoading ? (textWhenLoading || 'Đang xử lý...') : btn.dataset.originalText;
+        }
+
+        function formatNumber(value) {
+            const n = Number(value);
+            if (Number.isFinite(n)) {
+                return new Intl.NumberFormat('vi-VN').format(n);
+            }
+            return value === null || value === undefined ? '—' : String(value);
+        }
+
+        function formatMoneyVnd(value) {
+            const n = Number(value);
+            if (Number.isFinite(n)) {
+                return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(n);
+            }
+            return value === null || value === undefined ? '—' : String(value);
+        }
+
+        function buildQuery(params) {
+            const usp = new URLSearchParams();
+            Object.entries(params || {}).forEach(([k, v]) => {
+                if (v === null || v === undefined || v === '') return;
+                usp.set(k, String(v));
+            });
+            const s = usp.toString();
+            return s ? `?${s}` : '';
+        }
+
+        async function fetchJson(url) {
+            const res = await fetch(url);
+            if (!res.ok) {
+                const text = await res.text().catch(() => '');
+                throw new Error(`HTTP ${res.status} ${text}`.trim());
+            }
+            return res.json();
+        }
+
+        async function postJson(url) {
+            const res = await fetch(url, { method: 'POST' });
+            if (!res.ok) {
+                const text = await res.text().catch(() => '');
+                throw new Error(`HTTP ${res.status} ${text}`.trim());
+            }
+            return res.json();
+        }
+
+        async function waitForJob(jobId, options) {
+            const timeoutMs = options?.timeoutMs ?? 60_000;
+            const pollMs = options?.pollMs ?? 1000;
+            const start = Date.now();
+
+            while (true) {
+                const job = await fetchJson(`/api/admin/reports/export/jobs/${encodeURIComponent(jobId)}`);
+                const status = (job?.status || '').toUpperCase();
+
+                if (status === 'SUCCEEDED' || status === 'FAILED') return job;
+                if (Date.now() - start > timeoutMs) {
+                    throw new Error('Timeout waiting for export job');
+                }
+                await new Promise((r) => setTimeout(r, pollMs));
+            }
+        }
+
+        function extractFilenameFromContentDisposition(contentDisposition) {
+            if (!contentDisposition) return null;
+            // Handles: attachment; filename="foo.csv" and RFC5987: filename*=UTF-8''foo.csv
+            const matchStar = contentDisposition.match(/filename\*=(?:UTF-8''|utf-8'')([^;]+)/);
+            if (matchStar && matchStar[1]) {
+                try { return decodeURIComponent(matchStar[1].trim().replace(/^"|"$/g, '')); } catch { /* ignore */ }
+                return matchStar[1].trim().replace(/^"|"$/g, '');
+            }
+            const match = contentDisposition.match(/filename=([^;]+)/);
+            if (match && match[1]) {
+                return match[1].trim().replace(/^"|"$/g, '');
+            }
+            return null;
+        }
+
+        async function downloadFile(url, fallbackFilename) {
+            const res = await fetch(url);
+            if (!res.ok) {
+                const text = await res.text().catch(() => '');
+                throw new Error(`HTTP ${res.status} ${text}`.trim());
+            }
+
+            const blob = await res.blob();
+            const cd = res.headers.get('content-disposition');
+            const filename = extractFilenameFromContentDisposition(cd) || fallbackFilename || 'report.csv';
+
+            const objectUrl = URL.createObjectURL(blob);
+            try {
+                const a = document.createElement('a');
+                a.href = objectUrl;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+            } finally {
+                URL.revokeObjectURL(objectUrl);
+            }
+        }
+
+        function setDefaultDateRange() {
+            // Default: last 7 days
+            const to = new Date();
+            const from = new Date();
+            from.setDate(from.getDate() - 6);
+
+            const toStr = to.toISOString().slice(0, 10);
+            const fromStr = from.toISOString().slice(0, 10);
+
+            const fromEl = document.getElementById('salesFrom');
+            const toEl = document.getElementById('salesTo');
+            if (fromEl && !fromEl.value) fromEl.value = fromStr;
+            if (toEl && !toEl.value) toEl.value = toStr;
+        }
+
+        function renderSalesKpis(overview) {
+            const kpis = document.getElementById('salesKpis');
+            if (!kpis) return;
+
+            const items = [
+                { label: 'Tổng số đơn', value: formatNumber(overview?.totalOrders) },
+                { label: 'Đã thanh toán', value: formatNumber(overview?.paidOrders) },
+                { label: 'Doanh thu', value: formatMoneyVnd(overview?.revenue) },
+                { label: 'Giá trị TB/đơn', value: formatMoneyVnd(overview?.averageOrderValue) },
+            ];
+
+            kpis.innerHTML = items.map(i => `
+                <div class="kpi">
+                    <div class="kpi-label">${escapeHtml(i.label)}</div>
+                    <div class="kpi-value">${escapeHtml(i.value)}</div>
+                </div>
+            `).join('');
+        }
+
+        function renderSalesDaily(rows) {
+            const tbody = document.getElementById('salesDailyBody');
+            if (!tbody) return;
+
+            if (!rows || rows.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="3" class="empty-box">Không có dữ liệu trong khoảng thời gian này.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = rows.map(r => `
+                <tr>
+                    <td>${escapeHtml(r.date || '—')}</td>
+                    <td>${escapeHtml(formatNumber(r.orderCount))}</td>
+                    <td>${escapeHtml(formatMoneyVnd(r.revenue))}</td>
+                </tr>
+            `).join('');
+        }
+
+        function renderLowStock(rows) {
+            const tbody = document.getElementById('lowStockBody');
+            if (!tbody) return;
+
+            if (!rows || rows.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="3" class="empty-box">Không có sản phẩm nào dưới ngưỡng tồn kho.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = rows.map(r => `
+                <tr>
+                    <td><strong>${escapeHtml(r.productId ?? '—')}</strong></td>
+                    <td>${escapeHtml(r.productName ?? '—')}</td>
+                    <td>${escapeHtml(formatNumber(r.stock))}</td>
+                </tr>
+            `).join('');
+        }
+
+        async function loadSalesReport() {
+            const btn = document.getElementById('salesLoadBtn');
+            const from = document.getElementById('salesFrom')?.value;
+            const to = document.getElementById('salesTo')?.value;
+            const q = buildQuery({ from, to });
+
+            try {
+                setButtonLoading(btn, true, 'Đang tải...');
+                renderSalesKpis(null);
+                renderSalesDaily(null);
+
+                const [overview, daily] = await Promise.all([
+                    fetchJson(`${API_ANALYTICS_BASE_URL}/sales/overview${q}`),
+                    fetchJson(`${API_ANALYTICS_BASE_URL}/sales/daily${q}`),
+                ]);
+
+                renderSalesKpis(overview);
+                renderSalesDaily(daily);
+            } catch (e) {
+                console.error(e);
+                const tbody = document.getElementById('salesDailyBody');
+                if (tbody) {
+                    tbody.innerHTML = `<tr><td colspan="3" class="empty-box" style="color: red;">Lỗi tải báo cáo: ${escapeHtml(e.message)}</td></tr>`;
+                }
+            } finally {
+                setButtonLoading(btn, false);
+            }
+        }
+
+        async function loadLowStockReport() {
+            const btn = document.getElementById('lowStockLoadBtn');
+            const threshold = document.getElementById('lowStockThreshold')?.value;
+            const limit = document.getElementById('lowStockLimit')?.value;
+            const q = buildQuery({ threshold, limit });
+
+            try {
+                setButtonLoading(btn, true, 'Đang tải...');
+                renderLowStock(null);
+
+                const rows = await fetchJson(`${API_ANALYTICS_BASE_URL}/inventory/low-stock${q}`);
+                renderLowStock(rows);
+            } catch (e) {
+                console.error(e);
+                const tbody = document.getElementById('lowStockBody');
+                if (tbody) {
+                    tbody.innerHTML = `<tr><td colspan="3" class="empty-box" style="color: red;">Lỗi tải báo cáo: ${escapeHtml(e.message)}</td></tr>`;
+                }
+            } finally {
+                setButtonLoading(btn, false);
+            }
+        }
+
+        async function exportSales(format, btn) {
+            const from = document.getElementById('salesFrom')?.value;
+            const to = document.getElementById('salesTo')?.value;
+            const ext = (format === 'pdf') ? 'pdf' : (format === 'xlsx' ? 'xlsx' : 'csv');
+            const q = buildQuery({ from, to, format });
+
+            // Prefer async job via Kafka/worker.
+            try {
+                setButtonLoading(btn, true, 'Đang xếp hàng...');
+                const created = await postJson(`/api/admin/reports/export/jobs/sales${q}`);
+                const jobId = created?.jobId;
+                if (!jobId) throw new Error('Missing jobId');
+
+                setButtonLoading(btn, true, 'Đang xử lý...');
+                const job = await waitForJob(jobId, { timeoutMs: 60_000, pollMs: 1000 });
+
+                if ((job?.status || '').toUpperCase() !== 'SUCCEEDED') {
+                    const err = job?.error ? ` (${job.error})` : '';
+                    throw new Error(`Job failed: ${job?.status || 'UNKNOWN'}${err}`);
+                }
+
+                await downloadFile(`/api/admin/reports/export/jobs/${encodeURIComponent(jobId)}/download`, `sales-report.${ext}`);
+                return;
+            } catch (e) {
+                console.error(e);
+                // Fallback to direct export endpoint if job flow is unavailable.
+                downloadFile(`${API_EXPORT_BASE_URL}/sales${q}`, `sales-report.${ext}`).catch((e2) => {
+                    console.error(e2);
+                    alert(`Không thể xuất báo cáo: ${e2.message}`);
+                });
+            } finally {
+                setButtonLoading(btn, false);
+            }
+        }
+
+        async function exportLowStock(format, btn) {
+            const threshold = document.getElementById('lowStockThreshold')?.value;
+            const limit = document.getElementById('lowStockLimit')?.value;
+            const ext = (format === 'pdf') ? 'pdf' : (format === 'xlsx' ? 'xlsx' : 'csv');
+            const q = buildQuery({ threshold, limit, format });
+
+            // Prefer async job via Kafka/worker.
+            try {
+                setButtonLoading(btn, true, 'Đang xếp hàng...');
+                const created = await postJson(`/api/admin/reports/export/jobs/inventory/low-stock${q}`);
+                const jobId = created?.jobId;
+                if (!jobId) throw new Error('Missing jobId');
+
+                setButtonLoading(btn, true, 'Đang xử lý...');
+                const job = await waitForJob(jobId, { timeoutMs: 60_000, pollMs: 1000 });
+
+                if ((job?.status || '').toUpperCase() !== 'SUCCEEDED') {
+                    const err = job?.error ? ` (${job.error})` : '';
+                    throw new Error(`Job failed: ${job?.status || 'UNKNOWN'}${err}`);
+                }
+
+                await downloadFile(`/api/admin/reports/export/jobs/${encodeURIComponent(jobId)}/download`, `low-stock.${ext}`);
+                return;
+            } catch (e) {
+                console.error(e);
+                // Fallback to direct export endpoint if job flow is unavailable.
+                downloadFile(`${API_EXPORT_BASE_URL}/inventory/low-stock${q}`, `low-stock.${ext}`).catch((e2) => {
+                    console.error(e2);
+                    alert(`Không thể xuất báo cáo: ${e2.message}`);
+                });
+            } finally {
+                setButtonLoading(btn, false);
+            }
+        }
+
+
+        window.addEventListener('load', () => {
+            adminLayout.enforceAuth();
+            adminLayout.renderHeader();
+            adminLayout.setActiveNav();
+
+            setDefaultDateRange();
+
+            document.getElementById('salesLoadBtn')?.addEventListener('click', loadSalesReport);
+            document.getElementById('salesExportCsv')?.addEventListener('click', (e) => exportSales('csv', e.currentTarget));
+            document.getElementById('salesExportPdf')?.addEventListener('click', (e) => exportSales('pdf', e.currentTarget));
+            document.getElementById('salesExportXlsx')?.addEventListener('click', (e) => exportSales('xlsx', e.currentTarget));
+
+            document.getElementById('lowStockLoadBtn')?.addEventListener('click', loadLowStockReport);
+            document.getElementById('lowStockExportCsv')?.addEventListener('click', (e) => exportLowStock('csv', e.currentTarget));
+            document.getElementById('lowStockExportPdf')?.addEventListener('click', (e) => exportLowStock('pdf', e.currentTarget));
+            document.getElementById('lowStockExportXlsx')?.addEventListener('click', (e) => exportLowStock('xlsx', e.currentTarget));
+
+            // Load initial previews
+            loadSalesReport();
+            loadLowStockReport();
+        });
+    </script>
+</body>
+</html>

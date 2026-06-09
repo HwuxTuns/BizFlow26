@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BizFlow POS - Đổi trả hàng</title>
+    <link rel="stylesheet" href="../assets/css/employee-dashboard.css">
+    <link rel="stylesheet" href="../assets/css/invoice-list.css">
+    <link rel="stylesheet" href="../assets/css/return-orders.css">
+</head>
+<body class="pos-body">
+    <header class="pos-header">
+        <div class="header-left">
+            <button class="icon-btn" type="button" aria-label="Quay lại" onclick="window.location.href='/pages/employee-dashboard.html'">
+                <svg viewBox="0 0 24 24" class="icon-svg" aria-hidden="true">
+                    <path d="M15 6l-6 6 6 6" />
+                </svg>
+            </button>
+            <div class="logo-mark" aria-label="BizFlow">BizFlow POS</div>
+            <span class="app-icon app-orange app-badge">ĐR</span>
+            <div class="page-title">Đổi trả hàng</div>
+        </div>
+        <div class="header-actions">
+            <div class="store">TRƯỜNG CHINH</div>
+            <div class="user-chip">
+                <span id="userInitial">E</span>
+                <span id="userName">Nhân viên</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="invoice-page return-page">
+        <section class="invoice-toolbar">
+            <div class="toolbar-title">
+                <h2>Đổi / Trả hàng</h2>
+                <p>Tìm hóa đơn đã thanh toán để đổi hoặc trả</p>
+            </div>
+        </section>
+
+        <section class="invoice-filter-bar return-filter-bar">
+            <div class="invoice-filter-row return-filter-row">
+                <select id="returnDatePreset">
+                    <option value="today" selected>Hôm nay</option>
+                    <option value="yesterday">Hôm qua</option>
+                    <option value="thisWeek">Tuần này</option>
+                    <option value="thisMonth">Tháng này</option>
+                    <option value="all">Toàn bộ</option>
+                    <option value="custom">Chọn ngày</option>
+                </select>
+                <span id="returnRangeInline">--/--/----</span>
+                <input id="returnSearchKeyword" type="text" placeholder="Số hóa đơn / SĐT khách hàng">
+                <button id="returnSearchBtn" class="primary-btn" type="button">Tìm hóa đơn</button>
+            </div>
+            <input id="returnSearchFrom" type="hidden">
+            <input id="returnSearchTo" type="hidden">
+            <div class="return-range-panel" id="returnRangePanel" aria-hidden="true">
+                <div class="range-header">
+                    <button type="button" class="ghost-btn mini" id="rangePrevMonth">‹</button>
+                    <div id="rangeMonthLabel"></div>
+                    <button type="button" class="ghost-btn mini" id="rangeNextMonth">›</button>
+                </div>
+                <div class="range-week">
+                    <span>T2</span><span>T3</span><span>T4</span><span>T5</span><span>T6</span><span>T7</span><span>CN</span>
+                </div>
+                <div class="range-grid" id="rangeGrid"></div>
+                <div class="range-actions">
+                    <button type="button" class="ghost-btn mini" id="rangeClear">Clear</button>
+                    <button type="button" class="ghost-btn mini" id="rangeToday">Today</button>
+                    <button type="button" class="primary-btn mini" id="rangeApply">Xác nhận</button>
+                </div>
+            </div>
+        </section>
+
+        <section class="invoice-table">
+            <div class="invoice-row header">
+                <span>Số hóa đơn</span>
+                <span>Ngày hóa đơn</span>
+                <span>Khách hàng</span>
+                <span>Số điện thoại</span>
+                <span>Tổng thanh toán</span>
+                <span>Thu ngân</span>
+            </div>
+            <div id="returnInvoiceList" class="invoice-body"></div>
+            <div id="returnInvoiceEmpty" class="invoice-empty">Chưa có hóa đơn phù hợp</div>
+        </section>
+    </main>
+
+    <div class="modal" id="returnInvoiceModal" aria-hidden="true">
+        <div class="modal-content invoice-detail return-detail">
+            <div class="modal-header">
+                <h3>Hóa đơn thanh toán</h3>
+                <button id="closeReturnInvoiceModal" class="icon-btn small" type="button" aria-label="Đóng">×</button>
+            </div>
+            <div class="invoice-detail-code">
+                Số: <span id="returnDetailInvoiceNumber">-</span>
+            </div>
+            <div class="invoice-detail-info">
+                <div><strong>Nhân viên:</strong> <span id="returnDetailEmployee">-</span></div>
+                <div><strong>Thu ngân:</strong> <span id="returnDetailCashier">-</span></div>
+                <div><strong>Khách hàng:</strong> <span id="returnDetailCustomer">-</span></div>
+            </div>
+            <div class="invoice-detail-table">
+                <div class="detail-row header">
+                    <span>Chọn</span>
+                    <span>Tên hàng hóa</span>
+                    <span>Đơn vị</span>
+                    <span>Số lượng mua</span>
+                    <span>SL đổi / trả</span>
+                    <span>Đơn giá</span>
+                    <span>Thành tiền</span>
+                </div>
+                <div id="returnDetailItems"></div>
+            </div>
+            <div class="modal-actions return-actions">
+                <button type="button" class="ghost-btn" id="selectAllReturnItems">Chọn tất cả</button>
+                <div class="spacer"></div>
+                <button type="button" class="ghost-btn" id="returnOnlyBtn">Trả hàng</button>
+                <button type="button" class="primary-btn" id="exchangeBtn">Đổi hàng</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="returnConfirmModal" aria-hidden="true">
+        <div class="modal-content return-confirm">
+            <div class="modal-header">
+                <h3>Xác nhận trả hàng</h3>
+                <button id="closeReturnConfirm" class="icon-btn small" type="button" aria-label="Đóng">×</button>
+            </div>
+            <div class="return-confirm-body">
+                <div class="confirm-list" id="returnConfirmList"></div>
+                <div class="confirm-summary">
+                    <div><span>Tổng tiền hoàn</span><strong id="returnRefundTotal">0 đ</strong></div>
+                </div>
+                <div class="confirm-field">
+                    <label>Phương thức hoàn tiền</label>
+                    <select id="returnRefundMethod">
+                        <option value="CASH">Tiền mặt</option>
+                        <option value="TRANSFER">Chuyển khoản</option>
+                    </select>
+                </div>
+                <div class="confirm-field">
+                    <label>Lý do trả hàng</label>
+                    <input id="returnReason" type="text" placeholder="Nhập lý do">
+                </div>
+                <div class="confirm-field">
+                    <label>Ghi chú</label>
+                    <textarea id="returnNote" rows="3" placeholder="Ghi chú (nếu có)"></textarea>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="ghost-btn" id="cancelReturnConfirm">Hủy</button>
+                <button type="button" class="primary-btn" id="confirmReturnBtn">Xác nhận trả</button>
+            </div>
+        </div>
+    </div>
+
+
+
+    <script>
+        const username = sessionStorage.getItem('username');
+        const userInitial = (username ? username[0] : 'E').toUpperCase();
+        document.getElementById('userInitial').textContent = userInitial;
+        document.getElementById('userName').textContent = username || 'Nhân viên';
+    </script>
+    <script src="../assets/js/return-orders.js"></script>
+    <script src="../assets/js/app-shell.js"></script>
+</body>
+</html>

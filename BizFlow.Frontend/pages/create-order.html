@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BizFlow - Tạo Đơn Hàng</title>
+    <script src="https://cdn.jsdelivr.net/npm/heroicons@2.0.18/16/solid/index.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .navbar h1 {
+            font-size: 24px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .app-badge {
+            width: 32px;
+            height: 32px;
+            border-radius: 12px;
+            display: grid;
+            place-items: center;
+            font-weight: 700;
+            font-size: 12px;
+            color: #fff;
+            background: #8a63ff;
+        }
+
+        .navbar .btn {
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .navbar .btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h2 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .step-indicator {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            gap: 10px;
+        }
+
+        .step {
+            flex: 1;
+            text-align: center;
+            padding: 15px;
+            background: #f5f5f5;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .step.active {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+            font-weight: 600;
+        }
+
+        .step .number {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            background: #ddd;
+            border-radius: 50%;
+            line-height: 30px;
+            margin-right: 10px;
+        }
+
+        .step.active .number {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #4CAF50;
+            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+        }
+
+        .customer-card {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border-left: 4px solid #4CAF50;
+        }
+
+        .customer-card strong {
+            color: #4CAF50;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+        }
+
+        .btn-secondary {
+            background: #e0e0e0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #d0d0d0;
+        }
+
+        .app-popup {
+            position: fixed;
+            inset: 0;
+            background: rgba(22, 26, 38, 0.45);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 70;
+            padding: 16px;
+        }
+
+        .app-popup.show {
+            display: flex;
+        }
+
+        .app-popup-card {
+            background: #ffffff;
+            border-radius: 12px;
+            width: min(360px, 90vw);
+            box-shadow: 0 20px 50px rgba(12, 20, 36, 0.2);
+            padding: 16px;
+            display: grid;
+            gap: 12px;
+        }
+
+        .app-popup-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .app-popup-header h3 {
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .app-popup-message {
+            font-size: 13px;
+            color: #4b5366;
+            line-height: 1.5;
+        }
+
+        .app-popup-actions {
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .info-box {
+            background: linear-gradient(135deg, rgba(76, 175, 80, 0.1) 0%, rgba(69, 160, 73, 0.05) 100%);
+            border-left: 4px solid #4CAF50;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+
+        .info-box strong {
+            color: #4CAF50;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 12px;
+            }
+
+            .navbar {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 10px;
+                padding: 12px 16px;
+            }
+
+            .navbar h1 {
+                font-size: 20px;
+                justify-content: center;
+                text-align: center;
+            }
+
+            .navbar .btn {
+                width: 100%;
+            }
+
+            .header {
+                padding: 20px;
+            }
+
+            .header h2 {
+                font-size: 24px;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .step-indicator {
+                flex-direction: column;
+            }
+
+            .step {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 10px;
+            }
+
+            .step .number {
+                margin-right: 0;
+            }
+
+            .btn-group {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header h2 {
+                font-size: 22px;
+            }
+
+            .content {
+                padding: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <h1><span class="app-badge">ĐH</span> BizFlow - Tạo Đơn Hàng</h1>
+        <button class="btn" onclick="logout()">Đăng Xuất</button>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h2>Tạo Đơn Hàng Mới</h2>
+            <p>Quy trình tạo đơn hàng bán lẻ đơn giản</p>
+        </div>
+
+        <div class="content">
+            <div class="step-indicator">
+                <div class="step active">
+                    <span class="number">1</span> Chọn KH
+                </div>
+                <div class="step">
+                    <span class="number">2</span> Sản phẩm
+                </div>
+                <div class="step">
+                    <span class="number">3</span> Số lượng
+                </div>
+                <div class="step">
+                    <span class="number">4</span> Thanh toán
+                </div>
+            </div>
+
+            <div class="info-box">
+                <strong>💡 Tip:</strong> Bạn có thể thêm khách hàng mới hoặc chọn từ danh sách hiện có
+            </div>
+
+            <form id="orderForm">
+                <div class="form-group">
+                    <label for="customerType">Loại Khách Hàng</label>
+                    <select id="customerType" required onchange="handleCustomerTypeChange()">
+                        <option value="">-- Chọn --</option>
+                        <option value="new">Khách Hàng Mới</option>
+                        <option value="existing">Khách Hàng Hiện Có</option>
+                    </select>
+                </div>
+
+                <div id="newCustomerSection" style="display:none;">
+                    <div class="form-group">
+                        <label for="newCustomerName">Tên Khách Hàng</label>
+                        <input type="text" id="newCustomerName" placeholder="Nhập tên khách hàng">
+                    </div>
+                    <div class="form-group">
+                        <label for="newCustomerPhone">Số Điện Thoại</label>
+                        <input type="tel" id="newCustomerPhone" placeholder="Nhập số điện thoại">
+                    </div>
+                </div>
+
+                <div id="existingCustomerSection" style="display:none;">
+                    <div class="form-group">
+                        <label for="existingCustomer">Chọn Khách Hàng</label>
+                        <select id="existingCustomer">
+                            <option value="">-- Chọn khách hàng --</option>
+                            <option value="1">Nguyễn Văn A - 0123456789</option>
+                            <option value="2">Trần Thị B - 0987654321</option>
+                            <option value="3">Phạm Văn C - 0555555555</option>
+                        </select>
+                    </div>
+                    <div id="customerInfo" style="display:none;" class="customer-card">
+                        <div><strong>Tên:</strong> <span id="infoName"></span></div>
+                        <div><strong>SĐT:</strong> <span id="infoPhone"></span></div>
+                        <div><strong>Điểm thưởng:</strong> <span id="infoPoints">0</span> điểm</div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="notes">Ghi Chú</label>
+                    <textarea id="notes" placeholder="Ghi chú đơn hàng (nếu có)" rows="4"></textarea>
+                </div>
+
+                <div class="btn-group">
+                    <button type="button" class="btn btn-secondary" onclick="window.location.href='/pages/employee-dashboard.html'">Quay Lại</button>
+                    <button type="button" class="btn btn-primary" onclick="nextStep()">Tiếp Theo →</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function showPopup(message, options = {}) {
+            const { title = 'Thông báo' } = options;
+            let modal = document.getElementById('appPopup');
+            if (!modal) {
+                modal = document.createElement('div');
+                modal.id = 'appPopup';
+                modal.className = 'app-popup';
+                modal.setAttribute('aria-hidden', 'true');
+                modal.innerHTML = `
+                    <div class="app-popup-card" role="dialog" aria-modal="true">
+                        <div class="app-popup-header">
+                            <h3 id="appPopupTitle"></h3>
+                            <button type="button" id="appPopupClose" aria-label="Đóng">×</button>
+                        </div>
+                        <div id="appPopupMessage" class="app-popup-message"></div>
+                        <div class="app-popup-actions">
+                            <button type="button" id="appPopupOk">Đóng</button>
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(modal);
+
+                const closePopup = () => {
+                    modal.classList.remove('show');
+                    modal.setAttribute('aria-hidden', 'true');
+                };
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) {
+                        closePopup();
+                    }
+                });
+                modal.querySelector('#appPopupClose')?.addEventListener('click', closePopup);
+                modal.querySelector('#appPopupOk')?.addEventListener('click', closePopup);
+            }
+
+            const titleEl = modal.querySelector('#appPopupTitle');
+            const messageEl = modal.querySelector('#appPopupMessage');
+            if (titleEl) titleEl.textContent = title;
+            if (messageEl) messageEl.textContent = message || '';
+
+            modal.classList.add('show');
+            modal.setAttribute('aria-hidden', 'false');
+        }
+
+        function handleCustomerTypeChange() {
+            const type = document.getElementById('customerType').value;
+            document.getElementById('newCustomerSection').style.display = type === 'new' ? 'block' : 'none';
+            document.getElementById('existingCustomerSection').style.display = type === 'existing' ? 'block' : 'none';
+        }
+
+        document.getElementById('existingCustomer')?.addEventListener('change', async function() {
+            const val = this.value;
+            if (val) {
+                document.getElementById('customerInfo').style.display = 'block';
+                try {
+                    const resp = await fetch('/api/customers/' + val);
+                    if (resp.ok) {
+                        const customer = await resp.json();
+                        document.getElementById('infoName').textContent = customer.name || '';
+                        document.getElementById('infoPhone').textContent = customer.phone || '';
+                        // fetch points from API
+                        const pResp = await fetch('/api/customers/' + val + '/points');
+                        if (pResp.ok) {
+                            const pts = await pResp.json();
+                            document.getElementById('infoPoints').textContent = (pts.totalPoints ?? customer.totalPoints ?? 0);
+                        } else {
+                            document.getElementById('infoPoints').textContent = customer.totalPoints ?? 0;
+                        }
+                        return;
+                    }
+                } catch (e) {
+                    // ignore and fallback
+                }
+                // fallback
+                document.getElementById('infoName').textContent = 'Khách hàng';
+                document.getElementById('infoPhone').textContent = '';
+                document.getElementById('infoPoints').textContent = 0;
+            } else {
+                document.getElementById('customerInfo').style.display = 'none';
+            }
+        });
+
+        function nextStep() {
+            const type = document.getElementById('customerType').value;
+            if (!type) {
+                showPopup('⚠️ Vui lòng chọn loại khách hàng');
+                return;
+            }
+
+            if (type === 'new' && !document.getElementById('newCustomerName').value) {
+                showPopup('⚠️ Vui lòng nhập tên khách hàng');
+                return;
+            }
+
+            if (type === 'existing') {
+                const customerId = document.getElementById('existingCustomer').value;
+                if (!customerId) {
+                    showPopup('⚠️ Vui lòng chọn khách hàng');
+                    return;
+                }
+                localStorage.setItem('selectedCustomerId', customerId);
+            } else {
+                localStorage.removeItem('selectedCustomerId'); // Guest or new (handled by name/phone in backend)
+            }
+
+            window.location.href = '/pages/search-product.html';
+        }
+
+        function logout() {
+            if (confirm('Bạn có chắc muốn đăng xuất?')) {
+                localStorage.clear();
+                window.location.href = '/pages/index.html';
+            }
+        }
+
+        // Check auth on load
+        window.addEventListener('DOMContentLoaded', () => {
+            const role = localStorage.getItem('role');
+            if (!role) {
+                window.location.href = '/pages/index.html';
+            }
+        });
+    </script>
+</body>
+</html>

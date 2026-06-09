@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test AI Generate Promotion</title>
+    <style>
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f3f4f8;
+        }
+        .test-container {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2f3a8f;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            color: #6b7280;
+            margin-bottom: 30px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #1f2937;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px 14px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+        input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .result {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f9fafb;
+            border-radius: 8px;
+            border-left: 4px solid #10b981;
+            display: none;
+        }
+        .result.show {
+            display: block;
+        }
+        .result h3 {
+            color: #10b981;
+            margin-bottom: 15px;
+        }
+        .result-item {
+            margin-bottom: 10px;
+            padding: 10px;
+            background: white;
+            border-radius: 6px;
+        }
+        .result-label {
+            font-weight: 600;
+            color: #6b7280;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .result-value {
+            font-size: 16px;
+            color: #1f2937;
+            margin-top: 4px;
+        }
+        .error {
+            background: #fef2f2;
+            border-left-color: #ef4444;
+        }
+        .error h3 {
+            color: #ef4444;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>✨ Test AI Generate Promotion</h1>
+        <p class="subtitle">Tự động tạo tên, code và mô tả cho khuyến mãi</p>
+
+        <form id="testForm">
+            <div class="form-group">
+                <label>Loại giảm giá</label>
+                <select id="discountType" required>
+                    <option value="PERCENT">Giảm phần trăm (%)</option>
+                    <option value="FIXED">Giảm tiền cố định</option>
+                    <option value="BUNDLE">Combo/Bundle</option>
+                    <option value="FREE_GIFT">Quà tặng</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Giá trị giảm</label>
+                <input type="number" id="discountValue" placeholder="Ví dụ: 20 (cho 20%)" required min="0">
+            </div>
+
+            <div class="form-group">
+                <label>Tên sản phẩm (optional)</label>
+                <input type="text" id="productName" placeholder="Ví dụ: Coca Cola 1.5L">
+            </div>
+
+            <button type="submit" class="btn" id="generateBtn">
+                ✨ AI Tạo Khuyến Mãi
+            </button>
+        </form>
+
+        <div id="result" class="result">
+            <h3>✅ Kết quả</h3>
+            <div class="result-item">
+                <div class="result-label">Tên khuyến mãi</div>
+                <div class="result-value" id="resultName"></div>
+            </div>
+            <div class="result-item">
+                <div class="result-label">Mã khuyến mãi</div>
+                <div class="result-value" id="resultCode"></div>
+            </div>
+            <div class="result-item">
+                <div class="result-label">Mô tả</div>
+                <div class="result-value" id="resultDescription"></div>
+            </div>
+            <div class="result-item">
+                <div class="result-label">Timestamp</div>
+                <div class="result-value" id="resultTimestamp"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('testForm');
+        const resultDiv = document.getElementById('result');
+        const generateBtn = document.getElementById('generateBtn');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const discountType = document.getElementById('discountType').value;
+            const discountValue = parseFloat(document.getElementById('discountValue').value);
+            const productName = document.getElementById('productName').value;
+
+            // Disable button
+            generateBtn.disabled = true;
+            generateBtn.textContent = '⏳ AI đang tạo...';
+            resultDiv.classList.remove('show', 'error');
+
+            try {
+                const now = new Date();
+                const requestBody = {
+                    discount_type: discountType,
+                    discount_value: discountValue,
+                    targets: productName ? [{
+                        id: Math.floor(Math.random() * 1000),
+                        name: productName,
+                        type: 'PRODUCT'
+                    }] : [],
+                    month: now.getMonth() + 1,
+                    year: now.getFullYear()
+                };
+
+                console.log('Request:', requestBody);
+
+                const response = await fetch('/ai/api/generate-promotion-details', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(requestBody)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                console.log('Response:', data);
+
+                // Show results
+                document.getElementById('resultName').textContent = data.name;
+                document.getElementById('resultCode').textContent = data.code;
+                document.getElementById('resultDescription').textContent = data.description;
+                document.getElementById('resultTimestamp').textContent = data.timestamp;
+
+                resultDiv.classList.add('show');
+
+            } catch (error) {
+                console.error('Error:', error);
+                
+                // Show error
+                resultDiv.innerHTML = `
+                    <h3>❌ Lỗi</h3>
+                    <div class="result-item">
+                        <div class="result-value">${error.message}</div>
+                        <div style="margin-top: 10px; font-size: 14px; color: #6b7280;">
+                            Vui lòng kiểm tra:<br>
+                            • AI Service đã chạy chưa? (docker ps | grep ai)<br>
+                            • Port 5000 có available không?<br>
+                            • CORS đã enable chưa?
+                        </div>
+                    </div>
+                `;
+                resultDiv.classList.add('show', 'error');
+            } finally {
+                // Re-enable button
+                generateBtn.disabled = false;
+                generateBtn.textContent = '✨ AI Tạo Khuyến Mãi';
+            }
+        });
+    </script>
+</body>
+</html>
+

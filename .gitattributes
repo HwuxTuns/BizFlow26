@@ -1,0 +1,9 @@
+* text=auto
+*.js text
+*.html text
+*.java text
+*.css text
+*.sql text
+*.yml text
+*.xml text
+*.json text

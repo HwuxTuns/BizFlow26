@@ -1,0 +1,113 @@
+# Prometheus Configuration for BizFlow Monitoring
+
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    monitor: 'bizflow-monitor'
+
+# Scrape configurations
+scrape_configs:
+  # Prometheus self-monitoring
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+        labels:
+          service: 'prometheus'
+
+  # MySQL Database
+  - job_name: 'mysql'
+    static_configs:
+      - targets: ['mysql:3306']
+        labels:
+          service: 'mysql'
+          component: 'database'
+
+  # Redis Cache
+  - job_name: 'redis'
+    static_configs:
+      - targets: ['redis:6379']
+        labels:
+          service: 'redis'
+          component: 'cache'
+
+  # RabbitMQ
+  - job_name: 'rabbitmq'
+    static_configs:
+      - targets: ['rabbitmq:15672']
+        labels:
+          service: 'rabbitmq'
+          component: 'message-queue'
+
+  # Spring Boot Services (if they have actuator/prometheus enabled)
+  - job_name: 'gateway'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['gateway:8000']
+        labels:
+          service: 'gateway'
+          component: 'api-gateway'
+
+  - job_name: 'sales-service'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['sales-service:8081']
+        labels:
+          service: 'sales'
+          component: 'microservice'
+
+  - job_name: 'promotion-service'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['promotion-service:8082']
+        labels:
+          service: 'promotion'
+          component: 'microservice'
+
+  - job_name: 'catalog-service'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['catalog-service:8083']
+        labels:
+          service: 'catalog'
+          component: 'microservice'
+
+  - job_name: 'inventory-service'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['inventory-service:8084']
+        labels:
+          service: 'inventory'
+          component: 'microservice'
+
+  - job_name: 'customer-service'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['customer-service:8085']
+        labels:
+          service: 'customer'
+          component: 'microservice'
+
+  - job_name: 'authentication-service'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['authentication-service:8086']
+        labels:
+          service: 'authentication'
+          component: 'microservice'
+
+  - job_name: 'report-service'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['report-service:8087']
+        labels:
+          service: 'report'
+          component: 'microservice'
+
+  # AI Service (FastAPI)
+  - job_name: 'ai-service'
+    static_configs:
+      - targets: ['ai-service:5000']
+        labels:
+          service: 'ai'
+          component: 'ml-service'

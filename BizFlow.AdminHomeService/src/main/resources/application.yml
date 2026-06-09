@@ -1,0 +1,19 @@
+server:
+  port: 8202
+spring:
+  application:
+    name: admin-home-service
+
+admin:
+  user:
+    service:
+      url: http://bizflow-admin-user-service:8201
+  product:
+    service:
+      url: http://bizflow-admin-product-service:8204
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info

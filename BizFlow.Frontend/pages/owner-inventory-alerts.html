@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BizFlow - Thông báo Tồn kho</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2f3a8f;
+            --primary-dark: #1f2a66;
+            --accent: #4c6fff;
+            --highlight: #7dd3fc;
+            --bg: #f3f4f8;
+            --card: #ffffff;
+            --text: #1f2937;
+            --muted: #6b7280;
+            --border: #e5e7eb;
+            --shadow: 0 10px 30px rgba(31, 41, 55, 0.08);
+            --warning: #fbbf24;
+            --danger: #ef4444;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            overflow-x: hidden;
+        }
+
+        .layout {
+            display: grid;
+            grid-template-columns: 250px minmax(0, 1fr);
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            background: linear-gradient(180deg, var(--primary-dark), var(--primary));
+            color: #e5e7eb;
+            padding: 18px 0;
+            display: flex;
+            flex-direction: column;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 20px 14px;
+            margin-bottom: 6px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .brand-mark {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            display: grid;
+            place-items: center;
+            background: rgba(255, 255, 255, 0.15);
+            color: #fff;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .brand-name {
+            font-weight: 700;
+            letter-spacing: 0.3px;
+        }
+
+        .brand-sub {
+            font-size: 12px;
+            color: #c7d2fe;
+        }
+
+        .nav {
+            display: flex;
+            flex-direction: column;
+            padding: 8px 0;
+            gap: 2px;
+            overflow-y: auto;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 11px 18px;
+            margin: 0 10px;
+            border-radius: 10px;
+            color: #e5e7eb;
+            text-decoration: none;
+            border-left: 3px solid transparent;
+            transition: all 0.2s ease;
+        }
+
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        .nav-item.active {
+            background: rgba(255, 255, 255, 0.1);
+            border-left-color: var(--highlight);
+            color: #fff;
+        }
+
+        .nav-item .icon {
+            width: 18px;
+            text-align: center;
+            opacity: 0.9;
+        }
+
+        .sidebar-footer {
+            margin-top: auto;
+            padding: 14px 18px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #c7d2fe;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #4ade80;
+            box-shadow: 0 0 0 6px rgba(74, 222, 128, 0.12);
+        }
+
+        .content {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            min-width: 0;
+        }
+
+        .topbar {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 14px 24px;
+            background: #fff;
+            border-bottom: 1px solid var(--border);
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.02);
+            min-width: 0;
+        }
+
+        .top-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+
+        .page-title {
+            font-weight: 700;
+            font-size: 18px;
+        }
+
+        .top-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
+        .user-chip {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            padding: 8px 12px;
+            border-radius: 12px;
+        }
+
+        .avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 12px;
+            background: #eef2ff;
+            color: var(--primary);
+            display: grid;
+            place-items: center;
+            font-weight: 700;
+            font-size: 15px;
+        }
+
+        .user-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .user-meta span {
+            font-weight: 600;
+        }
+
+        .user-meta small {
+            font-size: 11px;
+            color: var(--muted);
+        }
+
+        .icon-btn {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 4px;
+            font-size: 18px;
+            color: var(--muted);
+        }
+
+        .main {
+            flex: 1;
+            padding: 24px;
+        }
+
+        .card {
+            background: var(--card);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .card-title {
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        .card-subtitle {
+            font-size: 13px;
+            color: var(--muted);
+            margin-top: 4px;
+        }
+
+        .alert-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .alert-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px;
+            border-radius: 10px;
+            border-left: 4px solid;
+        }
+
+        .alert-item.warning {
+            background: #fffbeb;
+            border-left-color: var(--warning);
+        }
+
+        .alert-item.danger {
+            background: #fef2f2;
+            border-left-color: var(--danger);
+        }
+
+        .alert-icon {
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .alert-content {
+            flex: 1;
+        }
+
+        .alert-title {
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .alert-message {
+            font-size: 13px;
+            color: var(--muted);
+        }
+
+        .alert-meta {
+            display: flex;
+            gap: 12px;
+            font-size: 12px;
+            color: var(--muted);
+            margin-top: 6px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .badge.warning {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .badge.danger {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--muted);
+        }
+
+        .empty {
+            text-align: center;
+            padding: 40px;
+            color: var(--muted);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: var(--card);
+            border-radius: 10px;
+            padding: 16px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: var(--muted);
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .stat-value.warning {
+            color: var(--warning);
+        }
+
+        .stat-value.danger {
+            color: var(--danger);
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .filter-btn {
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: #fff;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+
+        .filter-btn:hover {
+            background: #f3f4f6;
+        }
+
+        .filter-btn.active {
+            background: var(--primary);
+            color: #fff;
+            border-color: var(--primary);
+        }
+    </style>
+</head>
+<body>
+    <div class="layout">
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="brand-mark">BF</div>
+                <div>
+                    <div class="brand-name">BizFlow</div>
+                    <div class="brand-sub">Owner Center</div>
+                </div>
+            </div>
+            <nav class="nav">
+                <a class="nav-item" href="owner-dashboard.html">
+                    <span class="icon">🏠</span><span>Tổng quan</span>
+                </a>
+                <a class="nav-item" href="owner-reports.html">
+                    <span class="icon">📊</span><span>Báo cáo doanh thu</span>
+                </a>
+                <a class="nav-item" href="owner-products.html">
+                    <span class="icon">🛍️</span><span>Sản phẩm</span>
+                </a>
+                <a class="nav-item" href="owner-categories.html">
+                    <span class="icon">📁</span><span>Danh mục</span>
+                </a>
+                <a class="nav-item" href="owner-inventory.html">
+                    <span class="icon">📦</span><span>Quản lý kho</span>
+                </a>
+                <a class="nav-item" href="javascript:void(0)" data-purchase-href="owner-purchase.html" data-purchase-link="true" onclick="return window.openPurchaseDrawer ? window.openPurchaseDrawer(event) : false;">
+                    <span class="icon">🚚</span><span>Nhập hàng & Giá vốn</span>
+                </a>
+                <a class="nav-item" href="owner-users.html">
+                    <span class="icon">👤</span><span>Quản lý nhân viên</span>
+                </a>
+                <a class="nav-item" href="owner-promotions.html">
+                    <span class="icon">🎯</span><span>Khuyến mãi</span>
+                </a>
+                <a class="nav-item" href="owner-customer-support.html">
+                    <span class="icon">📞</span><span>Chăm sóc khách hàng</span>
+                </a>
+                <a class="nav-item active" href="owner-inventory-alerts.html">
+                    <span class="icon">🔔</span><span>Thông báo Tồn kho</span>
+                </a>
+                <a class="nav-item" href="owner-reviews.html">
+                    <span class="icon">⭐</span><span>Đánh giá</span>
+                </a>
+                <a class="nav-item" href="display-settings.html">
+                    <span class="icon">⚙️</span><span>Thiết lập</span>
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="status-dot"></div>
+                <div>
+                    <div class="brand-name">Hoạt động</div>
+                    <div class="brand-sub">Cập nhật: <span id="sidebarTimestamp">--:--</span></div>
+                </div>
+            </div>
+        </aside>
+
+        <div class="content">
+            <header class="topbar">
+                <div class="top-left">
+                    <div class="page-title">Thông báo Tồn kho & Tồn kệ</div>
+                </div>
+                <div class="top-right">
+                    <div class="user-chip">
+                        <div class="avatar" id="userAvatar">OW</div>
+                        <div class="user-meta">
+                            <span id="topUserName">Owner</span>
+                            <small>OWNER</small>
+                        </div>
+                        <button class="icon-btn" title="Đăng xuất" onclick="logout()">⎋</button>
+                    </div>
+                </div>
+            </header>
+
+            <main class="main">
+                <!-- Statistics -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">Tổng cảnh báo</div>
+                        <div class="stat-value" id="totalAlerts">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Cảnh báo Kệ</div>
+                        <div class="stat-value warning" id="shelfAlerts">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Cảnh báo Kho</div>
+                        <div class="stat-value warning" id="warehouseAlerts">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Cảnh báo Nguy hiểm</div>
+                        <div class="stat-value danger" id="dangerAlerts">0</div>
+                    </div>
+                </div>
+
+                <!-- Alerts Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">Danh sách Cảnh báo</div>
+                            <div class="card-subtitle" id="lastUpdate">Đang tải...</div>
+                        </div>
+                    </div>
+
+                    <!-- Filter Buttons -->
+                    <div class="filter-buttons">
+                        <button class="filter-btn active" data-filter="all" onclick="filterAlerts('all')">Tất cả</button>
+                        <button class="filter-btn" data-filter="SHELF" onclick="filterAlerts('SHELF')">Kệ</button>
+                        <button class="filter-btn" data-filter="WAREHOUSE" onclick="filterAlerts('WAREHOUSE')">Kho</button>
+                        <button class="filter-btn" data-filter="DANGER" onclick="filterAlerts('DANGER')">Nguy hiểm</button>
+                        <button class="filter-btn" data-filter="WARNING" onclick="filterAlerts('WARNING')">Cảnh báo</button>
+                    </div>
+
+                    <div id="alertsLoading" class="loading">Đang tải thông báo...</div>
+                    <div id="alertsEmpty" class="empty" style="display:none;">✅ Không có cảnh báo nào</div>
+                    <div id="alertsList" class="alert-list"></div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:8084';
+        const GATEWAY_BASE = 'http://localhost:8080';
+        let allAlerts = [];
+        let currentFilter = 'all';
+
+        // Check authentication
+        function checkAuth() {
+            console.log('[DEBUG] Checking authentication...');
+            const token = localStorage.getItem('token');
+            const role = localStorage.getItem('role');
+            
+            console.log('[DEBUG] Token:', token ? 'EXISTS' : 'NULL');
+            console.log('[DEBUG] Role:', role);
+            
+            if (!token) {
+                console.log('[DEBUG] No token found, redirecting to login...');
+                window.location.href = 'login.html';
+                return false;
+            }
+            
+            if (role !== 'OWNER' && role !== 'ADMIN') {
+                console.log('[DEBUG] Invalid role, redirecting...');
+                alert('Bạn không có quyền truy cập trang này');
+                window.location.href = 'owner-dashboard.html';
+                return false;
+            }
+            
+            console.log('[DEBUG] Authentication passed!');
+            
+            // Update user info
+            const username = localStorage.getItem('username');
+            if (username) {
+                document.getElementById('topUserName').textContent = username;
+                document.getElementById('userAvatar').textContent = username.substring(0, 2).toUpperCase();
+            }
+            
+            return true;
+        }
+
+        // Logout
+        function logout() {
+            localStorage.clear();
+            window.location.href = 'login.html';
+        }
+
+        // Load alerts
+        async function loadAlerts() {
+            if (!checkAuth()) return;
+
+            const token = localStorage.getItem('token');
+            const loading = document.getElementById('alertsLoading');
+            const empty = document.getElementById('alertsEmpty');
+            const list = document.getElementById('alertsList');
+
+            loading.style.display = 'block';
+            empty.style.display = 'none';
+            list.innerHTML = '';
+
+            try {
+                // Get last checked date from localStorage (giả lập check 7h mỗi ngày)
+                const lastChecked = localStorage.getItem('inventory_last_checked');
+                const today = new Date().toISOString().split('T')[0];
+                
+                // Build query params
+                let url = `${API_BASE}/api/inventory/alerts`;
+                if (lastChecked) {
+                    url += `?lastChecked=${lastChecked}`;
+                }
+
+                const response = await fetch(url, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to load alerts');
+                }
+
+                allAlerts = await response.json();
+                
+                // Update localStorage with today's date
+                localStorage.setItem('inventory_last_checked', today);
+
+                // Update statistics
+                updateStatistics();
+
+                // Display alerts
+                displayAlerts();
+
+                // Update timestamp
+                const now = new Date();
+                document.getElementById('lastUpdate').textContent = 
+                    `Cập nhật lúc ${now.toLocaleTimeString('vi-VN')}`;
+                document.getElementById('sidebarTimestamp').textContent = 
+                    now.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
+
+            } catch (error) {
+                console.error('Error loading alerts:', error);
+                list.innerHTML = '<div class="empty">❌ Không thể tải thông báo</div>';
+            } finally {
+                loading.style.display = 'none';
+            }
+        }
+
+        // Update statistics
+        function updateStatistics() {
+            const total = allAlerts.length;
+            const shelf = allAlerts.filter(a => a.type === 'SHELF').length;
+            const warehouse = allAlerts.filter(a => a.type === 'WAREHOUSE').length;
+            const danger = allAlerts.filter(a => a.level === 'DANGER').length;
+
+            document.getElementById('totalAlerts').textContent = total;
+            document.getElementById('shelfAlerts').textContent = shelf;
+            document.getElementById('warehouseAlerts').textContent = warehouse;
+            document.getElementById('dangerAlerts').textContent = danger;
+        }
+
+        // Display alerts based on current filter
+        function displayAlerts() {
+            const list = document.getElementById('alertsList');
+            const empty = document.getElementById('alertsEmpty');
+
+            let filtered = allAlerts;
+
+            // Apply filter
+            if (currentFilter === 'SHELF' || currentFilter === 'WAREHOUSE') {
+                filtered = allAlerts.filter(a => a.type === currentFilter);
+            } else if (currentFilter === 'DANGER' || currentFilter === 'WARNING') {
+                filtered = allAlerts.filter(a => a.level === currentFilter);
+            }
+
+            if (filtered.length === 0) {
+                list.innerHTML = '';
+                empty.style.display = 'block';
+                return;
+            }
+
+            empty.style.display = 'none';
+            list.innerHTML = filtered.map(alert => {
+                const levelClass = alert.level === 'DANGER' ? 'danger' : 'warning';
+                const icon = alert.level === 'DANGER' ? '🚨' : '⚠️';
+                const typeLabel = alert.type === 'SHELF' ? 'Kệ' : 'Kho';
+
+                return `
+                    <div class="alert-item ${levelClass}">
+                        <div class="alert-icon">${icon}</div>
+                        <div class="alert-content">
+                            <div class="alert-title">${alert.productName}</div>
+                            <div class="alert-message">${alert.message}</div>
+                            <div class="alert-meta">
+                                <span>📦 Mã: ${alert.productCode || 'N/A'}</span>
+                                <span>📍 Vị trí: ${typeLabel}</span>
+                                <span class="badge ${levelClass}">${alert.level}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Filter alerts
+        function filterAlerts(filter) {
+            currentFilter = filter;
+
+            // Update active button
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.dataset.filter === filter) {
+                    btn.classList.add('active');
+                }
+            });
+
+            // Display filtered alerts
+            displayAlerts();
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            // TEMPORARY: Bypass auth check for testing
+            // TODO: Remove this before production
+            if (!localStorage.getItem('token')) {
+                console.warn('[TESTING MODE] No token found, using mock data');
+                localStorage.setItem('token', 'mock-token-for-testing');
+                localStorage.setItem('role', 'OWNER');
+                localStorage.setItem('username', 'Test Owner');
+            }
+            
+            loadAlerts();
+            
+            // Auto refresh every 5 minutes
+            setInterval(loadAlerts, 5 * 60 * 1000);
+        });
+    </script>
+</body>
+</html>

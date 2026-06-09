@@ -1,0 +1,512 @@
+-- phpMyAdmin SQL Dump
+-- version 5.2.3
+-- https://www.phpmyadmin.net/
+--
+-- Máy chủ: mysql:3306
+-- Thời gian đã tạo: Th2 03, 2026 lúc 02:13 PM
+-- Phiên bản máy phục vụ: 8.0.45
+-- Phiên bản PHP: 8.3.26
+
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+START TRANSACTION;
+SET time_zone = "+00:00";
+
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
+
+--
+-- Cơ sở dữ liệu: `bizflow_inventory_db`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `inventory_stocks`
+--
+
+CREATE TABLE `inventory_stocks` (
+  `id` bigint NOT NULL,
+  `product_id` bigint NOT NULL,
+  `stock` int NOT NULL,
+  `updated_at` datetime(6) DEFAULT NULL,
+  `updated_by` bigint DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `inventory_stocks`
+--
+
+INSERT INTO `inventory_stocks` (`id`, `product_id`, `stock`, `updated_at`, `updated_by`) VALUES
+(2, 2, 68, '2026-02-03 18:19:47.295899', 4),
+(3, 3, 16, '2026-02-02 15:04:35.097883', 4),
+(4, 4, 12, '2026-02-02 14:43:13.766287', NULL),
+(5, 5, 2, '2026-01-25 23:10:15.499273', 3),
+(6, 6, 20, '2026-01-13 22:07:08.520953', NULL),
+(7, 7, 13, '2026-01-25 01:42:09.530992', 3),
+(8, 8, 1, '2026-02-01 17:07:55.561301', 3),
+(9, 9, 10, '2026-01-31 22:38:08.692552', 3),
+(10, 10, 4, '2026-02-01 17:07:55.566757', 3),
+(11, 11, 20, '2026-01-13 22:07:08.523134', NULL),
+(12, 12, 20, '2026-01-13 22:07:08.523593', NULL),
+(13, 13, 20, '2026-01-13 22:07:08.524031', NULL),
+(14, 14, 10, '2026-02-02 21:11:01.535637', 4),
+(15, 15, 19, '2026-02-02 20:19:27.787439', 4),
+(16, 16, 20, '2026-01-13 22:07:08.525221', NULL),
+(17, 17, 20, '2026-01-13 22:07:08.525678', NULL),
+(18, 18, 20, '2026-01-13 22:07:08.526184', NULL),
+(19, 19, 20, '2026-01-13 22:07:08.526577', NULL),
+(20, 20, 19, '2026-01-25 21:40:32.620127', 3),
+(21, 21, 20, '2026-01-13 22:07:08.527433', NULL),
+(22, 22, 20, '2026-01-13 22:07:08.527886', NULL),
+(23, 23, 16, '2026-01-25 21:40:32.608140', 3),
+(24, 24, 20, '2026-01-13 22:07:08.528703', NULL),
+(25, 25, 20, '2026-01-13 22:07:08.529092', NULL),
+(26, 26, 20, '2026-01-13 22:07:08.529502', NULL),
+(27, 27, 20, '2026-01-13 22:07:08.529895', NULL),
+(28, 28, 20, '2026-01-13 22:07:08.530740', NULL),
+(29, 29, 20, '2026-01-13 22:07:08.531151', NULL),
+(30, 30, 20, '2026-01-13 22:07:08.531574', NULL),
+(31, 31, 20, '2026-01-13 22:07:08.531960', NULL),
+(32, 32, 20, '2026-01-13 22:07:08.532376', NULL),
+(33, 33, 19, '2026-01-25 01:42:09.545019', 3),
+(34, 34, 20, '2026-01-13 22:07:08.533125', NULL),
+(35, 35, 20, '2026-01-13 22:07:08.533514', NULL),
+(36, 36, 20, '2026-01-13 22:07:08.533910', NULL),
+(37, 37, 20, '2026-01-13 22:07:08.534286', NULL),
+(38, 38, 20, '2026-01-13 22:07:08.534641', NULL),
+(39, 39, 20, '2026-01-13 22:07:08.535020', NULL),
+(40, 40, 20, '2026-01-13 22:07:08.535408', NULL),
+(41, 41, 20, '2026-01-13 22:07:08.535802', NULL),
+(42, 42, 20, '2026-01-13 22:07:08.536259', NULL),
+(43, 43, 20, '2026-01-13 22:07:08.536662', NULL),
+(44, 44, 20, '2026-01-13 22:07:08.537046', NULL),
+(45, 45, 20, '2026-01-13 22:07:08.537471', NULL),
+(46, 46, 20, '2026-01-13 22:07:08.537863', NULL),
+(47, 47, 20, '2026-01-13 22:07:08.538397', NULL),
+(48, 48, 20, '2026-01-13 22:07:08.538762', NULL),
+(49, 49, 20, '2026-01-13 22:07:08.539137', NULL),
+(50, 50, 20, '2026-01-13 22:07:08.539546', NULL),
+(51, 51, 20, '2026-01-13 22:07:08.539911', NULL),
+(52, 52, 20, '2026-01-13 22:07:08.540299', NULL),
+(53, 53, 20, '2026-01-13 22:07:08.540667', NULL),
+(54, 54, 20, '2026-01-13 22:07:08.541037', NULL),
+(55, 55, 20, '2026-01-13 22:07:08.541437', NULL),
+(56, 56, 1, '2026-01-15 23:32:14.175640', 4),
+(57, 57, 20, '2026-01-13 22:07:08.542559', NULL),
+(58, 58, 20, '2026-01-13 22:07:08.543511', NULL),
+(59, 59, 20, '2026-01-13 22:07:08.545163', NULL),
+(60, 60, 20, '2026-01-13 22:07:08.545596', NULL),
+(61, 61, 20, '2026-01-13 22:07:08.546052', NULL),
+(62, 62, 20, '2026-01-13 22:07:08.547222', NULL),
+(63, 63, 20, '2026-01-13 22:07:08.547692', NULL),
+(64, 64, 20, '2026-01-13 22:07:08.549431', NULL),
+(65, 65, 20, '2026-01-13 22:07:08.549927', NULL),
+(66, 66, 20, '2026-01-13 22:07:08.550596', NULL),
+(67, 67, 20, '2026-01-13 22:07:08.550978', NULL),
+(68, 68, 20, '2026-01-13 22:07:08.551456', NULL),
+(69, 69, 20, '2026-01-13 22:07:08.551822', NULL),
+(70, 70, 20, '2026-01-13 22:07:08.552165', NULL),
+(71, 71, 20, '2026-01-13 22:07:08.552529', NULL),
+(72, 72, 20, '2026-01-13 22:07:08.552869', NULL),
+(73, 73, 20, '2026-01-13 22:07:08.553294', NULL),
+(74, 74, 20, '2026-01-13 22:07:08.554052', NULL),
+(75, 75, 20, '2026-01-13 22:07:08.554392', NULL),
+(76, 76, 20, '2026-01-13 22:07:08.554730', NULL),
+(77, 77, 20, '2026-01-13 22:07:08.555106', NULL),
+(78, 78, 20, '2026-01-13 22:07:08.555436', NULL),
+(79, 79, 20, '2026-01-13 22:07:08.555757', NULL),
+(80, 80, 20, '2026-01-13 22:07:08.556092', NULL),
+(81, 81, 20, '2026-01-13 22:07:08.556443', NULL),
+(82, 82, 20, '2026-01-13 22:07:08.556784', NULL),
+(83, 83, 20, '2026-01-13 22:07:08.557179', NULL),
+(84, 84, 20, '2026-01-13 22:07:08.557607', NULL),
+(85, 85, 20, '2026-01-13 22:07:08.557990', NULL),
+(86, 86, 20, '2026-01-13 22:07:08.559043', NULL),
+(87, 87, 20, '2026-01-13 22:07:08.559678', NULL),
+(88, 88, 20, '2026-01-13 22:07:08.560101', NULL),
+(89, 89, 20, '2026-01-13 22:07:08.560449', NULL),
+(90, 90, 20, '2026-01-13 22:07:08.560834', NULL),
+(91, 91, 20, '2026-01-13 22:07:08.563471', NULL),
+(92, 92, 20, '2026-01-13 22:07:08.563906', NULL),
+(93, 93, 20, '2026-01-13 22:07:08.564324', NULL),
+(94, 94, 20, '2026-01-13 22:07:08.564732', NULL),
+(95, 95, 20, '2026-01-13 22:07:08.565105', NULL),
+(96, 96, 20, '2026-01-13 22:07:08.565452', NULL),
+(97, 97, 20, '2026-01-13 22:07:08.565780', NULL),
+(98, 98, 20, '2026-01-13 22:07:08.566265', NULL),
+(99, 99, 20, '2026-01-13 22:07:08.566712', NULL),
+(100, 100, 20, '2026-01-13 22:07:08.567111', NULL),
+(101, 101, 20, '2026-01-13 22:07:08.567499', NULL),
+(102, 102, 20, '2026-01-13 22:07:08.567843', NULL),
+(103, 103, 20, '2026-01-13 22:07:08.568211', NULL),
+(104, 104, 20, '2026-01-13 22:07:08.568558', NULL),
+(105, 105, 20, '2026-01-13 22:07:08.568889', NULL),
+(106, 106, 20, '2026-01-13 22:07:08.569286', NULL),
+(107, 107, 20, '2026-01-13 22:07:08.569626', NULL),
+(108, 108, 20, '2026-01-13 22:07:08.569940', NULL),
+(109, 109, 20, '2026-01-13 22:07:08.570306', NULL),
+(110, 110, 20, '2026-01-13 22:07:08.570657', NULL),
+(111, 111, 20, '2026-01-13 22:07:08.570989', NULL),
+(112, 112, 5, '2026-01-25 01:42:09.536330', 3),
+(113, 113, 20, '2026-01-13 22:07:08.571683', NULL),
+(114, 114, 20, '2026-01-13 22:07:08.572000', NULL),
+(115, 115, 20, '2026-01-13 22:07:08.572382', NULL),
+(116, 116, 20, '2026-01-13 22:07:08.572752', NULL),
+(117, 117, 20, '2026-01-13 22:07:08.573082', NULL),
+(118, 118, 20, '2026-01-13 22:07:08.573394', NULL),
+(119, 119, 20, '2026-01-13 22:07:08.574168', NULL),
+(120, 120, 20, '2026-01-13 22:07:08.574533', NULL),
+(121, 121, 20, '2026-01-13 22:07:08.576212', NULL),
+(122, 122, 20, '2026-01-13 22:07:08.576667', NULL),
+(123, 123, 20, '2026-01-13 22:07:08.576995', NULL),
+(124, 124, 20, '2026-01-13 22:07:08.577340', NULL),
+(125, 125, 20, '2026-01-13 22:07:08.578108', NULL),
+(126, 126, 20, '2026-01-13 22:07:08.578635', NULL),
+(127, 127, 20, '2026-01-13 22:07:08.579180', NULL),
+(128, 128, 20, '2026-01-13 22:07:08.579855', NULL),
+(129, 129, 20, '2026-01-13 22:07:08.581091', NULL),
+(130, 130, 20, '2026-01-13 22:07:08.581823', NULL),
+(131, 131, 20, '2026-01-13 22:07:08.582201', NULL),
+(132, 132, 20, '2026-01-13 22:07:08.582525', NULL),
+(133, 133, 20, '2026-01-13 22:07:08.582870', NULL),
+(134, 134, 20, '2026-01-13 22:07:08.583203', NULL),
+(135, 135, 20, '2026-01-13 22:07:08.583662', NULL),
+(136, 136, 20, '2026-01-13 22:07:08.585177', NULL),
+(137, 137, 20, '2026-01-13 22:07:08.585574', NULL),
+(138, 138, 20, '2026-01-13 22:07:08.585880', NULL),
+(139, 139, 20, '2026-01-13 22:07:08.586290', NULL),
+(140, 140, 20, '2026-01-13 22:07:08.586594', NULL),
+(141, 141, 20, '2026-01-13 22:07:08.586907', NULL),
+(142, 142, 20, '2026-01-13 22:07:08.587264', NULL),
+(143, 143, 20, '2026-01-13 22:07:08.587688', NULL),
+(144, 144, 20, '2026-01-13 22:07:08.588264', NULL),
+(145, 145, 20, '2026-01-13 22:07:08.588643', NULL),
+(146, 146, 20, '2026-01-13 22:07:08.588949', NULL),
+(147, 147, 20, '2026-01-13 22:07:08.589256', NULL),
+(148, 148, 20, '2026-01-13 22:07:08.590242', NULL),
+(149, 149, 19, '2026-01-14 15:13:15.115093', 4),
+(150, 150, 20, '2026-01-13 22:07:08.590847', NULL),
+(151, 1, 56, '2026-02-03 00:05:01.726398', 4),
+(152, 151, 10, '2026-01-22 23:07:32.500754', NULL),
+(153, 152, 10, '2026-01-22 23:16:12.283910', NULL),
+(154, 153, 10, '2026-01-22 23:34:52.363132', NULL),
+(155, 154, 101, '2026-01-24 19:07:10.335347', 3),
+(156, 155, 150, '2026-01-25 23:04:58.688905', NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `inventory_transactions`
+--
+
+CREATE TABLE `inventory_transactions` (
+  `transaction_id` bigint NOT NULL,
+  `product_id` bigint DEFAULT NULL,
+  `warehouse_id` bigint DEFAULT NULL,
+  `shelf_id` bigint DEFAULT NULL,
+  `transaction_type` enum('IN','OUT','SALE','RETURN','ADJUST') NOT NULL,
+  `quantity` int NOT NULL,
+  `unit_price` decimal(12,2) DEFAULT NULL,
+  `reference_type` varchar(50) DEFAULT NULL,
+  `reference_id` bigint DEFAULT NULL,
+  `note` text,
+  `created_by` bigint DEFAULT NULL,
+  `created_at` datetime DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `inventory_transactions`
+--
+
+INSERT INTO `inventory_transactions` (`transaction_id`, `product_id`, `warehouse_id`, `shelf_id`, `transaction_type`, `quantity`, `unit_price`, `reference_type`, `reference_id`, `note`, `created_by`, `created_at`) VALUES
+(6, 1, NULL, NULL, 'SALE', 1, 10000.00, 'ORDER', 14, NULL, 4, '2026-01-13 22:08:30'),
+(7, 4, NULL, NULL, 'SALE', 1, 15000.00, 'ORDER', 14, NULL, 4, '2026-01-13 22:08:30'),
+(8, 8, NULL, NULL, 'SALE', 1, 20000.00, 'ORDER', 14, NULL, 4, '2026-01-13 22:08:30'),
+(9, 8, NULL, NULL, 'SALE', 1, 20000.00, 'ORDER', 18, NULL, 4, '2026-01-14 00:53:17'),
+(10, 1, NULL, NULL, 'SALE', 1, 10000.00, 'ORDER', 18, NULL, 4, '2026-01-14 00:53:17'),
+(11, 10, NULL, NULL, 'SALE', 1, 15000.00, 'ORDER', 18, NULL, 4, '2026-01-14 00:53:17'),
+(12, 10, NULL, NULL, 'SALE', 1, 15000.00, 'ORDER', 19, NULL, 4, '2026-01-14 00:54:29'),
+(13, 8, NULL, NULL, 'SALE', 1, 20000.00, 'ORDER', 19, NULL, 4, '2026-01-14 00:54:29'),
+(14, 4, NULL, NULL, 'SALE', 1, 15000.00, 'ORDER', 19, NULL, 4, '2026-01-14 00:54:29'),
+(15, 1, NULL, NULL, 'SALE', 1, 10000.00, 'ORDER', 20, NULL, 4, '2026-01-14 00:55:10'),
+(16, 8, NULL, NULL, 'SALE', 1, 20000.00, 'ORDER', 20, NULL, 4, '2026-01-14 00:55:10'),
+(17, 8, NULL, NULL, 'SALE', 1, 20000.00, 'ORDER', 21, NULL, 4, '2026-01-14 00:58:57'),
+(18, 1, NULL, NULL, 'SALE', 1, 10000.00, 'ORDER', 21, NULL, 4, '2026-01-14 00:58:57'),
+(19, 10, NULL, NULL, 'SALE', 1, 15000.00, 'ORDER', 21, NULL, 4, '2026-01-14 00:58:57'),
+(20, 8, NULL, NULL, 'SALE', 1, 20000.00, 'ORDER', 22, NULL, 4, '2026-01-14 00:59:08'),
+(21, 1, NULL, NULL, 'SALE', 1, 10000.00, 'ORDER', 22, NULL, 4, '2026-01-14 00:59:08'),
+(22, 10, NULL, NULL, 'SALE', 1, 15000.00, 'ORDER', 22, NULL, 4, '2026-01-14 00:59:08'),
+(23, 10, NULL, NULL, 'SALE', 1, 15000.00, 'ORDER', 23, NULL, 4, '2026-01-14 01:06:38'),
+(24, 8, NULL, NULL, 'SALE', 1, 20000.00, 'ORDER', 23, NULL, 4, '2026-01-14 01:06:38'),
+(25, 1, NULL, NULL, 'SALE', 1, 10000.00, 'ORDER', 23, NULL, 4, '2026-01-14 01:06:38'),
+(26, 8, NULL, NULL, 'SALE', 2, 20000.00, 'ORDER', 24, NULL, 4, '2026-01-14 01:12:22'),
+(27, 10, NULL, NULL, 'SALE', 1, 15000.00, 'ORDER', 24, NULL, 4, '2026-01-14 01:12:22'),
+(28, 4, NULL, NULL, 'SALE', 1, 15000.00, 'ORDER', 25, NULL, 4, '2026-01-14 01:23:16'),
+(29, 1, NULL, NULL, 'SALE', 1, 10000.00, 'ORDER', 25, NULL, 4, '2026-01-14 01:23:16'),
+(30, 8, NULL, NULL, 'SALE', 1, 20000.00, 'ORDER', 25, NULL, 4, '2026-01-14 01:23:16'),
+(31, 4, NULL, NULL, 'SALE', 1, 15000.00, 'ORDER', 26, NULL, 4, '2026-01-14 01:27:00'),
+(32, 9, NULL, NULL, 'SALE', 1, 18000.00, 'ORDER', 26, NULL, 4, '2026-01-14 01:27:00'),
+(33, 8, NULL, NULL, 'SALE', 1, 20000.00, 'ORDER', 26, NULL, 4, '2026-01-14 01:27:00'),
+(34, 1, NULL, NULL, 'SALE', 1, 10000.00, 'ORDER', 27, NULL, 4, '2026-01-14 01:30:06'),
+(35, 8, NULL, NULL, 'SALE', 1, 20000.00, 'ORDER', 27, NULL, 4, '2026-01-14 01:30:06'),
+(36, 10, NULL, NULL, 'SALE', 1, 15000.00, 'ORDER', 27, NULL, 4, '2026-01-14 01:30:06'),
+(37, 1, NULL, NULL, 'SALE', 1, 10000.00, 'ORDER', 28, NULL, 4, '2026-01-14 01:43:12'),
+(38, 8, NULL, NULL, 'SALE', 1, 20000.00, 'ORDER', 28, NULL, 4, '2026-01-14 01:43:12'),
+(39, 4, NULL, NULL, 'SALE', 1, 15000.00, 'ORDER', 28, NULL, 4, '2026-01-14 01:43:12'),
+(40, 149, NULL, NULL, 'SALE', 1, 70000.00, 'ORDER', 30, NULL, 4, '2026-01-14 15:13:15'),
+(41, 8, NULL, NULL, 'SALE', 1, 18000.00, 'ORDER', 31, NULL, 4, '2026-01-14 15:22:50'),
+(42, 10, NULL, NULL, 'SALE', 1, 13000.00, 'ORDER', 31, NULL, 4, '2026-01-14 15:22:50'),
+(43, 9, NULL, NULL, 'SALE', 4, 16000.00, 'ORDER', 32, NULL, 4, '2026-01-15 23:21:47'),
+(44, 1, NULL, NULL, 'SALE', 1, 9990.00, 'ORDER', 32, NULL, 4, '2026-01-15 23:21:47'),
+(45, 8, NULL, NULL, 'SALE', 1, 18000.00, 'ORDER', 32, NULL, 4, '2026-01-15 23:21:47'),
+(46, 4, NULL, NULL, 'SALE', 7, 14985.00, 'ORDER', 32, NULL, 4, '2026-01-15 23:21:47'),
+(47, 3, NULL, NULL, 'SALE', 1, 4995.00, 'ORDER', 32, NULL, 4, '2026-01-15 23:21:47'),
+(48, 56, NULL, NULL, 'SALE', 5, 319680.00, 'ORDER', 33, NULL, 4, '2026-01-15 23:30:27'),
+(49, 56, NULL, NULL, 'SALE', 14, 319680.00, 'ORDER', 34, NULL, 4, '2026-01-15 23:32:14'),
+(50, 112, NULL, NULL, 'SALE', 14, 400000.00, 'ORDER', 35, NULL, 4, '2026-01-15 23:39:22'),
+(51, 8, NULL, NULL, 'SALE', 1, 18000.00, 'ORDER', 36, NULL, 4, '2026-01-21 16:39:45'),
+(52, 10, NULL, NULL, 'SALE', 2, 13000.00, 'ORDER', 36, NULL, 4, '2026-01-21 16:39:45'),
+(53, 3, NULL, NULL, 'SALE', 2, 4995.00, 'ORDER', 37, NULL, 4, '2026-01-21 16:52:53'),
+(54, 5, NULL, NULL, 'SALE', 2, 9990.00, 'ORDER', 37, NULL, 4, '2026-01-21 16:52:53'),
+(55, 1, NULL, NULL, 'ADJUST', 100, NULL, 'OTHER', NULL, '?i?u ch?nh kho: T?ng 100 (C?: 0 ? M?i: 100)', 1, '2026-01-22 21:47:03'),
+(56, 151, NULL, NULL, 'IN', 10, NULL, NULL, NULL, 'Nh?p h?ng - Gi? v?n: 25000', NULL, '2026-01-22 23:07:32'),
+(57, 152, NULL, NULL, 'IN', 10, NULL, NULL, NULL, 'Nh?p h?ng - Gi? v?n: 80000', NULL, '2026-01-22 23:16:12'),
+(58, 153, NULL, NULL, 'IN', 10, NULL, NULL, NULL, 'Nh?p h?ng - Gi? v?n: 1500', NULL, '2026-01-22 23:34:52'),
+(59, 154, NULL, NULL, 'IN', 1, NULL, NULL, NULL, 'Nh?p h?ng - Gi? v?n: 50000', NULL, '2026-01-23 02:47:31'),
+(60, 2, NULL, NULL, 'IN', 100, NULL, NULL, NULL, ' nh?p ng?y 23/01/2026\n', NULL, '2026-01-23 14:47:28'),
+(61, 154, NULL, NULL, 'IN', 100, NULL, 'RECEIPT', NULL, NULL, 3, '2026-01-24 19:07:10'),
+(62, 1, NULL, NULL, 'SALE', 1, 10000.00, 'ORDER', 38, NULL, 3, '2026-01-25 01:40:20'),
+(63, 8, NULL, NULL, 'SALE', 1, 20000.00, 'ORDER', 38, NULL, 3, '2026-01-25 01:40:20'),
+(64, 4, NULL, NULL, 'SALE', 2, 15000.00, 'ORDER', 38, NULL, 3, '2026-01-25 01:40:20'),
+(65, 10, NULL, NULL, 'SALE', 1, 15000.00, 'ORDER', 38, NULL, 3, '2026-01-25 01:40:20'),
+(66, 7, NULL, NULL, 'SALE', 7, 35000.00, 'ORDER', 39, NULL, 3, '2026-01-25 01:42:10'),
+(67, 112, NULL, NULL, 'SALE', 1, 400000.00, 'ORDER', 39, NULL, 3, '2026-01-25 01:42:10'),
+(68, 33, NULL, NULL, 'SALE', 1, 150000.00, 'ORDER', 39, NULL, 3, '2026-01-25 01:42:10'),
+(69, 3, NULL, NULL, 'SALE', 3, 4000.00, 'ORDER', 40, NULL, 3, '2026-01-25 21:17:22'),
+(70, 3, NULL, NULL, 'SALE', 1, 4000.00, 'ORDER', 40, NULL, 3, '2026-01-25 21:17:22'),
+(71, 5, NULL, NULL, 'SALE', 3, 8000.00, 'ORDER', 40, NULL, 3, '2026-01-25 21:17:22'),
+(72, 5, NULL, NULL, 'SALE', 1, 8000.00, 'ORDER', 40, NULL, 3, '2026-01-25 21:17:22'),
+(73, 3, NULL, NULL, 'SALE', 3, 4000.00, 'ORDER', 41, NULL, 3, '2026-01-25 21:34:39'),
+(74, 3, NULL, NULL, 'SALE', 1, 4000.00, 'ORDER', 41, NULL, 3, '2026-01-25 21:34:39'),
+(75, 1, NULL, NULL, 'SALE', 2, 8000.00, 'ORDER', 41, NULL, 3, '2026-01-25 21:34:39'),
+(76, 3, NULL, NULL, 'SALE', 3, 0.00, 'ORDER', 42, NULL, 3, '2026-01-25 21:40:33'),
+(77, 3, NULL, NULL, 'SALE', 1, 0.00, 'ORDER', 42, NULL, 3, '2026-01-25 21:40:33'),
+(78, 23, NULL, NULL, 'SALE', 3, 35000.00, 'ORDER', 42, NULL, 3, '2026-01-25 21:40:33'),
+(79, 23, NULL, NULL, 'SALE', 1, 35000.00, 'ORDER', 42, NULL, 3, '2026-01-25 21:40:33'),
+(80, 20, NULL, NULL, 'SALE', 1, 35000.00, 'ORDER', 42, NULL, 3, '2026-01-25 21:40:33'),
+(81, 155, NULL, NULL, 'IN', 150, NULL, NULL, NULL, 'Nh?p h?ng - Gi? v?n: 390000', NULL, '2026-01-25 23:04:59'),
+(82, 5, NULL, NULL, 'SALE', 3, 0.00, 'ORDER', 43, NULL, 3, '2026-01-25 23:08:13'),
+(83, 5, NULL, NULL, 'SALE', 1, 0.00, 'ORDER', 43, NULL, 3, '2026-01-25 23:08:13'),
+(84, 3, NULL, NULL, 'SALE', 3, 0.00, 'ORDER', 43, NULL, 3, '2026-01-25 23:08:13'),
+(85, 3, NULL, NULL, 'SALE', 1, 0.00, 'ORDER', 43, NULL, 3, '2026-01-25 23:08:13'),
+(86, 3, NULL, NULL, 'IN', 100, NULL, NULL, NULL, '', NULL, '2026-01-25 23:09:47'),
+(87, 3, NULL, NULL, 'SALE', 3, 0.00, 'ORDER', 45, NULL, 3, '2026-01-25 23:09:54'),
+(88, 3, NULL, NULL, 'SALE', 1, 0.00, 'ORDER', 45, NULL, 3, '2026-01-25 23:09:54'),
+(89, 5, NULL, NULL, 'SALE', 3, 0.00, 'ORDER', 45, NULL, 3, '2026-01-25 23:09:54'),
+(90, 5, NULL, NULL, 'SALE', 1, 0.00, 'ORDER', 45, NULL, 3, '2026-01-25 23:09:54'),
+(91, 5, NULL, NULL, 'SALE', 3, 0.00, 'ORDER', 46, NULL, 3, '2026-01-25 23:10:15'),
+(92, 5, NULL, NULL, 'SALE', 1, 0.00, 'ORDER', 46, NULL, 3, '2026-01-25 23:10:15'),
+(93, 3, NULL, NULL, 'SALE', 3, 0.00, 'ORDER', 46, NULL, 3, '2026-01-25 23:10:16'),
+(94, 3, NULL, NULL, 'SALE', 1, 0.00, 'ORDER', 46, NULL, 3, '2026-01-25 23:10:16'),
+(95, 4, NULL, NULL, 'SALE', 1, 12000.00, 'ORDER', 46, NULL, 3, '2026-01-25 23:10:16'),
+(96, 1, NULL, NULL, 'SALE', 1, 8000.00, 'ORDER', 46, NULL, 3, '2026-01-25 23:10:16'),
+(97, 1, NULL, NULL, 'SALE', 1, 8000.00, 'ORDER', 47, NULL, 3, '2026-01-27 15:57:48'),
+(98, 8, NULL, NULL, 'SALE', 1, 20000.00, 'ORDER', 47, NULL, 3, '2026-01-27 15:57:48'),
+(99, 10, NULL, NULL, 'SALE', 1, 15000.00, 'ORDER', 47, NULL, 3, '2026-01-27 15:57:48'),
+(100, 3, NULL, NULL, 'SALE', 4, 0.00, 'ORDER', 47, NULL, 3, '2026-01-27 15:57:48'),
+(101, 1, NULL, NULL, 'SALE', 3, 8000.00, 'ORDER', 53, NULL, 3, '2026-01-27 15:57:56'),
+(102, 1, NULL, NULL, 'SALE', 4, 8000.00, 'ORDER', 54, NULL, 3, '2026-01-27 16:34:25'),
+(103, 3, NULL, NULL, 'SALE', 4, 0.00, 'ORDER', 54, NULL, 3, '2026-01-27 16:34:25'),
+(104, 1, NULL, NULL, 'SALE', 4, 8000.00, 'ORDER', 56, NULL, 3, '2026-01-27 16:49:39'),
+(105, 3, NULL, NULL, 'SALE', 4, 0.00, 'ORDER', 56, NULL, 3, '2026-01-27 16:49:39'),
+(106, 1, NULL, NULL, 'SALE', 3, 8000.00, 'ORDER', 57, NULL, 3, '2026-01-27 16:50:04'),
+(107, 10, NULL, NULL, 'SALE', 3, 15000.00, 'ORDER', 61, NULL, 3, '2026-01-27 16:55:02'),
+(108, 9, NULL, NULL, 'SALE', 5, 18000.00, 'ORDER', 62, NULL, 3, '2026-01-31 22:38:09'),
+(109, 3, NULL, NULL, 'SALE', 6, 0.00, 'ORDER', 63, NULL, 3, '2026-01-31 22:38:27'),
+(110, 3, NULL, NULL, 'SALE', 2, 0.00, 'ORDER', 63, NULL, 3, '2026-01-31 22:38:27'),
+(111, 3, NULL, NULL, 'SALE', 3, 0.00, 'ORDER', 64, NULL, 3, '2026-01-31 22:38:46'),
+(112, 3, NULL, NULL, 'SALE', 1, 0.00, 'ORDER', 64, NULL, 3, '2026-01-31 22:38:46'),
+(113, 3, NULL, NULL, 'SALE', 1, 0.00, 'ORDER', 65, NULL, 3, '2026-01-31 22:59:57'),
+(114, 3, NULL, NULL, 'SALE', 1, 0.00, 'ORDER', 66, NULL, 3, '2026-01-31 23:00:31'),
+(115, 3, NULL, NULL, 'SALE', 1, 0.00, 'ORDER', 67, NULL, 3, '2026-01-31 23:11:05'),
+(116, 3, NULL, NULL, 'IN', 24, 3500.00, 'RECEIPT', NULL, '', NULL, '2026-01-31 23:34:15'),
+(117, 3, NULL, NULL, 'IN', 1, 3500.00, 'RECEIPT', NULL, '', NULL, '2026-01-31 23:38:38'),
+(118, 3, NULL, NULL, 'IN', 1, 3500.00, 'RECEIPT', NULL, '', NULL, '2026-01-31 23:39:02'),
+(119, 1, NULL, NULL, 'IN', 1, 7500.00, 'RECEIPT', NULL, '', NULL, '2026-02-01 15:33:24'),
+(120, 1, NULL, NULL, 'SALE', 1, 10000.00, 'ORDER', 68, NULL, 3, '2026-02-01 15:34:11'),
+(121, 1, NULL, NULL, 'IN', 1, 7500.00, 'RECEIPT', NULL, '', NULL, '2026-02-01 15:34:32'),
+(122, 1, NULL, NULL, 'SALE', 2, 10000.00, 'ORDER', 69, NULL, 3, '2026-02-01 15:34:58'),
+(123, 3, NULL, NULL, 'SALE', 2, 0.00, 'ORDER', 70, NULL, 3, '2026-02-01 15:35:34'),
+(124, 1, NULL, NULL, 'IN', 1, 7500.00, 'RECEIPT', NULL, '', NULL, '2026-02-01 15:42:42'),
+(125, 1, NULL, NULL, 'IN', 1, 7500.00, 'RECEIPT', NULL, '', NULL, '2026-02-01 15:43:26'),
+(126, 1, NULL, NULL, 'IN', 1, 7500.00, 'RECEIPT', NULL, '', NULL, '2026-02-01 17:06:39'),
+(127, 1, NULL, NULL, 'IN', 1, 7500.00, 'RECEIPT', NULL, '', NULL, '2026-02-01 17:07:00'),
+(128, 4, NULL, NULL, 'SALE', 2, 15000.00, 'ORDER', 71, NULL, 3, '2026-02-01 17:07:56'),
+(129, 1, NULL, NULL, 'SALE', 2, 10000.00, 'ORDER', 71, NULL, 3, '2026-02-01 17:07:56'),
+(130, 8, NULL, NULL, 'SALE', 1, 20000.00, 'ORDER', 71, NULL, 3, '2026-02-01 17:07:56'),
+(131, 10, NULL, NULL, 'SALE', 1, 15000.00, 'ORDER', 71, NULL, 3, '2026-02-01 17:07:56'),
+(132, 3, NULL, NULL, 'SALE', 12, 0.00, 'ORDER', 72, NULL, 3, '2026-02-01 17:08:21'),
+(133, 3, NULL, NULL, 'SALE', 4, 0.00, 'ORDER', 72, NULL, 3, '2026-02-01 17:08:21'),
+(134, 3, NULL, NULL, 'SALE', 1, 0.00, 'ORDER', 73, NULL, 3, '2026-02-01 21:39:13'),
+(135, 3, NULL, NULL, 'SALE', 1, 0.00, 'ORDER', 74, NULL, 3, '2026-02-01 21:39:26'),
+(136, 3, NULL, NULL, 'SALE', 2, 0.00, 'ORDER', 75, NULL, 3, '2026-02-01 21:49:35'),
+(137, 3, NULL, NULL, 'SALE', 2, 0.00, 'ORDER', 76, NULL, 3, '2026-02-01 21:54:48'),
+(138, 3, NULL, NULL, 'SALE', 1, 0.00, 'ORDER', 77, NULL, 3, '2026-02-01 22:10:52'),
+(139, 1, NULL, NULL, 'SALE', 10, 10000.00, 'ORDER', 78, NULL, 3, '2026-02-01 22:11:55'),
+(140, 1, NULL, NULL, 'SALE', 1, 10000.00, 'ORDER', 79, NULL, 3, '2026-02-01 22:14:08'),
+(141, 1, NULL, NULL, 'IN', 1, 7500.00, 'RECEIPT', NULL, '', NULL, '2026-02-01 22:14:25'),
+(142, 1, NULL, NULL, 'IN', 1, 7500.00, 'RECEIPT', NULL, '', NULL, '2026-02-01 22:29:15'),
+(143, 3, NULL, NULL, 'SALE', 1, 0.00, 'ORDER', 80, NULL, 3, '2026-02-01 23:33:39'),
+(144, 4, NULL, NULL, 'IN', 10, 11000.00, 'RECEIPT', NULL, '', NULL, '2026-02-02 14:43:14');
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `notifications`
+--
+
+CREATE TABLE `notifications` (
+  `id` bigint NOT NULL,
+  `created_at` datetime(6) NOT NULL,
+  `is_read` bit(1) NOT NULL,
+  `message` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `product_id` bigint NOT NULL,
+  `product_name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `quantity` int DEFAULT NULL,
+  `read_at` datetime(6) DEFAULT NULL,
+  `source` enum('SHELF','WAREHOUSE') COLLATE utf8mb4_unicode_ci NOT NULL,
+  `title` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `type` enum('CRITICAL','WARNING') COLLATE utf8mb4_unicode_ci NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `notifications`
+--
+
+INSERT INTO `notifications` (`id`, `created_at`, `is_read`, `message`, `product_id`, `product_name`, `quantity`, `read_at`, `source`, `title`, `type`) VALUES
+(1, '2026-02-03 14:44:00.122892', b'1', 'Sản phẩm \'Unknown Product\' trên kệ chỉ còn 2 sản phẩm. CẦN BỔ SUNG NGAY!', 1, 'Unknown Product', 2, '2026-02-03 07:59:35.090951', 'SHELF', '🚨 KỆ HÀNG CẤP BÁC - SẮP HẾT HÀNG!', 'CRITICAL'),
+(2, '2026-02-03 14:59:53.511751', b'1', 'Sản phẩm \'Coca-Cola lon 330ml\' trên kệ chỉ còn 2 sản phẩm. CẦN BỔ SUNG NGAY!', 1, 'Coca-Cola lon 330ml', 2, '2026-02-03 08:00:03.203286', 'SHELF', '🚨 KỆ HÀNG CẤP BÁC - SẮP HẾT HÀNG!', 'CRITICAL'),
+(3, '2026-02-03 15:01:50.281636', b'0', 'Sản phẩm \'Coca-Cola lon 330ml\' trên kệ chỉ còn 2 sản phẩm. CẦN BỔ SUNG NGAY!', 1, 'Coca-Cola lon 330ml', 2, NULL, 'SHELF', '🚨 KỆ HÀNG CẤP BÁC - SẮP HẾT HÀNG!', 'CRITICAL'),
+(4, '2026-02-03 15:51:18.890750', b'0', 'Sản phẩm ID 2 trên kệ chỉ còn 9 sản phẩm. Nên bổ sung sớm.', 2, NULL, NULL, NULL, 'SHELF', 'Kệ hàng sắp hết - Cảnh báo', 'WARNING');
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `shelves`
+--
+
+CREATE TABLE `shelves` (
+  `id` bigint NOT NULL,
+  `product_id` bigint NOT NULL COMMENT 'ID sáº£n pháº©m trÃªn ká»‡',
+  `quantity` int NOT NULL DEFAULT '0' COMMENT 'Sá»‘ lÆ°á»£ng sáº£n pháº©m trÃªn ká»‡',
+  `created_at` datetime DEFAULT NULL COMMENT 'Thá»i gian táº¡o',
+  `updated_at` datetime DEFAULT NULL COMMENT 'Thá»i gian cáº­p nháº­t',
+  `updated_by` bigint DEFAULT NULL COMMENT 'ID ngÆ°á»i cáº­p nháº­t'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Ká»‡ hÃ ng - OWNER Ä‘Æ°a tá»« kho lÃªn, nhÃ¢n viÃªn bÃ¡n tá»« ká»‡';
+
+--
+-- Đang đổ dữ liệu cho bảng `shelves`
+--
+
+INSERT INTO `shelves` (`id`, `product_id`, `quantity`, `created_at`, `updated_at`, `updated_by`) VALUES
+(3, 2, 6, '2026-02-03 18:19:47', '2026-02-03 18:27:13', 3);
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `warehouses`
+--
+
+CREATE TABLE `warehouses` (
+  `warehouse_id` bigint NOT NULL,
+  `warehouse_name` varchar(255) NOT NULL,
+  `address` varchar(255) DEFAULT NULL,
+  `manager_id` bigint DEFAULT NULL,
+  `status` enum('active','inactive') DEFAULT 'active',
+  `created_at` datetime DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Chỉ mục cho các bảng đã đổ
+--
+
+--
+-- Chỉ mục cho bảng `inventory_stocks`
+--
+ALTER TABLE `inventory_stocks`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `UK_hii2068ogj2cdjykg0h9adjo0` (`product_id`);
+
+--
+-- Chỉ mục cho bảng `inventory_transactions`
+--
+ALTER TABLE `inventory_transactions`
+  ADD PRIMARY KEY (`transaction_id`),
+  ADD KEY `fk_it_product` (`product_id`),
+  ADD KEY `fk_it_warehouse` (`warehouse_id`),
+  ADD KEY `fk_it_shelf` (`shelf_id`),
+  ADD KEY `fk_it_created_by` (`created_by`);
+
+--
+-- Chỉ mục cho bảng `notifications`
+--
+ALTER TABLE `notifications`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Chỉ mục cho bảng `shelves`
+--
+ALTER TABLE `shelves`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `uk_shelf_product` (`product_id`),
+  ADD KEY `idx_shelf_quantity` (`quantity`),
+  ADD KEY `idx_shelf_updated` (`updated_at`);
+
+--
+-- Chỉ mục cho bảng `warehouses`
+--
+ALTER TABLE `warehouses`
+  ADD PRIMARY KEY (`warehouse_id`),
+  ADD KEY `fk_warehouse_manager` (`manager_id`);
+
+--
+-- AUTO_INCREMENT cho các bảng đã đổ
+--
+
+--
+-- AUTO_INCREMENT cho bảng `inventory_stocks`
+--
+ALTER TABLE `inventory_stocks`
+  MODIFY `id` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=157;
+
+--
+-- AUTO_INCREMENT cho bảng `inventory_transactions`
+--
+ALTER TABLE `inventory_transactions`
+  MODIFY `transaction_id` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=145;
+
+--
+-- AUTO_INCREMENT cho bảng `notifications`
+--
+ALTER TABLE `notifications`
+  MODIFY `id` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT cho bảng `shelves`
+--
+ALTER TABLE `shelves`
+  MODIFY `id` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT cho bảng `warehouses`
+--
+ALTER TABLE `warehouses`
+  MODIFY `warehouse_id` bigint NOT NULL AUTO_INCREMENT;
+COMMIT;
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

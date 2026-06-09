@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logistics Dashboard | BizFlow</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-light: rgba(37, 99, 235, 0.1);
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --bg: #f8fafc;
+            --text: #1e293b;
+            --border: #e2e8f0;
+            --card-bg: #ffffff;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background: var(--bg); color: var(--text); display: flex; min-height: 100vh; }
+
+        .sidebar { width: 260px; background: #0f172a; color: #fff; padding: 24px; display: flex; flex-direction: column; flex-shrink: 0; }
+        .brand { display: flex; align-items: center; gap: 12px; margin-bottom: 40px; }
+        .brand-mark { width: 32px; height: 32px; background: var(--primary); border-radius: 8px; display: grid; place-items: center; font-weight: 800; font-size: 14px; }
+        .nav-list { list-style: none; display: flex; flex-direction: column; gap: 4px; }
+        .nav-item a { display: flex; align-items: center; gap: 12px; padding: 12px; color: #94a3b8; text-decoration: none; border-radius: 8px; font-size: 14px; font-weight: 500; transition: 0.2s; }
+        .nav-item.active a { background: rgba(255,255,255,0.1); color: #fff; }
+        .nav-item a:hover { color: #fff; background: rgba(255,255,255,0.05); }
+
+        .main-content { flex: 1; padding: 40px; overflow-y: auto; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; }
+        .page-title h1 { font-size: 24px; font-weight: 800; color: #0f172a; }
+        .page-title p { color: #64748b; font-size: 14px; margin-top: 4px; }
+
+        .tabs { display: flex; gap: 8px; margin-bottom: 24px; border-bottom: 1px solid var(--border); padding-bottom: 2px; }
+        .tab-btn { padding: 10px 20px; border-radius: 8px 8px 0 0; border: none; background: none; cursor: pointer; color: #64748b; font-weight: 600; font-size: 14px; position: relative; transition: 0.2s; }
+        .tab-btn.active { color: var(--primary); background: var(--card-bg); }
+        .tab-btn.active::after { content: ''; position: absolute; bottom: -2px; left: 0; right: 0; height: 2px; background: var(--primary); }
+        
+        .card { background: var(--card-bg); border-radius: 16px; border: 1px solid var(--border); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); overflow: hidden; }
+        .table-wrap { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; text-align: left; }
+        th { background: #f1f5f9; padding: 16px; font-size: 11px; font-weight: 700; text-transform: uppercase; color: #64748b; letter-spacing: 0.5px; }
+        td { padding: 16px; border-bottom: 1px solid var(--border); font-size: 14px; vertical-align: middle; }
+        tr:hover { background: #f8fafc; }
+
+        .pill { padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 800; text-transform: uppercase; display: inline-block; }
+        .status-CONFIRMED { background: rgba(59, 130, 246, 0.15); color: #3b82f6; }
+        .status-PACKING { background: rgba(245, 158, 11, 0.15); color: #f59e0b; }
+        .status-SHIPPING { background: rgba(16, 185, 129, 0.15); color: #10b981; }
+        .status-DELIVERED, .status-RECEIVED { background: rgba(5, 150, 105, 0.15); color: #059669; }
+
+        .ship-input { width: 100%; padding: 8px 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 13px; margin-bottom: 4px; }
+        .ship-input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); }
+
+        .action-btns { display: flex; gap: 8px; }
+        .btn { padding: 8px 16px; border-radius: 8px; border: none; font-size: 12px; font-weight: 700; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 6px; text-decoration: none; }
+        .btn-primary { background: var(--primary); color: #fff; }
+        .btn-success { background: var(--success); color: #fff; }
+        .loading { text-align: center; padding: 40px; color: #64748b; font-style: italic; }
+    </style>
+</head>
+<body>
+    <aside class="sidebar">
+        <div class="brand" onclick="location.href='admin-home.html'" style="cursor:pointer;">
+            <div class="brand-mark text-white">BF</div>
+            <div>
+                <div class="brand-title" style="font-weight: 800; font-size: 18px;">BizFlow</div>
+                <div class="brand-subtitle" style="font-size: 11px; color: #64748b;">Logistics Suite</div>
+            </div>
+        </div>
+        <ul class="nav-list">
+            <li class="nav-item"><a href="admin-orders.html"><i class="fa-solid fa-cart-shopping"></i> Đơn hàng</a></li>
+            <li class="nav-item active"><a href="#"><i class="fa-solid fa-truck-fast"></i> Vận chuyển</a></li>
+            <li class="nav-item"><a href="admin-reports.html"><i class="fa-solid fa-chart-line"></i> Báo cáo</a></li>
+        </ul>
+    </aside>
+
+    <main class="main-content">
+        <header class="header">
+            <div class="page-title">
+                <h1>📦 Logistics Dashboard</h1>
+                <p>Quản lý luồng hàng hóa từ Kho đến tận tay Khách hàng</p>
+            </div>
+            <button class="btn btn-primary" onclick="loadShipments()"><i class="fa-solid fa-rotate"></i> Tải lại</button>
+        </header>
+
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('ALL', this)">Tất cả</button>
+            <button class="tab-btn" onclick="switchTab('TOPACK', this)">📑 Chờ đóng gói</button>
+            <button class="tab-btn" onclick="switchTab('TOSHIP', this)">🚚 Chờ giao hàng</button>
+            <button class="tab-btn" onclick="switchTab('INTRANSIT', this)">📍 Đang vận chuyển</button>
+            <button class="tab-btn" onclick="switchTab('DONE', this)">✅ Đã hoàn tất</button>
+        </div>
+
+        <div class="card">
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Đơn hàng</th>
+                            <th>Thông tin khách</th>
+                            <th>Trạng thái</th>
+                            <th>Chi tiết vận đơn</th>
+                            <th>Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody id="shipmentBody">
+                        <!-- Data -->
+                    </tbody>
+                </table>
+            </div>
+            <div id="loadingMsg" class="loading" style="display: none;">Đang truy xuất dữ liệu kho hàng...</div>
+        </div>
+    </main>
+
+    <script>
+        const API = '/api/admin/orders';
+        let currentTab = 'ALL';
+        let allShipments = [];
+
+        const STATUS_LABELS = {
+            'PENDING': 'Chờ xác nhận',
+            'CONFIRMED': 'Đã xác nhận',
+            'PACKING': 'Đang đóng gói',
+            'PROCESSING': 'Đang đóng gói',
+            'SHIPPING': 'Đang giao hàng',
+            'SHIPPED': 'Đang giao hàng',
+            'DELIVERED': 'Giao hàng thành công',
+            'RECEIVED': 'Giao hàng thành công',
+            'CANCELLED': 'Đã hủy',
+            'RETURNED': 'Đã trả hàng',
+            'PAID': 'Đã thanh toán (Sẵn sàng đóng gói)'
+        };
+
+        function formatCurrency(v) {
+            return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(v || 0);
+        }
+
+        function safeUpper(t) { return String(t || '').toUpperCase(); }
+        function pick(o, ...ks) { for(const k of ks) { if(o && o[k] != null && o[k] !== '') return o[k]; } return null; }
+
+        async function loadShipments() {
+            const body = document.getElementById('shipmentBody');
+            const loader = document.getElementById('loadingMsg');
+            body.innerHTML = '';
+            loader.style.display = 'block';
+
+            try {
+                const res = await fetch(`${API}?size=500`);
+                if(!res.ok) throw new Error('Lỗi kết nối API');
+                const orders = await res.json();
+
+                // Logical Filtering for Logistics (Safe) - Include PAID orders
+                allShipments = orders.filter(o => 
+                    o.status && ['CONFIRMED', 'PAID', 'PACKING', 'PROCESSING', 'SHIPPING', 'SHIPPED', 'DELIVERED', 'RECEIVED'].includes(o.status.toUpperCase())
+                );
+                renderShipments();
+            } catch (err) {
+                body.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:20px; color:red;">${err.message}</td></tr>`;
+            } finally { loader.style.display = 'none'; }
+        }
+
+        function switchTab(tab, btn) {
+            currentTab = tab;
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            renderShipments();
+        }
+
+        function renderShipments() {
+            const body = document.getElementById('shipmentBody');
+            body.innerHTML = '';
+
+            let filtered = allShipments;
+            const tabName = currentTab;
+            if (tabName === 'TOPACK') filtered = allShipments.filter(o => ['CONFIRMED', 'PAID'].includes((o.status || '').toUpperCase()));
+            if (tabName === 'TOSHIP') filtered = allShipments.filter(o => ['PACKING', 'PROCESSING'].includes((o.status || '').toUpperCase()));
+            if (tabName === 'INTRANSIT') filtered = allShipments.filter(o => ['SHIPPING', 'SHIPPED'].includes((o.status || '').toUpperCase()));
+            if (tabName === 'DONE') filtered = allShipments.filter(o => ['DELIVERED', 'RECEIVED'].includes((o.status || '').toUpperCase()));
+
+            if (filtered.length === 0) {
+                body.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:40px; color:#94a3b8;">Trống trơn — Không có công việc nào trong mục này.</td></tr>';
+                return;
+            }
+
+            filtered.forEach(o => {
+                const status = (o.status || '').toUpperCase();
+                const tr = document.createElement('tr');
+                
+                // Get shipping method with fallback picking
+                const methodPicked = pick(o, 'shippingMethod', 'shipping_method', 'carrier', 'method');
+                const shipMethodName = methodPicked || o.shippingMethod;
+
+                // Determine Shipping Details Cell Content
+                let shipDetailsHtml = '';
+                if (status === 'PACKING' || status === 'PROCESSING') {
+                    // If already has method, lock the selection as per user request
+                    const isLocked = !!shipMethodName;
+                    shipDetailsHtml = `
+                        <select id="method-${o.id}" class="ship-input" ${isLocked ? 'disabled' : ''}>
+                            <option value="">-- Chọn ĐV vận chuyển --</option>
+                            <option value="Shopee Express" ${shipMethodName === 'Shopee Express' ? 'selected' : ''}>Shopee Express</option>
+                            <option value="Giao Hàng Tiết Kiệm" ${shipMethodName === 'Giao Hàng Tiết Kiệm' ? 'selected' : ''}>GHTK</option>
+                            <option value="Giao Hàng Nhanh" ${shipMethodName === 'Giao Hàng Nhanh' ? 'selected' : ''}>GHN</option>
+                            <option value="Viettel Post" ${shipMethodName === 'Viettel Post' ? 'selected' : ''}>Viettel Post</option>
+                            <option value="Nhà xe / Chành xe" ${shipMethodName === 'Nhà xe / Chành xe' ? 'selected' : ''}>Nhà xe / Chành xe</option>
+                            <option value="Hỏa Tốc" ${shipMethodName === 'Hỏa Tốc' ? 'selected' : ''}>Hỏa Tốc (Nội bộ)</option>
+                        </select>
+                        <input type="text" id="tracking-${o.id}" class="ship-input" placeholder="Mã vận đơn (nếu có)" value="${o.trackingNumber || ''}" style="margin-top:4px;">
+                        ${isLocked ? '<div style="font-size:10px; color:var(--success);"><i class="fa-solid fa-lock"></i> Đã khóa đơn vị vận chuyển</div>' : ''}
+                    `;
+                } else {
+                    const finalMethod = shipMethodName || 'Nhận tại cửa hàng';
+                    const code = o.trackingNumber || o.invoiceNumber || o.id;
+                    shipDetailsHtml = `
+                        <div style="background: rgba(37, 99, 235, 0.05); padding: 10px; border-radius: 10px; border: 1px solid var(--primary-light);">
+                            <div style="font-weight:700; color:var(--primary); font-size:13px; margin-bottom:6px; display:flex; align-items:center; gap:8px;">
+                                <i class="fa-solid fa-truck-ramp-box"></i>${finalMethod}
+                            </div>
+                            <div style="font-size:11px; color:#64748b; margin-bottom:2px;">Mã vận đơn:</div>
+                            <div style="color:var(--text); font-family:'JetBrains Mono', monospace; font-size:14px; font-weight:700; letter-spacing:0.5px;">${code}</div>
+                        </div>
+                    `;
+                }
+
+                tr.innerHTML = `
+                    <td>
+                        <div style="font-weight:700; color:var(--primary);">${o.invoiceNumber || o.id}</div>
+                        <div style="font-size:11px; color:#64748b;">${new Date(o.createdAt).toLocaleString('vi-VN')}</div>
+                    </td>
+                    <td>
+                        <div style="font-weight:600;">${o.customerName || 'Khách lẻ'}</div>
+                        <div style="font-size:12px; color:#64748b; max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${o.address || '—'}</div>
+                    </td>
+                    <td><span class="pill status-${status}">${STATUS_LABELS[status] || status}</span></td>
+                    <td style="width:280px;">${shipDetailsHtml}</td>
+                    <td>
+                        <div class="action-btns">${renderBtns(o)}</div>
+                    </td>
+                `;
+                body.appendChild(tr);
+            });
+        }
+
+        function renderBtns(o) {
+            const s = o.status.toUpperCase();
+            if (['CONFIRMED', 'PAID'].includes(s)) return `<button class="btn btn-primary" onclick="update(${o.id}, 'PACKING')"><i class="fa-solid fa-box"></i> Đóng hàng</button>`;
+            if (['PACKING', 'PROCESSING'].includes(s)) return `<button class="btn btn-success" onclick="update(${o.id}, 'SHIPPING')"><i class="fa-solid fa-truck"></i> Giao hàng</button>`;
+            if (['SHIPPING', 'SHIPPED'].includes(s)) return `<button class="btn btn-success" style="background:#059669;" onclick="update(${o.id}, 'DELIVERED')"><i class="fa-solid fa-check-double"></i> Hoàn tất</button>`;
+            return '<i class="fa-solid fa-circle-check" style="color:var(--success); font-size:20px;"></i>';
+        }
+
+        async function update(id, next) {
+            let payload = { status: next, note: 'Cập nhật qua Logistics Dashboard' };
+            if (next === 'SHIPPING') {
+                const methodEl = document.getElementById(`method-${id}`);
+                const trackEl = document.getElementById(`tracking-${id}`);
+                const m = methodEl ? methodEl.value : '';
+                const t = trackEl ? trackEl.value.trim() : '';
+                if (!m) return alert('Vui lòng chọn Đơn vị vận chuyển!');
+                
+                const order = allShipments.find(x => x.id == id);
+                payload.shippingMethod = m;
+                payload.trackingNumber = t || (order ? (order.invoiceNumber || order.id) : id);
+            }
+            try {
+                const res = await fetch(`${API}/${id}/status`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                if(!res.ok) throw new Error((await res.json()).message || 'Lỗi cập nhật');
+                loadShipments();
+            } catch (err) { alert(err.message); }
+        }
+
+        document.addEventListener('DOMContentLoaded', loadShipments);
+    </script>
+</body>
+</html>

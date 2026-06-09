@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UBIQUITY HUB- Đăng Nhập</title>
+    <link rel="stylesheet" href="/assets/css/login.css">
+</head>
+
+<body>
+    <div class="login-wrapper">
+        <div class="login-sidebar">
+            <div class="sidebar-overlay">
+                <img src="/assets/img/logo1.png" class="sidebar-logo" alt="UBIQUITY HUB" />
+                <p class="sidebar-tagline">TẠP HÓA MỌI LÚC MỌI NƠI</p>
+            </div>
+            <div class="sidebar-contact">
+                <a href="tel:02499983866" class="sidebar-contact-link">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M15 4h5v5" />
+                        <path d="M10 14 20 4" />
+                        <path
+                            d="M12 20c-4.97 0-9-4.03-9-9 0-1.1.19-2.15.54-3.13.14-.41.48-.72.9-.82l2.82-.7a1 1 0 0 1 1.05.35l2.06 2.62a1 1 0 0 1 .12 1.02l-1.1 2.63a7 7 0 0 0 3.58 3.58l2.63-1.1a1 1 0 0 1 1.02.12l2.62 2.06a1 1 0 0 1 .35 1.05l-.7 2.82a1.04 1.04 0 0 1-.82.9c-.98.35-2.03.54-3.13.54Z" />
+                    </svg>
+                    0866 066 042
+                </a>
+                <a href="mailto:support@bizflow.vn" class="sidebar-contact-link">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <rect x="3" y="5" width="18" height="14" rx="2" ry="2" />
+                        <polyline points="3,7 12,13 21,7" />
+                    </svg>
+                    supportBizflow@gmail.com
+                </a>
+            </div>
+        </div>
+
+        <!--Right Form-->
+        <div class="login-form-panel">
+            <form id="loginForm" class="login-form">
+                <div class="form-brand"><img src="/assets/img/logo1.png" alt="UBIQUITY HUB" class="form-logo-small" />
+                </div>
+
+                <div id="loginError" class="alert-error" style="display:none"></div>
+
+                <div class="form-group">
+                    <label for="username">Tên đăng nhập / Email / Số điện thoại</label>
+                    <input type="text" id="username" name="username" placeholder="Nhập username, email hoặc SĐT"
+                        required />
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Mật khẩu</label>
+                    <div class="password-input-wrapper">
+                        <input type="password" id="password" name="password" placeholder="Nhập mật khẩu" required />
+                        <button type="button" class="toggle-password" id="togglePassword" title="Hiển thị/ẩn mật khẩu"
+                            aria-label="Hiển thị hoặc ẩn mật khẩu">
+                            <svg class="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                                <circle cx="12" cy="12" r="3" />
+                            </svg>
+                            <svg class="eye-slash-icon" style="display:none;" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path
+                                    d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" />
+                                <line x1="1" y1="1" x2="23" y2="23" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-login">ĐĂNG NHẬP</button>
+
+                <div class="form-footer">
+                    <a href="#" class="link-secondary">Quên mật khẩu?</a>
+                    <a href="/pages/register.html" class="link-secondary-right">Chưa có tài khoản? Đăng ký ngay.</a>
+                </div>
+
+                <div class="working-hours">
+                    <p class="hours-title">Thời gian làm việc:</p>
+                    <p class="hours-detail">Thứ 2 - Thứ 6: 8:00 đến 22:00</p>
+                    <p class="hours-detail">Thứ 7, Chủ nhật: Sáng 8:00 - 12:00 • Chiều 12:00 - 22:00</p>
+                </div>
+
+                <div class="support-info">
+                    <div class="support-links">
+                        <a href="tel:02499983866" class="support-link">024 99983866</a>
+                        <a href="mailto:support@bizflow.vn" class="support-link">support@bizflow.vn</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="/assets/js/login.js"></script>
+</body>
+
+</html>

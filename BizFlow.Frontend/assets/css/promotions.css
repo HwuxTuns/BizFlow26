@@ -1,0 +1,272 @@
+/* Container chính của trang */
+.promo-page {
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    background-color: #f8fafc; /* Màu nền nhẹ nhàng hơn */
+    min-height: 100vh;
+    font-family: 'Inter', 'Segoe UI', Roboto, sans-serif;
+}
+
+/* Thanh Header/Hero phía trên */
+.promo-hero {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 20px 28px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    border: 1px solid #e2e8f0;
+}
+
+.promo-hero-text h1 {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0;
+}
+
+.promo-hero-text p {
+    font-size: 0.9rem;
+    color: #64748b;
+    margin: 4px 0 0 0;
+}
+
+/* Hệ thống lưới (Grid) - Cố định 4 đến 5 sản phẩm */
+.promo-grid {
+    display: grid;
+    /* Thu nhỏ card để thấy 10-12 sản phẩm */
+    grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+    gap: 14px;
+    align-items: stretch;
+}
+
+/* Card sản phẩm khuyến mãi */
+.promo-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    min-height: 260px;
+}
+
+.promo-card--row {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.promo-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+    border-color: #3b82f6;
+}
+
+/* Badge KM góc trái */
+.promo-badge-km {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: #ef4444;
+    color: white;
+    font-size: 10px;
+    font-weight: bold;
+    padding: 4px 8px;
+    border-radius: 6px;
+    z-index: 5;
+}
+
+/* KHUNG CHỨA ẢNH - Gọn gàng, cân đều */
+.promo-image {
+    width: 100%;
+    height: 120px; /* Ảnh lớn hơn cho dễ nhìn */
+    background-color: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    padding: 0;
+}
+
+.promo-card--row .promo-image {
+    width: 88px;
+    height: 88px;
+    margin-bottom: 0;
+    flex-shrink: 0;
+}
+
+.promo-info {
+    min-width: 0;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.promo-image img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain; /* Giữ đúng tỉ lệ */
+    object-position: center;
+    display: block;
+}
+
+/* Thông tin văn bản */
+.promo-title {
+    font-weight: 600;
+    font-size: 0.86rem;
+    color: #1e293b;
+    margin-bottom: 2px;
+    line-height: 1.4;
+    height: 2.2rem; /* 2 dòng nhỏ hơn */
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    line-clamp: 2;
+    overflow: hidden;
+}
+
+.promo-sku {
+    font-size: 0.65rem;
+    color: #94a3b8;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+}
+
+/* Hiển thị giá tiền */
+.promo-prices {
+    margin-top: auto;
+    padding-bottom: 6px;
+}
+
+.promo-price-new {
+    font-size: 1rem;
+    color: #dc2626;
+    font-weight: 700;
+}
+
+.promo-price-old {
+    font-size: 0.7rem;
+    color: #94a3b8;
+    text-decoration: line-through;
+    margin-left: 6px;
+}
+
+/* Chi tiết chương trình KM (Phần màu xám dưới cùng) */
+.promo-meta {
+    background: #f8fafc;
+    padding: 8px;
+    border-radius: 8px;
+    font-size: 0.7rem;
+    border: 1px solid #f1f5f9;
+}
+
+.promo-meta div {
+    margin-bottom: 2px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.promo-bundle {
+    margin-top: 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.bundle-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.bundle-label {
+    font-size: 0.6rem;
+    font-weight: 700;
+    color: #0f172a;
+    background: #e2e8f0;
+    padding: 2px 6px;
+    border-radius: 10px;
+}
+
+.bundle-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex: 1;
+    min-width: 0;
+}
+
+.bundle-thumb {
+    width: 30px;
+    height: 30px;
+    border-radius: 6px;
+    border: 1px solid #e5e7eb;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.bundle-thumb img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.bundle-text {
+    font-size: 0.65rem;
+    color: #0f172a;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.promo-discount {
+    color: #059669;
+    font-weight: 600;
+}
+
+.promo-expiry {
+    font-size: 9px;
+    margin-top: 2px;
+}
+
+.promo-badge {
+    color: #059669; /* Màu xanh lá hiện đại hơn */
+    font-weight: 700;
+}
+
+/* Responsive cho Tablet và Mobile */
+@media (max-width: 1024px) {
+    .promo-grid {
+        grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+    }
+}
+
+@media (max-width: 640px) {
+    .promo-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+    .promo-image {
+        height: 96px;
+    }
+    .promo-card--row .promo-image {
+        width: 72px;
+        height: 72px;
+    }
+}

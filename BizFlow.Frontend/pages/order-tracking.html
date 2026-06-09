@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Theo dõi Hành trình Đơn hàng | BizFlow</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Libre+Barcode+39&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --text: #1e293b;
+            --muted: #64748b;
+            --border: #e2e8f0;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; }
+        body { background: var(--bg); color: var(--text); padding-bottom: 50px; }
+
+        .header { background: #fff; padding: 20px; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; gap: 15px; }
+        .logo { font-size: 24px; font-weight: 800; color: var(--primary); text-decoration: none; display: flex; align-items: center; gap: 8px; }
+        
+        .container { max-width: 600px; margin: 20px auto; padding: 0 20px; }
+
+        .search-section { background: var(--card); padding: 25px; border-radius: 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin-bottom: 25px; }
+        .search-title { font-size: 18px; font-weight: 600; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
+        .search-box { display: flex; gap: 10px; }
+        input { flex: 1; border: 2px solid var(--border); border-radius: 12px; padding: 12px 16px; font-size: 16px; transition: border-color 0.2s; outline: none; }
+        input:focus { border-color: var(--primary); }
+        .btn-search { background: var(--primary); color: #fff; border: none; border-radius: 12px; padding: 0 24px; font-weight: 600; cursor: pointer; transition: opacity 0.2s; }
+        .btn-search:active { opacity: 0.8; }
+
+        .order-card { background: var(--card); border-radius: 20px; padding: 20px; margin-bottom: 25px; border: 1px solid var(--border); }
+        .order-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; }
+        .order-id { font-size: 14px; color: var(--muted); margin-bottom: 4px; }
+        .order-invoice { font-size: 20px; font-weight: 800; }
+        .status-badge { padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; text-transform: uppercase; }
+        
+        /* Timeline */
+        .timeline { position: relative; padding-left: 40px; margin-top: 30px; }
+        .timeline::before { content: ''; position: absolute; left: 19px; top: 0; bottom: 0; width: 2px; background: var(--border); }
+        .timeline-item { position: relative; margin-bottom: 35px; }
+        .timeline-dot { position: absolute; left: -31px; top: 0; width: 24px; height: 24px; border-radius: 50%; background: #fff; border: 2px solid var(--border); z-index: 2; transition: all 0.3s; }
+        .timeline-item.active .timeline-dot { background: var(--primary); border-color: var(--primary); box-shadow: 0 0 0 4px rgba(37,99,235,0.2); }
+        .timeline-content { background: #fff; }
+        .timeline-time { font-size: 12px; color: var(--muted); margin-bottom: 4px; font-weight: 600; }
+        .timeline-status { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
+        .timeline-note { font-size: 14px; color: var(--muted); }
+
+        /* Status Colors */
+        .status-PENDING { background: #fff7ed; color: #c2410c; }
+        .status-CONFIRMED { background: #eff6ff; color: #1d4ed8; }
+        .status-PROCESSING { background: #f5f3ff; color: #6d28d9; }
+        .status-SHIPPING { background: #fefce8; color: #a16207; }
+        .status-DELIVERED, .status-RECEIVED { background: #ecfdf5; color: #047857; }
+        .status-CANCELLED { background: #fef2f2; color: #b91c1c; }
+
+        /* Shopee Stepper */
+        .stepper { display: flex; justify-content: space-between; margin-bottom: 30px; position: relative; padding: 0 10px; }
+        .stepper::before { content: ''; position: absolute; top: 15px; left: 40px; right: 40px; height: 2px; background: var(--border); z-index: 1; }
+        .step { position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; gap: 8px; width: 60px; }
+        .step-icon { width: 32px; height: 32px; border-radius: 50%; background: #fff; border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 14px; transition: all 0.3s; }
+        .step-label { font-size: 10px; font-weight: 700; color: var(--muted); text-align: center; white-space: nowrap; }
+        .step.active .step-icon { background: var(--primary); border-color: var(--primary); color: #fff; box-shadow: 0 0 0 4px rgba(37,99,235,0.1); }
+        .step.active .step-label { color: var(--primary); }
+        .step.completed .step-icon { background: var(--success); border-color: var(--success); color: #fff; }
+        .step.completed .step-label { color: var(--success); }
+
+        .shipping-info-box { background: #f8fafc; border-radius: 12px; padding: 15px; margin-top: 15px; border: 1px dashed var(--border); }
+        .shipping-info-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 13px; }
+        .shipping-info-label { color: var(--muted); }
+        .shipping-info-value { font-weight: 700; color: var(--text); }
+
+        .loader { text-align: center; padding: 40px; display: none; }
+        .error-msg { text-align: center; padding: 40px; color: var(--danger); display: none; }
+        .empty-history { text-align: center; padding: 30px; color: var(--muted); }
+
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.2); } 100% { transform: scale(1); } }
+        .timeline-item.latest .timeline-dot { animation: pulse 2s infinite; }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a href="/" class="logo"><span>🛒</span> BizFlow</a>
+        <div style="font-size: 14px; font-weight: 600; color: var(--muted);">Tra cứu Hành trình</div>
+    </header>
+
+    <div class="container">
+        <div class="search-section">
+            <div class="search-title">🔍 Nhập mã đơn hàng để theo dõi</div>
+            <div class="search-box">
+                <input type="text" id="invoiceInput" placeholder="VD: TC-260400044">
+                <button class="btn-search" onclick="doSearch()">Tìm</button>
+            </div>
+        </div>
+
+        <div id="loader" class="loader">
+            <div style="font-size: 30px; margin-bottom: 10px;">⏳</div>
+            <p>Đang tải dữ liệu...</p>
+        </div>
+
+        <div id="errorMsg" class="error-msg"></div>
+
+                <div id="resultContent" style="display: none;">
+            <div style="font-size: 13px; color: var(--muted); margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
+                🕒 Cập nhật lần cuối: <span id="lastUpdatedText" style="font-weight: 600;">—</span>
+            </div>
+            <div class="order-card" id="orderCard">
+                <div class="order-header">
+                    <div>
+                        <div class="order-id" id="orderIdText">ID: -</div>
+                        <div class="order-invoice" id="invoiceText">-</div>
+                    </div>
+                    <span class="status-badge" id="statusBadge">-</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 14px;">
+                    <span>Khách hàng: <strong id="customerText">-</strong></span>
+                    <span>Tổng: <strong id="totalText">0đ</strong></span>
+                </div>
+                
+                <div id="shippingInfoBox" class="shipping-info-box" style="display: none;">
+                    <div class="shipping-info-row">
+                        <span class="shipping-info-label">🚚 Đơn vị vận chuyển</span>
+                        <span class="shipping-info-value" id="shipMethodText">-</span>
+                    </div>
+                    <div class="shipping-info-row">
+                        <span class="shipping-info-label">🆔 Mã vận đơn</span>
+                        <span class="shipping-info-value" id="shipTrackingText" style="color:var(--primary)">-</span>
+                    </div>
+                    <div id="barcodeContainer" style="text-align: center; margin-top: 10px; padding: 10px; background: white; border-radius: 8px; display: none;">
+                        <div id="barcodeValue" style="font-family: 'Libre Barcode 39', cursive; font-size: 40px;">*TRACKING*</div>
+                        <div style="font-size: 10px; color: var(--muted); margin-top: 5px;">Mã vận đơn điện tử</div>
+                    </div>
+                </div>
+
+                <div class="shipping-info-box" style="background: #fffafa; border-color: #ffdada;">
+                    <div style="font-weight: 700; font-size: 14px; margin-bottom: 10px; color: #b91c1c;">📍 Địa chỉ nhận hàng</div>
+                    <div id="recipientName" style="font-weight: 600; font-size: 15px; margin-bottom: 4px;">-</div>
+                    <div id="recipientPhone" style="font-size: 13px; color: var(--muted); margin-bottom: 4px;">-</div>
+                    <div id="recipientAddress" style="font-size: 13px; line-height: 1.4;">-</div>
+                </div>
+            </div>
+
+            <div class="stepper" id="stepper">
+                <div class="step" id="step-PENDING"><div class="step-icon">📝</div><div class="step-label">Đặt hàng</div></div>
+                <div class="step" id="step-CONFIRMED"><div class="step-icon">✅</div><div class="step-label">Xác nhận</div></div>
+                <div class="step" id="step-PACKING"><div class="step-icon">📦</div><div class="step-label">Đóng gói</div></div>
+                <div class="step" id="step-SHIPPING"><div class="step-icon">🚚</div><div class="step-label">Đang giao</div></div>
+                <div class="step" id="step-DELIVERED"><div class="step-icon">🏁</div><div class="step-label">Đã giao</div></div>
+            </div>
+
+            <h3 style="margin-bottom: 20px; font-weight: 800; display: flex; align-items: center; gap: 10px;">
+                🛤️ Lịch trình cập nhật
+            </h3>
+            
+            <div class="timeline" id="timeline">
+                <!-- Timeline items will be injected here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = '/api'; // Adjusted by Gateway
+
+        function resolveApi() {
+            if (window.location.protocol === 'file:') return 'http://localhost:8000/api';
+            return (window.location.port !== '8000' && window.location.port !== '') ? 'http://localhost:8000/api' : '/api';
+        }
+        const API = resolveApi();
+
+        function formatDateTime(value) {
+            if (!value) return '—';
+            try {
+                const d = new Date(value);
+                if (Number.isNaN(d.getTime())) return '—';
+                return d.toLocaleString('vi-VN', { 
+                    day: '2-digit', month: '2-digit', year: 'numeric',
+                    hour: '2-digit', minute: '2-digit'
+                });
+            } catch { return '—'; }
+        }
+
+        const statusMap = {
+            'PENDING': 'Đơn mới',
+            'CONFIRMED': 'Đã xác nhận',
+            'PACKING': 'Đang đóng gói',
+            'PROCESSING': 'Đang đóng gói',
+            'SHIPPING': 'Đang giao hàng',
+            'SHIPPED': 'Đang giao hàng',
+            'DELIVERED': 'Giao hàng thành công',
+            'RECEIVED': 'Giao hàng thành công',
+            'CANCELLED': 'Đã hủy',
+            'RETURNED': 'Đã trả hàng',
+            'PAID': 'Đã xác nhận (Sẵn sàng đóng gói)',
+            'UNPAID': 'Đơn mới'
+        };
+
+        async function doSearch() {
+            const invoice = document.getElementById('invoiceInput').value.trim();
+            if (!invoice) return;
+
+            showLoader(true);
+            showError('');
+            document.getElementById('resultContent').style.display = 'none';
+
+            try {
+                // 1. Get Order basic info
+                const orderRes = await fetch(`${API}/orders/invoice/${encodeURIComponent(invoice)}`);
+                if (!orderRes.ok) throw new Error('Không tìm thấy đơn hàng này');
+                const order = await orderRes.json();
+
+                // Update UI
+                document.getElementById('orderIdText').textContent = `ID: ${order.id}`;
+                document.getElementById('invoiceText').textContent = order.invoiceNumber;
+                document.getElementById('customerText').textContent = order.customerName || 'Khách lẻ';
+                document.getElementById('totalText').textContent = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(order.totalAmount || 0);
+                document.getElementById('lastUpdatedText').textContent = formatDateTime(order.updatedAt || order.createdAt);
+                
+                // Recipient Info
+                document.getElementById('recipientName').textContent = order.customerName || 'Người nhận ẩn danh';
+                document.getElementById('recipientPhone').textContent = order.customerPhone || '—';
+                document.getElementById('recipientAddress').textContent = order.shippingAddress || 'Nhận tại cửa hàng';
+
+                const sb = document.getElementById('statusBadge');
+                const curStatus = (order.status || '').toUpperCase();
+                sb.textContent = statusMap[curStatus] || order.status;
+                sb.className = 'status-badge status-' + curStatus;
+
+                // Update shipping info
+                const shipBox = document.getElementById('shippingInfoBox');
+                if (order.shippingMethod || order.trackingNumber) {
+                    shipBox.style.display = 'block';
+                    document.getElementById('shipMethodText').textContent = order.shippingMethod || '—';
+                    document.getElementById('shipTrackingText').textContent = order.trackingNumber || '—';
+                    
+                    if (order.trackingNumber) {
+                        const barcodeContainer = document.getElementById('barcodeContainer');
+                        const barcodeValue = document.getElementById('barcodeValue');
+                        barcodeContainer.style.display = 'block';
+                        barcodeValue.textContent = '*' + order.trackingNumber.toUpperCase().replace(/\s/g, '') + '*';
+                    }
+                } else {
+                    shipBox.style.display = 'none';
+                }
+
+                // Update Stepper
+                updateStepper(order.status);
+
+                // 2. Get history
+                const historyRes = await fetch(`${API}/orders/${order.id}/history`);
+                const history = historyRes.ok ? await historyRes.json() : [];
+
+                renderTimeline(history, order.status);
+
+                document.getElementById('resultContent').style.display = 'block';
+            } catch (err) {
+                showError(err.message);
+            } finally {
+                showLoader(false);
+            }
+        }
+
+        function renderTimeline(history, currentStatus) {
+            const container = document.getElementById('timeline');
+            if (!history || history.length === 0) {
+                container.innerHTML = '<div class="empty-history">Chưa có lịch sử cập nhật hành trình</div>';
+                return;
+            }
+
+            container.innerHTML = history.map((h, i) => {
+                const timeStr = formatDateTime(h.createdAt);
+                const isLatest = (i === 0);
+                
+                return `
+                    <div class="timeline-item ${isLatest ? 'active latest' : ''}">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-content">
+                            <div class="timeline-time">${timeStr}</div>
+                            <div class="timeline-status">${statusMap[h.status] || h.status}</div>
+                            <div class="timeline-note">${h.note || ''}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function updateStepper(status) {
+            const curStatus = (status || '').toUpperCase();
+            
+            // Map statuses to step IDs
+            const statusToStep = {
+                'PENDING': 'PENDING',
+                'CONFIRMED': 'CONFIRMED', 'PAID': 'CONFIRMED',
+                'PACKING': 'PACKING', 'PROCESSING': 'PACKING',
+                'SHIPPING': 'SHIPPING', 'SHIPPED': 'SHIPPING',
+                'DELIVERED': 'DELIVERED', 'RECEIVED': 'DELIVERED'
+            };
+
+            const steps = ['PENDING', 'CONFIRMED', 'PACKING', 'SHIPPING', 'DELIVERED'];
+            const targetStepId = statusToStep[curStatus];
+            const currentIndex = steps.indexOf(targetStepId);
+            
+            steps.forEach((s, i) => {
+                const el = document.getElementById('step-' + s);
+                if (!el) return;
+                
+                el.classList.remove('active', 'completed');
+                if (i < currentIndex) el.classList.add('completed');
+                if (i === currentIndex) el.classList.add('active');
+            });
+        }
+
+        function showLoader(show) { document.getElementById('loader').style.display = show ? 'block' : 'none'; }
+        function showError(msg) { 
+            const el = document.getElementById('errorMsg');
+            el.textContent = msg;
+            el.style.display = msg ? 'block' : 'none';
+        }
+
+        // Auto search if parameter exists
+        window.onload = () => {
+            const params = new URLSearchParams(window.location.search);
+            const inv = params.get('invoice');
+            if (inv) {
+                document.getElementById('invoiceInput').value = inv;
+                doSearch();
+            }
+        };
+    </script>
+</body>
+</html>

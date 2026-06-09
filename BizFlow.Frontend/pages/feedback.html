@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BizFlow POS - Góp ý cải tiến</title>
+    <link rel="stylesheet" href="../assets/css/employee-dashboard.css">
+</head>
+<body class="pos-body">
+    <header class="pos-header">
+        <div class="header-left">
+            <button class="icon-btn" type="button" aria-label="Quay lại" onclick="window.location.href='/pages/employee-dashboard.html'">
+                <svg viewBox="0 0 24 24" class="icon-svg" aria-hidden="true">
+                    <path d="M15 6l-6 6 6 6" />
+                </svg>
+            </button>
+            <div class="logo-mark" aria-label="BizFlow">BizFlow POS</div>
+            <span class="app-icon app-cyan app-badge">GY</span>
+            <div class="page-title">Góp ý cải tiến</div>
+        </div>
+        <div class="header-actions">
+            <div class="store">TRƯỜNG CHINH</div>
+            <div class="user-chip">
+                <span id="userInitial">E</span>
+                <span id="userName">Nhân viên</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="basic-page">
+        <section class="basic-card">
+            <div class="basic-title">Góp ý cải tiến</div>
+            <p class="basic-desc">Trang đang được hoàn thiện. Bạn có thể chỉnh sửa giao diện và bổ sung nghiệp vụ theo nhu cầu.</p>
+            <div class="basic-actions">
+                <button class="primary-btn" type="button" onclick="window.location.href='/pages/employee-dashboard.html'">Về bán hàng</button>
+                <button class="ghost-btn" type="button" onclick="window.location.href='/pages/invoice-list.html'">DS hóa đơn</button>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        const username = sessionStorage.getItem('username');
+        const userInitial = (username ? username[0] : 'E').toUpperCase();
+        document.getElementById('userInitial').textContent = userInitial;
+        document.getElementById('userName').textContent = username || 'Nhân viên';
+    </script>
+    <script src="../assets/js/app-shell.js"></script>
+</body>
+</html>

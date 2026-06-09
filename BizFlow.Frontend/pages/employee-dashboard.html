@@ -1,0 +1,1104 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UBIQUITY HUB - Bán hàng</title>
+    <link rel="stylesheet" href="../assets/css/employee-dashboard.css">
+    <link rel="stylesheet" href="../assets/css/combo-promotion-ai.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body class="pos-body">
+    <header class="pos-header">
+        <div class="header-left">
+            <div class="logo-mark" aria-label="UBIQUITY HUB">
+                UBIQUITY HUB
+            </div>
+            <span class="app-icon app-blue app-badge">BH</span>
+            <div class="order-tabs" id="orderTabs">
+                <button class="order-tab active" data-invoice-id="default">Gi&#7887; h&#224;ng 1 <span
+                        class="tab-close">&times;</span></button>
+                <button class="order-tab ghost" id="addInvoiceBtn" title="Th&#234;m gi&#7887; h&#224;ng">+</button>
+                <button class="order-tab ghost" id="savedInvoiceBtn"><span class="saved-cart-icon"
+                        aria-hidden="true">&#128722;</span>Gi&#7887; h&#224;ng</button>
+                <button class="order-tab ghost" id="trackOrdersHeaderBtn" title="Theo dõi đơn hàng">Theo dõi đơn
+                    hàng</button>
+            </div>
+        </div>
+        <div class="header-actions">
+            <a href="../pages/shop-locations.html" class="icon-btn shop-locations-btn" title="Vị trí các cửa hàng"
+                aria-label="Vị trí các cửa hàng">
+                <svg viewBox="0 0 24 24" class="icon-svg" aria-hidden="true">
+                    <path
+                        d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5z" />
+                </svg>
+            </a>
+            <div class="store">TRƯỜNG CHINH</div>
+            <button class="icon-btn" title="Thông báo" aria-label="Thông báo">
+                <svg viewBox="0 0 24 24" class="icon-svg" aria-hidden="true">
+                    <path d="M12 3a6 6 0 0 0-6 6v3.5L4 15v1h16v-1l-2-2.5V9a6 6 0 0 0-6-6Z" />
+                    <path d="M9.5 18a2.5 2.5 0 0 0 5 0" />
+                </svg>
+            </button>
+            <button class="icon-btn" title="Đồng bộ" aria-label="Đồng bộ dữ liệu">
+                <svg viewBox="0 0 24 24" class="icon-svg" aria-hidden="true">
+                    <path d="M4 12a8 8 0 0 1 13.66-5.66" />
+                    <path d="M18 4v4h-4" />
+                    <path d="M20 12a8 8 0 0 1-13.66 5.66" />
+                    <path d="M6 20v-4h4" />
+                </svg>
+            </button>
+            <div class="user-chip" id="userBtn">
+                <span id="userInitial">E</span>
+                <span id="userNameDropdown">Nhân viên</span>
+            </div>
+            <button id="logoutBtn" class="icon-btn" title="Đăng xuất" aria-label="Đăng xuất">
+                <svg viewBox="0 0 24 24" class="icon-svg" aria-hidden="true">
+                    <path d="M10 6H5v12h5" />
+                    <path d="M14 16l4-4-4-4" />
+                    <path d="M18 12H9" />
+                </svg>
+            </button>
+            <button id="appMenuBtn" class="icon-btn" title="Ứng dụng" aria-label="Ứng dụng">
+                <svg viewBox="0 0 24 24" class="icon-svg" aria-hidden="true">
+                    <circle cx="6" cy="6" r="1.5" />
+                    <circle cx="12" cy="6" r="1.5" />
+                    <circle cx="18" cy="6" r="1.5" />
+                    <circle cx="6" cy="12" r="1.5" />
+                    <circle cx="12" cy="12" r="1.5" />
+                    <circle cx="18" cy="12" r="1.5" />
+                </svg>
+            </button>
+        </div>
+    </header>
+
+    <div class="saved-bills-panel" id="savedBillsPanel" aria-hidden="true">
+        <div class="saved-bills-header">
+            <span>Giỏ hàng </span>
+            <button id="closeSavedBills" class="icon-btn mini" type="button" aria-label="Đóng">×</button>
+        </div>
+        <div class="saved-bills-list" id="savedBillsList"></div>
+        <div class="saved-bills-empty" id="savedBillsEmpty">Chưa có giỏ hàng</div>
+    </div>
+
+    <section class="pos-toolbar">
+        <div class="toolbar-group toolbar-group--main">
+            <div class="toolbar-search">
+                <button class="dropdown-btn">Tìm kiếm</button>
+                <input id="searchInput" type="text" placeholder="(F3) Nhập tên hàng hóa, mã vạch, mã SKU">
+                <div class="toolbar-qty toolbar-qty--inline">
+                    <span class="barcode" aria-hidden="true">|||</span>
+                    <label for="qtyInput">SL</label>
+                    <input id="qtyInput" type="number" min="1" value="1">
+                </div>
+                <div class="toolbar-search-results" id="toolbarSearchResults" aria-hidden="true">
+                    <div class="toolbar-search-row header">
+                        <span>#</span>
+                        <span>Mã SP</span>
+                        <span>SKU</span>
+                        <span>Tên sản phẩm</span>
+                        <span>SL</span>
+                        <span>ĐVT</span>
+                        <span>Đơn giá</span>
+                        <span>Thành tiền</span>
+                    </div>
+                    <div class="toolbar-search-list" id="toolbarSearchList"></div>
+                    <div class="toolbar-search-empty" id="toolbarSearchEmpty">Không có sản phẩm</div>
+                </div>
+            </div>
+            <button class="toolbar-chip" type="button" onclick="window.location.href='/pages/promotions.html'">
+                <span class="chip-icon">
+                    <svg viewBox="0 0 24 24" class="icon-svg" aria-hidden="true">
+                        <path d="M4 7h16v10H4z" />
+                        <path d="M7 7V5h10v2" />
+                        <path d="M9 11h6" />
+                    </svg>
+                </span>
+                <span>Khuyến mãi</span>
+                <span class="chip-caret">&#9662;</span>
+            </button>
+        </div>
+    </section>
+
+    <section class="pos-layout">
+        <div class="product-panel">
+            <div class="empty-state cart-area" id="cartArea">
+                <div class="cart-table">
+                    <div class="cart-row header" id="cartHeaderRow">
+                        <span>#</span>
+                        <span>Mã SP</span>
+                        <span>Tên sản phẩm</span>
+                        <span>SL</span>
+                        <span>ĐVT</span>
+                        <span>Đơn giá</span>
+                        <span>Thành tiền</span>
+                        <span></span>
+                    </div>
+                    <div class="cart-items" id="cartItems"></div>
+                </div>
+                <div class="empty-state-content" id="emptyState">
+                    <div class="empty-brand">
+                        <div class="empty-brand-badge">UH</div>
+                        <div class="empty-brand-text">
+                            <div class="empty-brand-title">UBIQUITY HUB</div>
+                            <div class="empty-brand-sub">Smart Retail POS</div>
+                        </div>
+                    </div>
+                    <p class="empty-text">Chưa có hàng hóa nào, ấn F3 để tìm kiếm hàng hóa</p>
+                    <div class="empty-actions">
+                        <button class="ghost-btn">Chọn hàng hóa</button>
+                        <button class="ghost-btn">Nhập khẩu hàng hóa</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="suggestion-panel" id="suggestionPanel">
+                <div class="suggestion-header" id="suggestionHeader">
+                    <h3 id="suggestionTitle">TƯ VẤN BÁN HÀNG</h3>
+                    <div class="suggestion-controls" id="suggestionControls">
+                        <div class="suggestion-search">
+                            <svg viewBox="0 0 24 24" class="icon-svg" aria-hidden="true">
+                                <circle cx="11" cy="11" r="7" />
+                                <path d="M16.5 16.5L21 21" />
+                            </svg>
+                            <input id="suggestionSearchInput" type="text"
+                                placeholder="(Shift + F3) T&#236;m ki&#7871;m">
+                        </div>
+                        <div class="suggestion-filter">
+                            <svg viewBox="0 0 24 24" class="icon-svg" aria-hidden="true">
+                                <path d="M4 6h16" />
+                                <path d="M8 12h8" />
+                                <path d="M10 18h4" />
+                            </svg>
+                            <select id="sortSelect">
+                                <option value="name">Lọc theo nhóm hàng hóa</option>
+                                <option value="price-low">Giá thấp đến cao</option>
+                                <option value="price-high">Giá cao đến thấp</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="suggestion-content">
+                    <aside class="category-sidebar" id="categorySidebar">
+                        <div class="category-sidebar-header">
+                            <svg viewBox="0 0 24 24" class="category-header-icon" aria-hidden="true">
+                                <path d="M3 6h18" />
+                                <path d="M3 12h18" />
+                                <path d="M3 18h18" />
+                            </svg>
+                            <span>Danh mục sản phẩm</span>
+                        </div>
+                        <div class="category-list" id="productCategoryList"></div>
+                    </aside>
+                    <div class="products-grid" id="productsGrid"></div>
+                </div>
+            </div>
+        </div>
+
+        <aside class="side-panel">
+            <div class="customer-panel">
+                <div class="customer-header">
+                    <div class="customer-title">
+                        <!-- store pill removed per UX request -->
+                    </div>
+                    <div class="customer-actions"></div>
+                </div>
+                <div class="customer-search-box">
+                    <svg viewBox="0 0 24 24" class="icon-svg" aria-hidden="true">
+                        <circle cx="11" cy="11" r="7" />
+                        <path d="M16.5 16.5L21 21" />
+                    </svg>
+                    <input id="customerSearch" type="text" placeholder="(F4) SĐT, tên khách hàng">
+                    <button id="scanCustomerBtn" class="icon-btn mini" type="button" title="Quét mã">
+                        <svg viewBox="0 0 24 24" class="icon-svg" aria-hidden="true">
+                            <path d="M4 7V4h3" />
+                            <path d="M20 7V4h-3" />
+                            <path d="M4 17v3h3" />
+                            <path d="M20 17v3h-3" />
+                            <path d="M7 12h10" />
+                        </svg>
+                    </button>
+                    <button id="clearCustomerBtn" class="icon-btn mini" type="button"
+                        title="B&#7887; kh&#225;ch">×</button>
+                    <button id="addCustomerBtn" class="icon-btn mini" type="button" title="Thêm khách hàng">+</button>
+                </div>
+                <div class="customer-dropdown" id="customerList">
+                    <div class="customer-empty"></div>
+                </div>
+            </div>
+            <div class="payment-panel customer-facing">
+                <div class="customer-payment-header">
+                    <div class="amount-block">
+                        <div class="label">Số tiền cần thanh toán</div>
+                        <div class="amount" id="amountDue">0đ</div>
+                        <div class="muted small">Tạm tính: <span id="subtotal">0đ</span> · Giảm: <span
+                                id="memberDiscountAmount">0đ</span></div>
+                    </div>
+
+                </div>
+
+                <div style="padding:8px 12px; border-top:1px solid #eee;">
+                    <div class="checkout-customer-fields" style="display:flex;flex-direction:column;gap:8px;">
+                        <input id="checkoutCustomerName" type="text" placeholder="Tên khách hàng" value="Khách lẻ"
+                            style="width:100%;padding:6px;border:1px solid #ddd;border-radius:6px;" />
+                        <input id="checkoutCustomerPhone" type="tel" placeholder="SĐT khách hàng" required
+                            style="width:100%;padding:6px;border:1px solid #ddd;border-radius:6px;" />
+                        <div style="position:relative;display:flex;gap:6px;align-items:flex-start;">
+                            <div style="flex:1;position:relative;">
+                                <textarea id="checkoutCustomerAddress" rows="2" placeholder="Địa chỉ nhận hàng" required
+                                    style="width:100%;padding:6px;border:1px solid #ddd;border-radius:6px;"></textarea>
+                                <div id="addressSuggestions"
+                                    style="display:none;position:absolute;top:100%;left:0;right:0;z-index:20;margin-top:6px;background:#fff;border:1px solid #ddd;border-radius:8px;box-shadow:0 8px 22px rgba(0,0,0,0.12);max-height:220px;overflow:auto;font-size:13px;">
+                                </div>
+                            </div>
+                            <button id="getLocationBtn" type="button" class="primary-btn"
+                                style="padding:6px 10px;font-size:12px;white-space:nowrap;height:fit-content;margin-top:6px;"
+                                title="Lấy vị trí hiện tại từ GPS">📍 Vị trí</button>
+                        </div>
+                    </div>
+                    <div class="customer-points-info" style="padding-top:8px;">
+                        <div
+                            style="font-size:13px;color:#333;margin-top:6px;display:flex;align-items:center;justify-content:space-between;">
+                            <span><span>Điểm hiện có: </span><strong
+                                    id="checkoutPointsCurrent">0</strong>&nbsp;điểm</span>
+                            <button id="usePointsBtn" type="button" class="primary-btn"
+                                style="padding:4px 8px;font-size:11px;margin-left:8px;" title="Sử dụng điểm tích lũy">Sử
+                                dụng điểm</button>
+                        </div>
+                        <div style="font-size:13px;color:#333;margin-top:4px;">
+                            <span>Sẽ cộng thêm: </span><strong id="checkoutPointsEarn">0</strong>&nbsp;điểm
+                        </div>
+                        <div id="pointsUsedInfo" style="font-size:13px;color:#d9534f;margin-top:4px;display:none;">
+                            <div style="margin-bottom:6px;">
+                                <span>Đã sử dụng: </span><strong id="checkoutPointsUsed">0</strong>&nbsp;điểm
+                            </div>
+                            <div style="color:#d9534f;font-weight:bold;">
+                                <span>Giảm từ điểm: </span><strong id="checkoutPointsDiscount">0đ</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="payment-methods customer-methods" aria-label="Phương thức thanh toán">
+                    <input type="radio" name="paymentMethod" id="pm_cash" value="CASH" checked style="display:none">
+                    <input type="radio" name="paymentMethod" id="pm_transfer" value="TRANSFER" style="display:none">
+
+                    <div class="method-buttons">
+                        <button class="method-btn" data-method="CASH">Thanh toán khi nhận hàng</button>
+                        <button class="method-btn" data-method="TRANSFER">Thanh toán chuyển khoản</button>
+                    </div>
+                </div>
+
+                <div class="customer-payment-body">
+                    <div class="panel transfer-panel" id="transferPanel" style="display:none">
+                        <div class="transfer-qr-box" aria-hidden="false">
+                            <div class="qr-placeholder">QR / Mã chuyển khoản sẽ hiển thị tại đây</div>
+                        </div>
+                        <div class="transfer-note muted small">Quý khách thực hiện chuyển khoản theo mã trên và nhấn 'Đã
+                            chuyển xong'</div>
+                    </div>
+
+                    <!-- Card payment removed for simplified checkout -->
+                </div>
+
+                <div class="payment-note customer-note">
+                    <label for="paymentNote">Ghi chú (tuỳ chọn)</label>
+                    <textarea id="paymentNote" rows="2" placeholder="Ghi chú cho đơn..."></textarea>
+                </div>
+
+                <div class="cart-actions customer-actions">
+                    <button id="saveBillBtn" class="ghost-btn small">Lưu</button>
+                    <button id="checkoutBtn" class="primary-btn large">Thanh toán</button>
+                </div>
+            </div>
+        </aside>
+    </section>
+
+    <div class="modal" id="customerModal" aria-hidden="true">
+        <div class="modal-content customer-modal">
+            <div class="modal-header">
+                <h3>Thêm khách hàng</h3>
+                <button id="closeCustomerModal" class="icon-btn small" type="button" aria-label="Đóng">×</button>
+            </div>
+            <form id="customerForm">
+                <div class="modal-section">
+                    <div class="section-title">Thông tin cơ bản</div>
+                    <div class="form-grid two-cols">
+                        <label class="form-field">
+                            <span>Mã khách hàng</span>
+                            <input type="text" placeholder="T&#7921; &#273;&#7897;ng">
+                        </label>
+                        <label class="form-field">
+                            <span class="required-label">Khách hàng <span class="required-star">*</span></span>
+                            <input id="customerNameInput" type="text" placeholder="Tên khách hàng" required>
+                        </label>
+                        <label class="form-field">
+                            <span class="required-label">Số điện thoại <span class="required-star">*</span></span>
+                            <input id="customerPhoneInput" type="tel" placeholder="Số điện thoại" required>
+                        </label>
+                        <label class="form-field">
+                            <span>Email</span>
+                            <input id="customerEmailInput" type="email" placeholder="Email">
+                        </label>
+                        <label class="form-field">
+                            <span>CCCD</span>
+                            <input id="customerCccdInput" type="text"
+                                placeholder="S&#7889; c&#259;n c&#432;&#7899;c c&#244;ng d&#226;n">
+                        </label>
+                        <label class="form-field">
+                            <span>Ngày sinh</span>
+                            <input id="customerDobInput" type="date">
+                        </label>
+                        <div class="form-field inline-group">
+                            <span>Giới tính</span>
+                            <div class="radio-group">
+                                <label><input type="radio" name="customerGender" value="MALE"> Nam</label>
+                                <label><input type="radio" name="customerGender" value="FEMALE"> Nữ</label>
+                                <label><input type="radio" name="customerGender" value="UNKNOWN" checked> Không xác
+                                    định</label>
+                            </div>
+                        </div>
+                        <div class="form-field address-group">
+                            <span class="required-label">Địa chỉ <span class="required-star">*</span></span>
+                            <div class="address-grid">
+                                <input id="customerCityInput" type="text" list="customerCityList"
+                                    placeholder="Tỉnh/Thành phố" required>
+                                <datalist id="customerCityList"></datalist>
+                                <input id="customerDistrictInput" type="text" list="customerDistrictList"
+                                    placeholder="Quận/Huyện" required disabled>
+                                <datalist id="customerDistrictList"></datalist>
+                                <input id="customerWardInput" type="text" list="customerWardList"
+                                    placeholder="Xã/Phường" required disabled>
+                                <datalist id="customerWardList"></datalist>
+                                <input id="customerAddressInput" type="text" placeholder="Số nhà, tên đường" required>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-section">
+                    <div class="section-title">Thông tin thẻ thành viên</div>
+                    <div class="form-grid two-cols">
+                        <label class="form-field">
+                            <span>Mã thẻ thành viên</span>
+                            <input type="text" placeholder="Mã thẻ thành viên">
+                        </label>
+                        <label class="form-field">
+                            <span>Hạng thẻ</span>
+                            <select id="customerTierSelect">
+                                <option value="">Chọn hạng</option>
+                                <option value="member">Member (<= 1.000 điểm)</option>
+                                <option value="silver">Silver (>= 3.000 điểm)</option>
+                                <option value="gold">Gold (>= 9.000 điểm)</option>
+                                <option value="platinum">Platinum (>= 15.000 điểm)</option>
+                                <option value="diamond">Diamond (>= 25.000 điểm)</option>
+                            </select>
+                        </label>
+                        <label class="form-field">
+                            <span>Điểm thành viên</span>
+                            <input id="customerPointsInput" type="number" min="0" placeholder="0">
+                        </label>
+                        <label class="form-field">
+                            <span>Nhóm khách hàng</span>
+                            <select>
+                                <option value="">Chọn nhóm</option>
+                                <option>Khách lẻ</option>
+                                <option>Khách VIP</option>
+                                <option>Đại lý</option>
+                            </select>
+                        </label>
+                        <label class="form-field">
+                            <span>Nhân viên phụ trách</span>
+                            <input type="text" placeholder="Nhân viên phụ trách">
+                        </label>
+                        <label class="form-field full">
+                            <span>Ghi chú</span>
+                            <input type="text" placeholder="Ghi chú thêm">
+                        </label>
+                    </div>
+                </div>
+
+                <div class="modal-section">
+                    <div class="section-title">Thông tin công ty</div>
+                    <div class="form-grid two-cols">
+                        <label class="form-field">
+                            <span>Công ty</span>
+                            <input type="text" placeholder="Tên công ty">
+                        </label>
+                        <label class="form-field">
+                            <span>Mã số thuế</span>
+                            <input type="text" placeholder="Mã số thuế">
+                        </label>
+                    </div>
+                </div>
+
+                <div class="modal-actions">
+                    <label class="confirm-check">
+                        <input id="customerConfirmInput" type="checkbox">
+                        <span>Xác nhận thông tin khách hàng</span>
+                    </label>
+                    <button type="button" class="ghost-btn" id="cancelCustomerModal">Hủy bỏ</button>
+                    <button type="submit" class="primary-btn">Đồng ý</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal" id="invoiceModal" aria-hidden="true">
+        <div class="modal-content invoice-modal">
+            <div class="modal-header">
+                <h3>Hóa đơn thanh toán</h3>
+                <button id="closeInvoiceModal" class="icon-btn small" type="button" aria-label="Đóng">×</button>
+            </div>
+            <div class="invoice-receipt" id="invoiceReceipt">
+                <div class="receipt-header">
+                    <div class="receipt-brand">UBIQUITY HUB</div>
+                    <div class="receipt-meta">
+                        <div>Mã hóa đơn: <strong id="invoiceCode">-</strong></div>
+                        <div>Thời gian: <span id="invoiceDate">-</span></div>
+                    </div>
+                </div>
+                <div class="receipt-section">
+                    <div>Khách hàng: <span id="invoiceCustomer">-</span></div>
+                    <div>SĐT: <span id="invoicePhone">-</span></div>
+                    <div>Thanh toán: <span id="invoiceMethod">-</span></div>
+                </div>
+                <div class="receipt-divider"></div>
+                <div class="receipt-items">
+                    <div class="receipt-item header">
+                        <span>SP</span>
+                        <span>SL</span>
+                        <span>Đơn giá</span>
+                        <span>Thành tiền</span>
+                    </div>
+                    <div id="invoiceItems"></div>
+                </div>
+                <div class="receipt-divider"></div>
+                <div class="receipt-totals">
+                    <div><span>Tạm tính</span><span id="invoiceSubtotal">0đ</span></div>
+                    <div><span>Giảm giá thành viên</span><span id="invoiceMemberDiscount">0đ</span></div>
+                    <div><span>Điểm đã dùng</span><span id="invoicePointsUsed">0</span></div>
+                    <div><span>Tổng cộng</span><span id="invoiceTotal">0đ</span></div>
+                </div>
+                <div class="receipt-note" id="invoiceNoteWrap">
+                    <span>Ghi chú:</span>
+                    <span id="invoiceNote">-</span>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="ghost-btn" id="printInvoiceBtn">In lại</button>
+                <button class="ghost-btn" id="printInvoiceBtnAlt">In hóa đơn</button>
+                <button class="primary-btn" id="closeInvoiceBtn">Đóng</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="productDetailModal" aria-hidden="true">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Chi tiết sản phẩm</h3>
+                <button class="icon-btn small" type="button" aria-label="Đóng" onclick="closeProductDetail()">×</button>
+            </div>
+            <div class="detail-layout">
+                <div class="detail-image">
+                    <div class="detail-image-placeholder">Ảnh sản phẩm</div>
+                </div>
+                <div class="detail-grid">
+                    <div class="detail-row">
+                        <span class="detail-label">Tên sản phẩm</span>
+                        <span id="detailProductName" class="detail-value">-</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Mã/SKU</span>
+                        <span id="detailProductSku" class="detail-value">-</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Barcode</span>
+                        <span id="detailProductBarcode" class="detail-value">-</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Đơn vị</span>
+                        <span id="detailProductUnit" class="detail-value">-</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Giá bán</span>
+                        <span id="detailProductPrice" class="detail-value">-</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Tồn kho</span>
+                        <span id="detailProductStock" class="detail-value">-</span>
+                    </div>
+                    <div class="detail-row full">
+                        <span class="detail-label">Mô tả</span>
+                        <span id="detailProductDescription" class="detail-value">-</span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="ghost-btn" onclick="closeProductDetail()">Đóng</button>
+                <button type="button" class="ghost-btn" id="detailInventoryBtn">Nhập kho</button>
+                <button type="button" class="primary-btn" id="detailAddToCart">Xác nhận</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="inventoryModal" aria-hidden="true">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Nhập kho</h3>
+                <button id="closeInventoryModal" class="icon-btn small" type="button" aria-label="Đóng">x</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-grid two-cols">
+                    <label class="form-field">
+                        <span>Sản phẩm</span>
+                        <select id="inventoryProductSelect"></select>
+                    </label>
+                    <label class="form-field">
+                        <span>Số lượng nhập</span>
+                        <input id="inventoryQtyInput" type="number" min="1" value="1">
+                    </label>
+                    <label class="form-field">
+                        <span>Giá nhập (tuỳ chọn)</span>
+                        <input id="inventoryUnitPriceInput" type="number" min="0" placeholder="0">
+                    </label>
+                    <label class="form-field">
+                        <span>Ghi chú</span>
+                        <input id="inventoryNoteInput" type="text" placeholder="...">
+                    </label>
+                </div>
+                <div class="summary-row">
+                    <span>Tồn hiện tại</span>
+                    <strong id="inventoryCurrentStock">0</strong>
+                </div>
+                <div class="modal-section">
+                    <div class="section-title">Lịch sử tồn kho</div>
+                    <div id="inventoryHistoryList"></div>
+                    <div id="inventoryHistoryEmpty" class="empty-text" style="display:none;">Chưa có lịch sử</div>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="ghost-btn" id="cancelInventoryBtn">Huỷ</button>
+                <button type="button" class="primary-btn" id="saveInventoryBtn">Nhập kho</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="customerDetailModal" aria-hidden="true">
+        <div class="modal-content customer-detail">
+            <div class="modal-header">
+                <h3>Khách hàng: <span id="detailCustomerName">-</span></h3>
+                <button class="icon-btn small" type="button" aria-label="Đóng"
+                    onclick="closeCustomerDetail()">×</button>
+            </div>
+            <div class="detail-tabs">
+                <button class="tab active" data-tab="overview">Tổng quan</button>
+                <button class="tab" data-tab="info">Thông tin</button>
+                <button class="tab" data-tab="history">Lịch sử mua hàng</button>
+            </div>
+            <div class="detail-panels">
+                <div class="detail-panel active" data-panel="overview">
+                    <div class="customer-overview-grid">
+                        <div class="member-card">
+                            <div class="member-card-header">
+                                <div class="member-avatar">KH</div>
+                                <div>
+                                    <div class="member-name" id="detailCustomerNameCard">-</div>
+                                    <div class="member-tier">Hạng thẻ: <span id="detailCustomerTier">-</span></div>
+                                </div>
+                                <button class="ghost-btn small">Đổi thẻ</button>
+                            </div>
+                            <div class="member-metrics">
+                                <div class="metric-row">
+                                    <span>Mã thẻ thành viên</span>
+                                    <strong id="detailCustomerMemberCode" class="muted">--</strong>
+                                </div>
+                                <div class="metric-row">
+                                    <span>Chính sách tích điểm</span>
+                                    <strong id="detailEarnPolicy">-</strong>
+                                </div>
+                                <div class="metric-row">
+                                    <span>Chính sách đổi điểm</span>
+                                    <strong id="detailRedeemPolicy">-</strong>
+                                </div>
+                                <div class="metric-row">
+                                    <span>Điểm tích lũy</span>
+                                    <strong id="detailCustomerPoints">0</strong>
+                                </div>
+                                <div class="metric-row">
+                                    <span>Số dùng điểm</span>
+                                    <strong id="detailCustomerPointsUsed">0</strong>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="summary-card">
+                            <div class="summary-block">
+                                <h4>Mua hàng</h4>
+                                <div class="summary-row">
+                                    <span>Tổng chi tiêu</span>
+                                    <strong id="detailCustomerSpend">0</strong>
+                                </div>
+                                <div class="summary-row">
+                                    <span>Số lượng hóa đơn</span>
+                                    <strong id="detailCustomerOrders">0</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="detail-panel" data-panel="info">
+                    <div class="detail-section">
+                        <div class="section-title">Thông tin cơ bản</div>
+                        <div class="detail-info-grid">
+                            <div class="info-row">
+                                <span>Mã khách hàng</span>
+                                <strong id="detailCustomerCodeInfo" class="muted">--</strong>
+                            </div>
+                            <div class="info-row">
+                                <span>Tên khách hàng</span>
+                                <strong id="detailCustomerNameInfo">-</strong>
+                            </div>
+                            <div class="info-row">
+                                <span>Số điện thoại</span>
+                                <strong id="detailCustomerPhoneInfo">-</strong>
+                            </div>
+                            <div class="info-row">
+                                <span>Ngày sinh</span>
+                                <strong id="detailCustomerDobInfo">-</strong>
+                            </div>
+                            <div class="info-row">
+                                <span>CCCD</span>
+                                <strong id="detailCustomerCccdInfo">-</strong>
+                            </div>
+                            <div class="info-row">
+                                <span>Giới tính</span>
+                                <strong id="detailCustomerGenderInfo" class="muted">Chưa có thông tin</strong>
+                            </div>
+                            <div class="info-row">
+                                <span>Email</span>
+                                <strong id="detailCustomerEmailInfo">-</strong>
+                            </div>
+                            <div class="info-row">
+                                <span>Địa chỉ</span>
+                                <strong id="detailCustomerAddressInfo">-</strong>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="detail-section">
+                        <div class="section-title">Thông tin thẻ thành viên</div>
+                        <div class="detail-info-grid">
+                            <div class="info-row">
+                                <span>Mã thẻ Lomas</span>
+                                <strong class="muted">--</strong>
+                            </div>
+                            <div class="info-row">
+                                <span>Hạng thẻ Lomas</span>
+                                <strong class="muted">Member</strong>
+                            </div>
+                            <div class="info-row">
+                                <span>Nhóm KH</span>
+                                <strong class="muted">Chưa có thông tin</strong>
+                            </div>
+                            <div class="info-row">
+                                <span>Nhân viên phụ trách</span>
+                                <strong class="muted">Chưa có thông tin</strong>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="detail-section">
+                        <div class="section-title">Thông tin công ty</div>
+                        <div class="detail-info-grid">
+                            <div class="info-row">
+                                <span>Công ty</span>
+                                <strong class="muted">Chưa có thông tin</strong>
+                            </div>
+                            <div class="info-row">
+                                <span>Mã số thuế</span>
+                                <strong class="muted">Chưa có thông tin</strong>
+                            </div>
+                            <div class="info-row">
+                                <span>Ghi chú</span>
+                                <strong class="muted">Chưa có thông tin</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="detail-panel" data-panel="history">
+                    <div class="detail-history-summary">
+                        <div>
+                            <span>Tổng chi tiêu</span>
+                            <strong id="detailCustomerSpendHistory">0</strong>
+                        </div>
+                        <div>
+                            <span>Số lượng hóa đơn</span>
+                            <strong id="detailCustomerOrdersHistory">0</strong>
+                        </div>
+                    </div>
+                    <div class="history-filter-row">
+                        <div class="filter-field">
+                            <label>Ngày hóa đơn</label>
+                            <input type="date" placeholder="--/--/----">
+                        </div>
+                        <div class="filter-field">
+                            <label>Số hóa đơn</label>
+                            <input type="text" placeholder="*">
+                        </div>
+                        <div class="filter-field">
+                            <label>Tên cửa hàng</label>
+                            <input type="text" placeholder="*">
+                        </div>
+                        <div class="filter-field">
+                            <label>Trạng thái</label>
+                            <select>
+                                <option>Tất cả</option>
+                                <option>Đã thanh toán</option>
+                                <option>Chờ xử lý</option>
+                                <option>Đã hủy</option>
+                            </select>
+                        </div>
+                        <div class="filter-field">
+                            <label>Tổng thanh toán</label>
+                            <input type="text" placeholder="*">
+                        </div>
+                        <div class="filter-field">
+                            <label>Ghi chú</label>
+                            <input type="text" placeholder="*">
+                        </div>
+                    </div>
+                    <div class="history-table">
+                        <div class="history-table-header">
+                            <span>Ngày hóa đơn</span>
+                            <span>Số hóa đơn</span>
+                            <span>Tên cửa hàng</span>
+                            <span>Trạng thái</span>
+                            <span>Tổng thanh toán</span>
+                            <span>Ghi chú</span>
+                        </div>
+                        <div id="detailCustomerHistoryList" class="detail-history-list">
+                            <div class="history-empty">Chưa có lịch sử mua hàng</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="ghost-btn" id="detailSecondaryAction"
+                    onclick="closeCustomerDetail()">Đóng</button>
+                <button type="button" class="primary-btn" id="detailPrimaryAction">Xác nhận</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal side" id="appMenuModal" aria-hidden="true">
+        <div class="modal-content app-menu">
+            <div class="modal-header">
+                <h3>Ứng dụng</h3>
+                <button id="closeAppMenu" class="icon-btn small" type="button" aria-label="Đóng">×</button>
+            </div>
+            <div class="app-menu-grid">
+                <button class="app-tile" data-app="pos">
+                    <span class="app-icon app-blue">BH</span>
+                    <span>Bán hàng</span>
+                </button>
+                <button class="app-tile" data-app="invoices">
+                    <span class="app-icon app-pink">HD</span>
+                    <span>DS hóa đơn</span>
+                </button>
+                <button class="app-tile" data-app="return-request" onclick="window.location.href='/pages/return-request.html'">
+                    <span class="app-icon app-red">ĐT</span>
+                    <span>Đổi trả hàng</span>
+                </button>
+                <button class="app-tile" data-app="warranty-request" onclick="window.location.href='/pages/warranty-request.html'">
+                    <span class="app-icon app-teal">BH</span>
+                    <span>Bảo hành</span>
+                </button>
+                <button class="app-tile" data-app="print">
+                    <span class="app-icon app-orange">IN</span>
+                    <span>Máy in - Mẫu in</span>
+                </button>
+                <button class="app-tile" data-app="daily-report">
+                    <span class="app-icon app-teal">BC</span>
+                    <span>Báo cáo theo ngày</span>
+                </button>
+                <button class="app-tile" data-app="access-log">
+                    <span class="app-icon app-gray">NK</span>
+                    <span>Nhật ký truy cập</span>
+                </button>
+                <button class="app-tile" data-app="management">
+                    <span class="app-icon app-indigo">QL</span>
+                    <span>Trang quản lý</span>
+                </button>
+                <button class="app-tile" data-app="guide">
+                    <span class="app-icon app-purple">HD</span>
+                    <span>Hướng dẫn</span>
+                </button>
+                <button class="app-tile" data-app="intro">
+                    <span class="app-icon app-orange">GT</span>
+                    <span>Giới thiệu</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <button id="contactSupportBtn" class="contact-support-btn" type="button" aria-label="Liên hệ Owner">💬 Liên
+        hệ</button>
+
+    <div id="toastContainer" style="position: fixed; top: 20px; right: 20px; z-index: 9999; max-width: 400px;"></div>
+
+    <div class="modal" id="contactSupportModal" aria-hidden="true">
+        <div class="modal-content contact-support-modal">
+            <div class="modal-header">
+                <h3>Liên hệ Owner</h3>
+                <button id="contactSupportCloseBtn" class="icon-btn small" type="button" aria-label="Đóng">×</button>
+            </div>
+            <div class="contact-support-body">
+                <div class="contact-support-meta" id="contactSupportMeta">Đang kết nối...</div>
+                <div class="contact-support-messages" id="contactSupportMessages"></div>
+                <div class="contact-support-input-row">
+                    <input id="contactSupportInput" type="text" placeholder="Nhập tin nhắn cho Owner..." />
+                    <button id="contactSupportSendBtn" class="primary-btn" type="button">Gửi</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Transfer QR Modal -->
+    <div class="modal" id="transferQrModal" aria-hidden="true">
+        <div class="modal-content transfer-qr">
+            <div class="modal-header">
+                <h3>Thanh toán chuyển khoản (VietQR)</h3>
+                <button id="transferCloseBtn" class="icon-btn small" type="button" aria-label="Đóng">×</button>
+            </div>
+            <div class="transfer-qr-body">
+                <div class="qr-column">
+                    <div class="qr-card">
+                        <img id="transferBankLogo" class="bank-logo" src="" alt="Bank logo" style="display:none;" />
+                        <div id="qrCodeContainer" class="qr-box" aria-label="QR code area"
+                            style="width:260px;height:260px;margin:10px auto;display:flex;align-items:center;justify-content:center;background:#fff;border-radius:8px;overflow:hidden;">
+                            <!-- QR code will be rendered here -->
+                        </div>
+                    </div>
+                    <div id="transferPayload" class="qr-payload"
+                        style="margin-top:8px;word-break:break-word;color:#333;font-size:13px;text-align:center;"></div>
+                    <div class="qr-actions" style="text-align:center;margin-top:8px;">
+                        <button id="downloadQrBtn" class="ghost-btn mini" type="button">Tải mã</button>
+                        <button id="copyTokenBtn" class="ghost-btn mini" type="button">Sao chép mã</button>
+                    </div>
+                    <div class="qr-note" style="text-align:center;margin-top:8px;"><small>Quét mã VietQR để thanh toán
+                            (số tiền sẽ được điền sẵn)</small></div>
+                </div>
+                <div class="info-column">
+                    <div class="info-box">
+                        <p><strong>Ngân hàng:</strong> VCB</p>
+                        <p><strong>Số tài khoản:</strong> 1021209511</p>
+                        <p><strong>Chủ tài khoản:</strong> UBIQUITY HUB</p>
+                        <p><strong>Số tiền:</strong> <span id="transferAmount">0₫</span></p>
+                        <p><strong>Mã đơn:</strong> <span id="transferOrderId">-</span></p>
+                        <p><strong>Mã thanh toán:</strong> <span id="transferPaymentToken">-</span></p>
+                        <p><small>Nội dung chuyển khoản: Thanh toán đơn #<span
+                                    id="transferOrderIdSmall">-</span></small></p>
+                    </div>
+                    <div style="margin-top:12px;display:flex;gap:8px;">
+                        <button id="transferConfirmBtn" class="primary-btn">Đã chuyển xong</button>
+                        <button id="transferCancelBtn" class="ghost-btn">Đóng</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="orderTrackModal" aria-hidden="true">
+        <div class="modal-content order-track-modal">
+            <div class="modal-header">
+                <h3>Theo dõi đơn hàng</h3>
+                <button id="closeOrderTrackModal" class="icon-btn small" type="button" aria-label="Đóng">×</button>
+            </div>
+            <div class="order-track-body">
+                <div id="orderTrackCustomerInfo" class="muted">Đang tải đơn hàng...</div>
+                <div id="orderTrackControls" style="display:none;gap:8px;align-items:center;margin-top:12px;">
+                    <label style="flex:1;display:flex;gap:8px;align-items:center;">
+                        <span>SĐT / mã đơn</span>
+                        <input id="orderTrackPhoneInput" type="text" placeholder="Nhập số điện thoại hoặc mã đơn"
+                            style="flex:1;padding:8px;border:1px solid #ddd;border-radius:6px;" />
+                    </label>
+                    <button id="orderTrackFindBtn" class="primary-btn" type="button">Tìm</button>
+                </div>
+                <div id="orderTrackList" class="order-track-list"
+                    style="margin-top:12px;max-height:320px;overflow:auto;"></div>
+                <div id="orderTrackingResult" class="order-track-result" style="margin-top:12px;"></div>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="ghost-btn" id="closeOrderTrackBtn">Đóng</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Use Points Modal -->
+    <div class="modal" id="usePointsModal" aria-hidden="true">
+        <div class="modal-content" style="width:400px;max-width:90vw;">
+            <div class="modal-header">
+                <h3>Sử dụng điểm tích lũy</h3>
+                <button id="closeUsePointsModal" class="icon-btn small" type="button" aria-label="Đóng">×</button>
+            </div>
+            <div style="padding:20px;display:flex;flex-direction:column;gap:16px;">
+                <div>
+                    <div style="font-size:13px;color:#666;margin-bottom:4px;">Điểm hiện có</div>
+                    <div style="font-size:20px;font-weight:bold;color:#333;" id="usePointsCurrentPoints">0</div>
+                </div>
+                <div>
+                    <label style="display:block;font-size:13px;color:#666;margin-bottom:6px;">
+                        Số điểm muốn sử dụng
+                        <span style="color:#d9534f;">*</span>
+                    </label>
+                    <input id="usePointsInput" type="number" min="0" step="100"
+                        placeholder="Nhập số điểm (bội số của 100)"
+                        style="width:100%;padding:8px;border:1px solid #ddd;border-radius:6px;font-size:13px;" />
+                    <div style="font-size:12px;color:#999;margin-top:4px;">
+                        Giảm giá: <strong id="usePointsDiscountPreview">0đ</strong>
+                    </div>
+                </div>
+                <div style="background:#f5f5f5;padding:12px;border-radius:6px;font-size:12px;color:#666;">
+                    <strong>Lưu ý:</strong> Cứ 100 điểm được giảm <span id="usePointsRateInfo">10,000đ</span> (tùy theo
+                    hạng thẻ)
+                </div>
+                <div style="display:flex;gap:8px;justify-content:flex-end;padding-top:8px;border-top:1px solid #eee;">
+                    <button id="cancelUsePointsBtn" class="ghost-btn" type="button">Hủy</button>
+                    <button id="confirmUsePointsBtn" class="primary-btn" type="button">Sử dụng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Product Review Modal -->
+    <div class="modal" id="reviewModal" aria-hidden="true">
+        <div class="modal-content" style="width:450px;max-width:90vw;">
+            <div class="modal-header">
+                <h3>Đánh giá sản phẩm</h3>
+                <button id="closeReviewModal" class="icon-btn small" type="button" aria-label="Đóng">×</button>
+            </div>
+            <div style="padding:20px;display:flex;flex-direction:column;gap:16px;">
+                <div>
+                    <div style="font-size:13px;color:#666;margin-bottom:8px;">Bạn có muốn đánh giá sản phẩm vừa mua
+                        không?</div>
+                    <div style="font-size:12px;color:#999;padding:8px;background:#f5f5f5;border-radius:4px;">
+                        Đơn hàng: <strong id="reviewOrderId">-</strong>
+                    </div>
+                </div>
+                <div>
+                    <label style="display:block;font-size:13px;color:#666;margin-bottom:8px;">
+                        Mức độ hài lòng <span style="color:#d9534f;">*</span>
+                    </label>
+                    <div style="display:flex;gap:12px;align-items:center;">
+                        <div style="display:flex;gap:8px;font-size:24px;">
+                            <span class="rating-star" data-rating="1" style="cursor:pointer;color:#ddd;">★</span>
+                            <span class="rating-star" data-rating="2" style="cursor:pointer;color:#ddd;">★</span>
+                            <span class="rating-star" data-rating="3" style="cursor:pointer;color:#ddd;">★</span>
+                            <span class="rating-star" data-rating="4" style="cursor:pointer;color:#ddd;">★</span>
+                            <span class="rating-star" data-rating="5" style="cursor:pointer;color:#ddd;">★</span>
+                        </div>
+                        <span id="ratingText" style="font-size:12px;color:#666;">Chưa chọn</span>
+                    </div>
+                    <input id="reviewRatingHidden" type="hidden" value="0" />
+                </div>
+                <div>
+                    <label style="display:block;font-size:13px;color:#666;margin-bottom:6px;">Nhận xét (tùy
+                        chọn)</label>
+                    <textarea id="reviewComment"
+                        style="width:100%;padding:8px;border:1px solid #ddd;border-radius:6px;font-size:13px;font-family:Arial,sans-serif;resize:vertical;min-height:80px;"
+                        placeholder="Chia sẻ cảm nhận của bạn về sản phẩm..."></textarea>
+                </div>
+                <div style="display:flex;gap:8px;justify-content:flex-end;padding-top:8px;border-top:1px solid #eee;">
+                    <button id="skipReviewBtn" class="ghost-btn" type="button">Bỏ qua</button>
+                    <button id="submitReviewBtn" class="primary-btn" type="button">Gửi đánh giá</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- View Product Reviews Modal -->
+    <div class="modal" id="viewProductReviewsModal" aria-hidden="true">
+        <div class="modal-content" style="width:600px;max-width:90vw;border-radius:16px;overflow:hidden;">
+            <div style="background:linear-gradient(135deg, #667eea 0%, #764ba2 100%);padding:24px;color:white;">
+                <button id="closeViewReviewsModal" class="icon-btn small" type="button" aria-label="Đóng"
+                    style="position:absolute;top:16px;right:16px;color:white;">×</button>
+                <div style="display:flex;gap:16px;">
+                    <img id="reviewProductImage"
+                        src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect fill='%23f0f0f0' width='100' height='100'/%3E%3Ctext x='50%25' y='50%25' text-anchor='middle' dy='.3em' font-family='Arial' font-size='14' fill='%23999'%3ENo Image%3C/text%3E%3C/svg%3E"
+                        alt="" style="width:80px;height:80px;border-radius:8px;object-fit:cover;background:#f0f0f0;">
+                    <div style="flex:1;">
+                        <h3 id="reviewProductName" style="margin:0;font-size:18px;font-weight:700;margin-bottom:12px;">
+                        </h3>
+                        <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px;">
+                            <span id="reviewAverageRating" style="font-size:32px;font-weight:700;">0.0</span>
+                            <div style="display:flex;flex-direction:column;gap:4px;">
+                                <div style="display:flex;gap:2px;font-size:18px;" id="reviewAverageStars">★★★★★</div>
+                                <span id="reviewTotalCount" style="font-size:12px;opacity:0.9;">0 đánh giá</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div style="padding:24px;display:flex;flex-direction:column;gap:16px;">
+                <div id="reviewsList"
+                    style="max-height:400px;overflow-y:auto;display:flex;flex-direction:column;gap:12px;">
+                    <div style="text-align:center;color:#999;padding:20px;">Không có đánh giá</div>
+                </div>
+            </div>
+            <div class="modal-actions" style="padding:16px 24px;background:#f9f9f9;border-top:1px solid #e5e7eb;">
+                <button type="button" class="ghost-btn" id="closeViewReviewsBtn">Đóng</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="../assets/js/combo-promotion-ai.js?v=1.0.0"
+        onerror="console.error('Failed to load combo-promotion-ai.js')"></script>
+    <script src="../assets/data/vietnamese-addresses-hcm.js"></script>
+    <script>
+        // Ensure frontend calls the correct backend API when running on localhost
+        // Minimal change: set global API_BASE used by employee-dashboard.js
+        (function () {
+            if (!window.API_BASE && !window.API_BASE_URL) {
+                // Use API gateway as default so order POSTs route correctly
+                // and other service routes are resolved via gateway routing.
+                window.API_BASE = 'http://localhost:8000/api';
+            }
+        })();
+    </script>
+    <script src="../assets/js/employee-dashboard.js?v=stock-9"></script>
+    <script src="../assets/js/app-shell.js"></script>
+    <script>
+        // Lightweight fallback: if products grid still empty after main script,
+        // try fetching local inventory directly and render simple cards so UI isn't blank.
+        (function () {
+            setTimeout(async () => {
+                try {
+                    const grid = document.getElementById('productsGrid');
+                    if (!grid) return;
+                    const emptyText = grid.textContent || '';
+                    if (grid.children.length > 0 && !/Không có sản phẩm|Đang tải/.test(emptyText)) return;
+
+                    const res = await fetch('http://localhost:8084/api/inventory/shelves');
+                    if (!res.ok) return;
+                    const data = await res.json();
+                    const arr = Array.isArray(data) ? data : (Array.isArray(data?.value) ? data.value : []);
+                    if (!arr || arr.length === 0) return;
+                    const items = arr.filter(s => Number(s.quantity) > 0).slice(0, 60);
+                    grid.innerHTML = items.map(p => `
+                        <div class="product-card" onclick="addToCart(${p.productId}, '${(p.productName || '').replace(/'/g, "\\'")}', ${p.price || 0})">
+                            <div class="product-image">${'<svg viewBox="0 0 24 24"><path d="M6 8h12l-1.2 11H7.2L6 8Z"/></svg>'}</div>
+                            <div class="product-name">${(p.productName || 'Sản phẩm')}</div>
+                            <div class="product-price">${(p.price || 0).toLocaleString('vi-VN')}đ</div>
+                        </div>
+                    `).join('');
+                } catch (e) {
+                    console.warn('Fallback render failed', e);
+                }
+            }, 1200);
+        })();
+    </script>
+</body>
+
+</html>

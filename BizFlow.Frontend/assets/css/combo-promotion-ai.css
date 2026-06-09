@@ -1,0 +1,438 @@
+/**
+ * Combo Promotion AI - CSS Styles
+ * Styling cho các thông báo và modal combo khuyến mãi
+ * 
+ * @version 1.0.0
+ * @date 2026-01-25
+ */
+
+/* ==================== COMBO NOTIFICATION ==================== */
+
+.combo-notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 15px 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    z-index: 10000;
+    animation: slideInRight 0.3s ease-out;
+    min-width: 300px;
+    max-width: 400px;
+}
+
+.combo-notification.success {
+    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+}
+
+.combo-notification.info {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+
+.combo-notification.warning {
+    background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+}
+
+.combo-notification-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.4;
+}
+
+.combo-notification-content i {
+    font-size: 22px;
+    flex-shrink: 0;
+}
+
+.combo-notification.fade-out {
+    animation: fadeOut 0.3s ease-out forwards;
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+        transform: scale(1);
+    }
+    to {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+}
+
+/* ==================== UPSELL MODAL ==================== */
+
+.upsell-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    animation: fadeIn 0.2s ease-out;
+    backdrop-filter: blur(4px);
+}
+
+.upsell-content {
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    max-width: 450px;
+    width: 90%;
+    text-align: center;
+    position: relative;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    animation: scaleIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes scaleIn {
+    from {
+        transform: scale(0.9);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.upsell-content .close-btn {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 28px;
+    cursor: pointer;
+    color: #999;
+    transition: color 0.2s;
+    line-height: 1;
+    padding: 5px;
+}
+
+.upsell-content .close-btn:hover {
+    color: #333;
+}
+
+.upsell-icon {
+    font-size: 56px;
+    margin-bottom: 15px;
+    animation: bounce 1s infinite;
+}
+
+@keyframes bounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+.upsell-content h3 {
+    color: #333;
+    margin-bottom: 10px;
+    font-size: 22px;
+    font-weight: 600;
+}
+
+.upsell-content > p {
+    color: #666;
+    margin-bottom: 20px;
+    line-height: 1.6;
+    font-size: 15px;
+}
+
+.upsell-details {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.upsell-detail-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.upsell-detail-item:last-child {
+    border-bottom: none;
+}
+
+.upsell-detail-item .label {
+    color: #555;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.upsell-detail-item .value {
+    color: #333;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.upsell-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.upsell-actions button {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
+    transition: all 0.3s;
+    flex: 1;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+}
+
+.btn-secondary {
+    background: #e0e0e0;
+    color: #666;
+}
+
+.btn-secondary:hover {
+    background: #d0d0d0;
+}
+
+/* ==================== COMBO BADGE (trên sản phẩm) ==================== */
+
+.combo-badge {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: linear-gradient(135deg, #ff6b9d 0%, #ff8c42 100%);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    box-shadow: 0 2px 8px rgba(255, 107, 157, 0.4);
+    z-index: 10;
+}
+
+.combo-badge i {
+    font-size: 12px;
+}
+
+/* ==================== GIFT ITEM (trong giỏ hàng) ==================== */
+
+.cart-item.gift-item {
+    background: linear-gradient(90deg, #fff5e6 0%, #ffe6f0 100%);
+    border-left: 4px solid #ff6b9d;
+    padding: 12px;
+    margin-bottom: 8px;
+    border-radius: 8px;
+    display: grid;
+    grid-template-columns: auto 1fr auto auto auto;
+    gap: 10px;
+    align-items: center;
+}
+
+.gift-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, #ff6b9d 0%, #ff8c42 100%);
+    color: white;
+    padding: 4px 10px;
+    border-radius: 5px;
+    font-size: 11px;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+}
+
+.gift-item .name {
+    color: #333;
+    font-weight: 500;
+}
+
+.gift-item .quantity {
+    color: #ff6b9d;
+    font-weight: 600;
+}
+
+.gift-item .price {
+    color: #666;
+    text-decoration: line-through;
+}
+
+.gift-label {
+    color: #ff6b9d;
+    font-size: 12px;
+    font-style: italic;
+}
+
+/* ==================== PRODUCT COMBO INFO ==================== */
+
+.product-combo-info {
+    background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);
+    color: #2d3436;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 12px;
+    margin-top: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 600;
+}
+
+.product-combo-info i {
+    font-size: 14px;
+}
+
+/* ==================== RESPONSIVE ==================== */
+
+@media (max-width: 768px) {
+    .combo-notification {
+        top: 10px;
+        right: 10px;
+        left: 10px;
+        min-width: auto;
+    }
+    
+    .upsell-content {
+        width: 95%;
+        padding: 20px;
+    }
+    
+    .upsell-content h3 {
+        font-size: 18px;
+    }
+    
+    .upsell-icon {
+        font-size: 48px;
+    }
+    
+    .upsell-actions {
+        flex-direction: column;
+    }
+    
+    .upsell-actions button {
+        width: 100%;
+    }
+}
+
+/* ==================== LOADING STATE ==================== */
+
+.combo-loading {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ==================== PULSE EFFECT ==================== */
+
+.combo-pulse {
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+/* ==================== SHAKE EFFECT (cho gợi ý) ==================== */
+
+.combo-shake {
+    animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+    0%, 100% {
+        transform: translateX(0);
+    }
+    10%, 30%, 50%, 70%, 90% {
+        transform: translateX(-5px);
+    }
+    20%, 40%, 60%, 80% {
+        transform: translateX(5px);
+    }
+}
+
+/* ==================== SUCCESS CHECKMARK ==================== */
+
+.combo-success-checkmark {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #38ef7d;
+    border-radius: 50%;
+    position: relative;
+    margin-right: 8px;
+}
+
+.combo-success-checkmark::after {
+    content: '';
+    position: absolute;
+    top: 3px;
+    left: 6px;
+    width: 5px;
+    height: 10px;
+    border: solid #38ef7d;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}

@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BizFlow Admin - Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f7fa;
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .navbar h1 {
+            font-size: 24px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .btn-logout {
+            padding: 8px 20px;
+            background: rgba(255,255,255,0.2);
+            border: 1px solid white;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .btn-logout:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .stat-card h3 {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .stat-card .value {
+            font-size: 32px;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .service-card {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .service-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .service-card .icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .service-card h3 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .service-card p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            margin-top: 10px;
+        }
+
+        .status-online {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-offline {
+            background: #f8d7da;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <h1>🏪 BizFlow Admin Dashboard</h1>
+        <div class="user-info">
+            <span id="userName">Loading...</span>
+            <button class="btn-logout" onclick="logout()">Đăng xuất</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>TỔNG NGƯỜI DÙNG</h3>
+                <div class="value" id="totalUsers">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>TỔNG SẢN PHẨM</h3>
+                <div class="value" id="totalProducts">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>ĐơN HÀNG HÔM NAY</h3>
+                <div class="value" id="totalOrders">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>DOANH THU THÁNG</h3>
+                <div class="value" id="totalRevenue">0đ</div>
+            </div>
+        </div>
+
+        <h2 style="margin-bottom: 20px; color: #333;">Quản lý dịch vụ</h2>
+        <div class="services-grid">
+            <div class="service-card" onclick="openService('users')">
+                <div class="icon">👥</div>
+                <h3>Quản lý Người dùng</h3>
+                <p>Quản lý tài khoản nhân viên và phân quyền</p>
+                <span class="status-badge status-online" id="statusUsers">Online</span>
+            </div>
+
+            <div class="service-card" onclick="openService('products')">
+                <div class="icon">📦</div>
+                <h3>Quản lý Sản phẩm</h3>
+                <p>Quản lý danh mục và tồn kho sản phẩm</p>
+                <span class="status-badge status-online" id="statusProducts">Online</span>
+            </div>
+
+            <div class="service-card" onclick="openService('orders')">
+                <div class="icon">🛒</div>
+                <h3>Quản lý Đơn hàng</h3>
+                <p>Xem và xử lý đơn hàng bán hàng</p>
+                <span class="status-badge status-online" id="statusOrders">Online</span>
+            </div>
+
+            <div class="service-card" onclick="openService('reports')">
+                <div class="icon">📊</div>
+                <h3>Báo cáo & Thống kê</h3>
+                <p>Xem báo cáo doanh thu và phân tích</p>
+                <span class="status-badge status-online" id="statusReports">Online</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Check authentication
+        const userData = localStorage.getItem('bizflow_user');
+        if (!userData) {
+            window.location.href = '/login.html';
+        } else {
+            const user = JSON.parse(userData);
+            document.getElementById('userName').textContent = user.fullName || user.username;
+        }
+
+        // Load stats
+        async function loadStats() {
+            try {
+                // Load user count
+                const usersRes = await fetch('http://localhost:8201/api/admin/users/count');
+                if (usersRes.ok) {
+                    const count = await usersRes.json();
+                    document.getElementById('totalUsers').textContent = count;
+                }
+
+                // Load product count
+                const productsRes = await fetch('http://localhost:8202/api/admin/products/count');
+                if (productsRes.ok) {
+                    const count = await productsRes.json();
+                    document.getElementById('totalProducts').textContent = count;
+                }
+
+                // Load order count
+                const ordersRes = await fetch('http://localhost:8203/api/admin/orders/count');
+                if (ordersRes.ok) {
+                    const count = await ordersRes.json();
+                    document.getElementById('totalOrders').textContent = count;
+                }
+            } catch (error) {
+                console.error('Error loading stats:', error);
+            }
+        }
+
+        function openService(service) {
+            const ports = {
+                'users': 8201,
+                'products': 8202,
+                'orders': 8203,
+                'reports': 8204
+            };
+            window.open(`http://localhost:${ports[service]}/api/admin/${service}`, '_blank');
+        }
+
+        function logout() {
+            localStorage.removeItem('bizflow_user');
+            window.location.href = '/login.html';
+        }
+
+        // Load stats on page load
+        loadStats();
+    </script>
+</body>
+</html>

@@ -1,0 +1,1918 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BizFlow - Owner Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        :root {
+            --primary: #2f3a8f;
+            --primary-dark: #1f2a66;
+            --accent: #4c6fff;
+            --highlight: #7dd3fc;
+            --bg: #f3f4f8;
+            --card: #ffffff;
+            --text: #1f2937;
+            --muted: #6b7280;
+            --border: #e5e7eb;
+            --shadow: 0 10px 30px rgba(31, 41, 55, 0.08);
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            overflow-x: hidden;
+        }
+
+        .layout {
+            display: grid;
+            grid-template-columns: 250px minmax(0, 1fr);
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            background: linear-gradient(180deg, var(--primary-dark), var(--primary));
+            color: #e5e7eb;
+            padding: 18px 0;
+            display: flex;
+            flex-direction: column;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 20px 14px;
+            margin-bottom: 6px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .brand-mark {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            display: grid;
+            place-items: center;
+            background: rgba(255, 255, 255, 0.15);
+            color: #fff;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .brand-name {
+            font-weight: 700;
+            letter-spacing: 0.3px;
+        }
+
+        .brand-sub {
+            font-size: 12px;
+            color: #c7d2fe;
+        }
+
+        .nav {
+            display: flex;
+            flex-direction: column;
+            padding: 8px 0;
+            gap: 2px;
+            overflow-y: auto;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 11px 18px;
+            margin: 0 10px;
+            border-radius: 10px;
+            color: #e5e7eb;
+            text-decoration: none;
+            border-left: 3px solid transparent;
+            transition: all 0.2s ease;
+        }
+
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        .nav-item.active {
+            background: rgba(255, 255, 255, 0.1);
+            border-left-color: var(--highlight);
+            color: #fff;
+        }
+        .nav-item.drawer-active {
+            background: rgba(255,255,255,0.1);
+            border-left-color: var(--highlight);
+            color: #fff;
+        }
+
+        .nav-item .icon {
+            width: 18px;
+            text-align: center;
+            opacity: 0.9;
+        }
+
+        .sidebar-footer {
+            margin-top: auto;
+            padding: 14px 18px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #c7d2fe;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #4ade80;
+            box-shadow: 0 0 0 6px rgba(74, 222, 128, 0.12);
+        }
+
+        .content {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            min-width: 0;
+        }
+
+        .topbar {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 14px 24px;
+            background: #fff;
+            border-bottom: 1px solid var(--border);
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.02);
+            min-width: 0;
+        }
+
+        .top-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+
+        .page-title {
+            font-weight: 700;
+            font-size: 18px;
+        }
+
+        .search {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #f3f4f6;
+            padding: 9px 12px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            min-width: 320px;
+        }
+
+        .search input {
+            border: none;
+            background: transparent;
+            outline: none;
+            font-size: 14px;
+            width: 100%;
+        }
+
+        .top-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
+        .ghost-btn {
+            background: #eef2ff;
+            color: var(--primary);
+            border: 1px solid #dfe3fa;
+            padding: 9px 14px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .ghost-btn:hover {
+            background: #e0e7ff;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(47, 58, 143, 0.2);
+        }
+
+        .selector {
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            padding: 8px 12px;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            min-width: 170px;
+        }
+
+        .selector .label {
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        .selector .value {
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .user-chip {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            padding: 8px 12px;
+            border-radius: 12px;
+        }
+
+        .avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 12px;
+            background: #eef2ff;
+            color: var(--primary);
+            display: grid;
+            place-items: center;
+            font-weight: 700;
+        }
+
+        .user-meta {
+            display: flex;
+            flex-direction: column;
+            line-height: 1.2;
+        }
+
+        .user-meta small {
+            color: var(--muted);
+        }
+
+        .icon-btn {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            width: 36px;
+            height: 36px;
+            display: grid;
+            place-items: center;
+            cursor: pointer;
+        }
+
+        .notification-badge {
+            position: relative;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+
+        .notification-badge:hover {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        .notification-badge .bell-icon {
+            font-size: 20px;
+            display: block;
+        }
+
+        .notification-badge .badge-count {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            background: #ef4444;
+            color: white;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 2px 5px;
+            border-radius: 10px;
+            min-width: 16px;
+            text-align: center;
+        }
+
+        .notification-badge.has-danger .bell-icon {
+            animation: ring 2s ease-in-out infinite;
+        }
+
+        @keyframes ring {
+            0%, 100% { transform: rotate(0deg); }
+            10%, 30% { transform: rotate(-10deg); }
+            20%, 40% { transform: rotate(10deg); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        .card:nth-child(1) { animation-delay: 0s; }
+        .card:nth-child(2) { animation-delay: 0.1s; }
+        .card:nth-child(3) { animation-delay: 0.2s; }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .loading-indicator {
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        .quick-action-card {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            color: var(--text);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .quick-action-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(47, 58, 143, 0.15);
+            border-color: var(--accent);
+            background: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 100%);
+        }
+
+        .quick-action-icon {
+            font-size: 32px;
+            margin-bottom: 4px;
+        }
+
+        .quick-action-title {
+            font-weight: 700;
+            font-size: 14px;
+            color: var(--primary);
+        }
+
+        .quick-action-desc {
+            font-size: 12px;
+            color: var(--muted);
+            text-align: center;
+        }
+
+        .service-status-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            padding: 12px;
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            transition: all 0.2s ease;
+        }
+
+        .service-status-card:hover {
+            background: #f1f5f9;
+            border-color: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .service-icon {
+            font-size: 24px;
+        }
+
+        .service-name {
+            font-weight: 600;
+            font-size: 13px;
+            color: var(--text);
+        }
+
+        .service-status {
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .service-status.online {
+            color: #10b981;
+        }
+
+        .service-status.offline {
+            color: #ef4444;
+        }
+
+        .service-status.warning {
+            color: #f59e0b;
+        }
+
+        .main {
+            padding: 22px 24px 32px;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            width: 100%;
+            max-width: 1240px;
+            margin: 0 auto;
+            min-width: 0;
+        }
+
+        .top-grid {
+            display: grid;
+            grid-template-columns: 2fr 1.1fr 1.1fr;
+            gap: 16px;
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 16px 18px;
+            box-shadow: var(--shadow);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .card-title {
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card-subtitle {
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        .stat-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .stat-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 10px 12px;
+            background: #f8fafc;
+            border-radius: 10px;
+            transition: all 0.2s ease;
+            cursor: default;
+        }
+
+        .stat-row:hover {
+            background: #f1f5f9;
+            transform: translateX(2px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .stat-label {
+            color: var(--muted);
+            font-weight: 600;
+        }
+
+        .stat-value {
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .muted {
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 16px;
+        }
+
+        .panel {
+            min-height: 300px;
+            position: relative;
+        }
+
+        .empty {
+            display: grid;
+            place-items: center;
+            height: 220px;
+            background: #f9fafb;
+            border: 1px dashed #d1d5db;
+            border-radius: 12px;
+            color: var(--muted);
+            font-weight: 600;
+        }
+
+        .chart-container {
+            background: #f9fafb;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 12px;
+            height: 240px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .chart-container:hover {
+            background: #f3f4f6;
+            border-color: #d1d5db;
+        }
+
+        .legend {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 8px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            color: var(--muted);
+        }
+
+        .legend-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .donut {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            background: conic-gradient(#3b82f6 0deg 100deg, #fbbf24 100deg 170deg, #10b981 170deg 230deg, #e11d48 230deg 280deg, #6366f1 280deg 360deg);
+            position: relative;
+            box-shadow: inset 0 0 0 20px #f9fafb;
+        }
+
+        .donut::after {
+            content: "";
+            position: absolute;
+            inset: 24px;
+            background: #f9fafb;
+            border-radius: 50%;
+            box-shadow: inset 0 0 0 1px #e5e7eb;
+        }
+
+        .donut-value {
+            position: absolute;
+            inset: 0;
+            display: grid;
+            place-items: center;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .donut-card {
+            display: grid;
+            grid-template-columns: 200px 1fr;
+            align-items: center;
+            gap: 18px;
+        }
+
+        .legend-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 8px 16px;
+        }
+
+        .footer-note {
+            margin-top: 10px;
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        .session-card {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 12px;
+        }
+
+        .token-box {
+            background: #0f172a;
+            color: #e2e8f0;
+            border-radius: 10px;
+            padding: 12px;
+            font-family: "SFMono-Regular", Consolas, monospace;
+            font-size: 12px;
+            max-height: 90px;
+            overflow: auto;
+            border: 1px solid #1e293b;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 12px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-group label {
+            font-size: 13px;
+            color: var(--muted);
+            font-weight: 600;
+        }
+
+        .form-group input,
+        .form-group select {
+            padding: 10px 12px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            background: #fff;
+            font-size: 14px;
+        }
+
+        .password-input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .password-input-wrapper input {
+            width: 100%;
+            padding-right: 42px;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 8px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #94a3b8;
+            transition: color 0.2s ease;
+        }
+
+        .toggle-password:hover {
+            color: var(--primary);
+        }
+
+        .toggle-password svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .form-actions {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-top: 14px;
+            flex-wrap: wrap;
+        }
+
+        .primary-btn {
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .primary-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(47, 58, 143, 0.3);
+        }
+
+        .primary-btn:active {
+            transform: translateY(0);
+        }
+
+        .hint {
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        .status-message {
+            font-size: 13px;
+        }
+
+        .status-success {
+            color: #16a34a;
+            font-weight: 600;
+        }
+
+        .status-error {
+            color: #dc2626;
+            font-weight: 600;
+        }
+
+        svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        @media (max-width: 1100px) {
+            .layout {
+                grid-template-columns: 76px 1fr;
+            }
+            .brand,
+            .brand-sub {
+                display: none;
+            }
+            .nav-item {
+                justify-content: center;
+                border-left: none;
+                margin: 0 8px;
+            }
+            .nav-item span:not(.icon) {
+                display: none;
+            }
+            .top-grid {
+                grid-template-columns: 1fr;
+            }
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+            .donut-card {
+                grid-template-columns: 1fr;
+                justify-items: center;
+            }
+            .search {
+                min-width: 200px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .topbar {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 12px;
+            }
+            .top-left {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 8px;
+            }
+            .top-right {
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+            .search { min-width: auto; width: 100%; }
+            .main { padding: 16px; }
+            .top-grid { grid-template-columns: 1fr; }
+            .grid-2 { grid-template-columns: 1fr; }
+            .form-grid { grid-template-columns: 1fr; }
+            .form-actions { flex-direction: column; align-items: stretch; }
+            .session-card { grid-template-columns: 1fr; }
+            .donut-card { grid-template-columns: 1fr; justify-items: center; }
+        }
+
+        @media (max-width: 480px) {
+            .layout { grid-template-columns: 1fr; }
+            .sidebar { display: none; }
+            .page-title { font-size: 18px; }
+            .topbar { padding: 12px 16px; }
+            .card { padding: 12px; }
+            .stat-row { flex-direction: column; align-items: flex-start; gap: 4px; }
+            .user-chip { justify-content: center; }
+            .icon-btn { width: 32px; height: 32px; }
+            .donut { width: 120px; height: 120px; }
+        }
+            body.in-drawer .sidebar {
+            display: none;
+        }
+        body.in-drawer .layout {
+            grid-template-columns: 1fr;
+        }
+        body.in-drawer .purchase-backdrop,
+        body.in-drawer .purchase-drawer {
+            display: none;
+        }        .purchase-backdrop {
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 250px;
+            right: 0;
+            width: calc(100% - 250px);
+            background: rgba(15, 23, 42, 0.45);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease;
+            z-index: 999;
+        }
+        .purchase-drawer {
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 250px;
+            right: 0;
+            width: calc(100% - 250px);
+            height: 100vh;
+            background: #0f172a;
+            box-shadow: -10px 0 30px rgba(15, 23, 42, 0.35);
+            transform: translateX(100%);
+            transition: transform 0.25s ease;
+            z-index: 1000;
+        }
+        .purchase-frame {
+            width: 100%;
+            height: 100%;
+            border: 0;
+            display: block;
+            background: #0f172a;
+        }
+        .purchase-close {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            border: none;
+            background: rgba(255, 255, 255, 0.12);
+            color: #fff;
+            font-size: 18px;
+            cursor: pointer;
+            z-index: 1001;
+        }
+        body.purchase-open {
+            overflow: hidden;
+        }
+        body.purchase-open .purchase-backdrop {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        body.purchase-open .purchase-drawer {
+            transform: translateX(0);
+        }
+        .nav-item.drawer-active {
+            background: rgba(255,255,255,0.1);
+            border-left-color: var(--highlight);
+            color: #fff;
+        }
+        body.in-drawer .sidebar {
+            display: none;
+        }
+        body.in-drawer .layout {
+            grid-template-columns: 1fr;
+        }
+        body.in-drawer .purchase-backdrop,
+        body.in-drawer .purchase-drawer {
+            display: none;
+        }</style>
+</head>
+<body>
+    <div class="layout">
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="brand-mark">BF</div>
+                <div>
+                    <div class="brand-name">BizFlow</div>
+                    <div class="brand-sub">Owner Center</div>
+                </div>
+            </div>
+            <nav class="nav">
+                <a class="nav-item active" href="owner-dashboard.html">
+                    <span class="icon">🏠</span><span>Tổng quan</span>
+                </a>
+                <a class="nav-item" href="owner-reports.html">
+                    <span class="icon">📊</span><span>Báo cáo doanh thu</span>
+                </a>
+                <a class="nav-item" href="owner-products.html">
+                    <span class="icon">🛍️</span><span>Sản phẩm</span>
+                </a>
+                <a class="nav-item" href="owner-categories.html">
+                    <span class="icon">📁</span><span>Danh mục</span>
+                </a>
+                <a class="nav-item" href="owner-inventory.html">
+                    <span class="icon">📦</span><span>Quản lý kho</span>
+                </a>
+                <a class="nav-item" href="javascript:void(0)" data-purchase-href="owner-purchase.html" data-purchase-link="true" onclick="return window.openPurchaseDrawer ? window.openPurchaseDrawer(event) : false;">
+                    <span class="icon">🚚</span><span>Nhập hàng & Giá vốn</span>
+                </a>
+                <a class="nav-item" href="owner-users.html">
+                    <span class="icon">👤</span><span>Quản lý nhân viên</span>
+                </a>
+                <a class="nav-item" href="owner-promotions.html">
+                    <span class="icon">🎯</span><span>Khuyến mãi</span>
+                </a>
+                <a class="nav-item" href="owner-customer-support.html">
+                    <span class="icon">📞</span><span>Chăm sóc khách hàng</span>
+                </a>
+                <a class="nav-item" href="owner-inventory-alerts.html">
+                    <span class="icon">🔔</span><span>Thông báo Tồn kho</span>
+                </a>
+                <a class="nav-item" href="owner-reviews.html">
+                    <span class="icon">⭐</span><span>Đánh giá</span>
+                </a>
+                <a class="nav-item" href="display-settings.html">
+                    <span class="icon">⚙️</span><span>Thiết lập</span>
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="status-dot"></div>
+                <div>
+                    <div class="brand-name">Hoạt động</div>
+                    <div class="brand-sub">Cập nhật: <span id="sidebarTimestamp">--:--</span></div>
+                </div>
+            </div>
+        </aside>
+
+        <div class="content">
+            <header class="topbar">
+                <div class="top-left">
+                    <div>
+                        <div class="page-title" id="greetingTitle">Tổng quan</div>
+                        <div class="card-subtitle" id="greetingSubtitle" style="margin-top: 2px;"></div>
+                    </div>
+                    <div class="search">
+                        <span style="color:#9ca3af;">🔍</span>
+                        <input type="text" id="dashboardSearch" placeholder="Tìm kiếm sản phẩm, khách hàng, nhân viên..." onkeypress="handleSearchKeypress(event)" />
+                    </div>
+                </div>
+                <div class="top-right">
+                    <div class="notification-badge" id="notificationBadge" onclick="goToAlerts()" title="Xem thông báo">
+                        <span class="bell-icon">🔔</span>
+                        <span class="badge-count" id="badgeCount" style="display:none;">0</span>
+                    </div>
+                    <button class="ghost-btn" onclick="showQuickStart()">📘 Hướng dẫn sử dụng</button>
+                    <div class="selector">
+                        <span class="label">Chi nhánh</span>
+                        <span class="value" id="branchName">TRỤ SỞ CHÍNH</span>
+                    </div>
+                    <div class="user-chip">
+                        <div class="avatar" id="userAvatar">OW</div>
+                        <div class="user-meta">
+                            <span id="topUserName">Owner</span>
+                            <small>OWNER</small>
+                        </div>
+                        <button class="icon-btn" title="Đăng xuất" onclick="logout()">⎋</button>
+                    </div>
+                </div>
+            </header>
+
+            <main class="main">
+                <section class="top-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <div class="card-title">Tổng quan hệ thống</div>
+                                <div class="card-subtitle" id="dailySubtitle">Đang tải...</div>
+                            </div>
+                            <button class="icon-btn" onclick="refreshDashboard()" title="Làm mới dữ liệu">
+                                🔄
+                            </button>
+                        </div>
+                        <div class="stat-list" id="dailyStats"></div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <div class="card-title">Nhân sự</div>
+                                <div class="card-subtitle" id="estimateSubtitle">Đang tải...</div>
+                            </div>
+                        </div>
+                        <div class="stat-list" id="estimateStats"></div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <div class="card-title">Dữ liệu kinh doanh</div>
+                                <div class="card-subtitle" id="invoiceSubtitle">Đang tải...</div>
+                            </div>
+                        </div>
+                        <div class="stat-list" id="invoiceStats"></div>
+                    </div>
+                </section>
+
+                <section class="grid-2">
+                    <div class="card panel">
+                        <div class="card-header">
+                            <div>
+                                <div class="card-title">Doanh thu, chi phí, lợi nhuận</div>
+                                <div class="card-subtitle">Tháng này</div>
+                            </div>
+                            <div class="card-subtitle" id="financeTimestamp"></div>
+                        </div>
+                        <div class="stat-list" id="financeStats">
+                            <div class="stat-row">
+                                <div class="stat-label">💰 Tổng doanh thu</div>
+                                <div class="stat-value" id="totalRevenue" style="color: #10b981;">-</div>
+                            </div>
+                            <div class="stat-row">
+                                <div class="stat-label">💸 Tổng chi phí</div>
+                                <div class="stat-value" id="totalExpense" style="color: #ef4444;">-</div>
+                            </div>
+                            <div class="stat-row">
+                                <div class="stat-label">📈 Lợi nhuận ròng</div>
+                                <div class="stat-value" id="netProfit" style="color: #3b82f6; font-size: 18px;">-</div>
+                            </div>
+                            <div class="stat-row">
+                                <div class="stat-label">📊 Tỷ suất lợi nhuận</div>
+                                <div class="stat-value" id="profitMargin">-</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card panel">
+                        <div class="card-header">
+                            <div>
+                                <div class="card-title">Tình hình thu chi tiền theo thời gian</div>
+                                <div class="card-subtitle">Tháng này</div>
+                            </div>
+                            <div class="card-subtitle" id="cashTimestamp"></div>
+                        </div>
+                        <div class="chart-container" id="cashChart">Chưa có dữ liệu thu chi.</div>
+                        <div class="legend" id="cashLegend"></div>
+                        <div class="footer-note" id="cashNote"></div>
+                    </div>
+                </section>
+
+                <section class="grid-2">
+                    <div class="card panel">
+                        <div class="card-header">
+                            <div>
+                                <div class="card-title">Tỉ trọng doanh thu hàng hóa</div>
+                                <div class="card-subtitle" id="pieSubtitle">Tháng này</div>
+                            </div>
+                            <div class="card-subtitle" id="pieTimestamp"></div>
+                        </div>
+                        <div class="donut-card">
+                            <div class="donut" id="donutChart">
+                                <div class="donut-value" id="donutValue">--%</div>
+                            </div>
+                            <div class="legend-list" id="donutLegend"></div>
+                        </div>
+                        <div class="footer-note">Chưa có dữ liệu doanh thu để hiển thị.</div>
+                    </div>
+                    <div class="card panel">
+                        <div class="card-header">
+                            <div>
+                                <div class="card-title">Doanh thu theo thời gian</div>
+                                <div class="card-subtitle">Tháng này</div>
+                            </div>
+                            <div class="card-subtitle" id="revenueTimestamp"></div>
+                        </div>
+                        <div class="chart-container" id="revenueChart">Chưa có dữ liệu doanh thu.</div>
+                        <div class="footer-note" id="revenueNote"></div>
+                    </div>
+                </section>
+
+                <section class="card">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">⚡ Thao tác nhanh</div>
+                            <div class="card-subtitle">Truy cập nhanh các chức năng thường dùng</div>
+                        </div>
+                    </div>
+                    <div class="session-card">
+                        <a href="owner-products.html" class="quick-action-card">
+                            <div class="quick-action-icon">🛍️</div>
+                            <div class="quick-action-title">Quản lý sản phẩm</div>
+                            <div class="quick-action-desc">Thêm, sửa, xóa sản phẩm</div>
+                        </a>
+                        <a href="owner-inventory.html" class="quick-action-card">
+                            <div class="quick-action-icon">📦</div>
+                            <div class="quick-action-title">Kiểm tra kho</div>
+                            <div class="quick-action-desc">Theo dõi tồn kho</div>
+                        </a>
+                        <a href="javascript:void(0)" onclick="openPurchaseDrawerQuick()" class="quick-action-card">
+                            <div class="quick-action-icon">🚚</div>
+                            <div class="quick-action-title">Nhập hàng</div>
+                            <div class="quick-action-desc">Quản lý nhập hàng</div>
+                        </a>
+                        <a href="owner-reports.html" class="quick-action-card">
+                            <div class="quick-action-icon">📊</div>
+                            <div class="quick-action-title">Báo cáo</div>
+                            <div class="quick-action-desc">Xem báo cáo chi tiết</div>
+                        </a>
+                        <a href="owner-users.html" class="quick-action-card">
+                            <div class="quick-action-icon">👥</div>
+                            <div class="quick-action-title">Nhân viên</div>
+                            <div class="quick-action-desc">Quản lý tài khoản</div>
+                        </a>
+                        <a href="owner-promotions.html" class="quick-action-card">
+                            <div class="quick-action-icon">🎯</div>
+                            <div class="quick-action-title">Khuyến mãi</div>
+                            <div class="quick-action-desc">Tạo chương trình KM</div>
+                        </a>
+                    </div>
+                </section>
+
+                <section class="card">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">Thông tin đăng nhập</div>
+                            <div class="card-subtitle">Dành cho kiểm thử API</div>
+                        </div>
+                    </div>
+                    <div class="session-card">
+                        <div>
+                            <div class="stat-label">User ID</div>
+                            <div class="stat-value" id="userId">-</div>
+                        </div>
+                        <div>
+                            <div class="stat-label">Username</div>
+                            <div class="stat-value" id="username">-</div>
+                        </div>
+                        <div>
+                            <div class="stat-label">Role</div>
+                            <div class="stat-value"><span style="color: var(--primary); font-weight: 700;">OWNER</span></div>
+                        </div>
+                        <div>
+                            <div class="stat-label">Chi nhánh</div>
+                            <div class="stat-value" id="branchValue">TRỤ SỞ CHÍNH</div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="card">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">🖥️ Tình trạng hệ thống</div>
+                            <div class="card-subtitle">Trạng thái các dịch vụ</div>
+                        </div>
+                    </div>
+                    <div class="session-card">
+                        <div class="service-status-card">
+                            <div class="service-icon">🔐</div>
+                            <div class="service-name">Authentication</div>
+                            <div class="service-status online">● Online</div>
+                        </div>
+                        <div class="service-status-card">
+                            <div class="service-icon">📦</div>
+                            <div class="service-name">Inventory</div>
+                            <div class="service-status online">● Online</div>
+                        </div>
+                        <div class="service-status-card">
+                            <div class="service-icon">🛒</div>
+                            <div class="service-name">Sales</div>
+                            <div class="service-status online">● Online</div>
+                        </div>
+                        <div class="service-status-card">
+                            <div class="service-icon">📊</div>
+                            <div class="service-name">Reports</div>
+                            <div class="service-status online">● Online</div>
+                        </div>
+                        <div class="service-status-card">
+                            <div class="service-icon">🗂️</div>
+                            <div class="service-name">Catalog</div>
+                            <div class="service-status online">● Online</div>
+                        </div>
+                        <div class="service-status-card">
+                            <div class="service-icon">🎯</div>
+                            <div class="service-name">Promotion</div>
+                            <div class="service-status online">● Online</div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="card">
+                    <div class="card-header">
+                        <div>
+                            <div class="card-title">Đăng ký tài khoản nhân viên</div>
+                            <div class="card-subtitle">Chỉ Owner/Admin được tạo tài khoản nhân viên</div>
+                        </div>
+                    </div>
+                    <form id="employeeForm">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="empName">Họ tên</label>
+                                <input id="empName" name="empName" type="text" placeholder="Nguyễn Văn A" required />
+                            </div>
+                            <div class="form-group">
+                                <label for="empUsername">Username</label>
+                                <input id="empUsername" name="empUsername" type="text" placeholder="nhanvien01" required />
+                            </div>
+                            <div class="form-group">
+                                <label for="empEmail">Email</label>
+                                <input id="empEmail" name="empEmail" type="email" placeholder="nhanvien@email.com" required />
+                            </div>
+                            <div class="form-group">
+                                <label for="empPhone">Số điện thoại</label>
+                                <input id="empPhone" name="empPhone" type="tel" placeholder="0901234567" />
+                            </div>
+                            <div class="form-group">
+                                <label for="empRole">Vai trò</label>
+                                <select id="empRole" name="empRole">
+                                    <option value="EMPLOYEE">Nhân viên</option>
+                                    <option value="MANAGER">Quản lý</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="empBranch">Chi nhánh</label>
+                                <select id="empBranch" name="empBranch">
+                                    <option value="">Đang tải chi nhánh...</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="empPassword">Mật khẩu tạm</label>
+                                <div class="password-input-wrapper">
+                                    <input id="empPassword" name="empPassword" type="password" placeholder="Tối thiểu 6 ký tự" required />
+                                    <button type="button" class="toggle-password" id="toggleEmployeePassword" aria-label="Ẩn/hiện mật khẩu">
+                                        <svg class="eye-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                            <circle cx="12" cy="12" r="3"/>
+                                        </svg>
+                                        <svg class="eye-slash-icon" style="display:none;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+                                            <line x1="1" y1="1" x2="23" y2="23"/>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button class="primary-btn" type="submit">Tạo tài khoản nhân viên</button>
+                            <span id="employeeStatus" class="status-message"></span>
+                            <span class="hint">Tài khoản Owner do Admin tạo, không hỗ trợ tự đăng ký.</span>
+                        </div>
+                    </form>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        const numberFormatter = new Intl.NumberFormat('vi-VN');
+        const apiEndpoints = {
+            summary: '/api/dashboard/owner-summary',
+            financial: '/api/dashboard/financial-summary',
+            branches: '/api/branches',
+            users: '/api/users'
+        };
+
+        window.addEventListener('load', () => {
+            enforceAuth();
+            renderHeader();
+            fillSessionInfo();
+            setEmptyCharts();
+            loadSummary();
+            loadBranches();
+            wireEmployeeForm();
+            wirePasswordToggle('empPassword', 'toggleEmployeePassword');
+        });
+
+        function enforceAuth() {
+            const token = sessionStorage.getItem('accessToken');
+            const role = sessionStorage.getItem('role');
+            if (!token) {
+                window.location.href = '/pages/login.html';
+                return;
+            }
+            if (role !== 'OWNER') {
+                if (role === 'ADMIN') {
+                    window.location.href = '/pages/admin-home.html';
+                } else {
+                    window.location.href = '/pages/employee-dashboard.html';
+                }
+            }
+        }
+
+        function renderHeader() {
+            const username = sessionStorage.getItem('username') || 'Owner';
+            const branch = sessionStorage.getItem('branch') || 'TRỤ SỞ CHÍNH';
+            document.getElementById('topUserName').textContent = username;
+            document.getElementById('branchName').textContent = branch;
+            document.getElementById('branchValue').textContent = branch;
+            document.getElementById('userAvatar').textContent = initials(username);
+            document.getElementById('sidebarTimestamp').textContent = timeStamp();
+            
+            // Set greeting based on time
+            const hour = new Date().getHours();
+            let greeting = '';
+            let icon = '';
+            if (hour < 12) {
+                greeting = 'Chào buổi sáng';
+                icon = '🌅';
+            } else if (hour < 18) {
+                greeting = 'Chào buổi chiều';
+                icon = '☀️';
+            } else {
+                greeting = 'Chào buổi tối';
+                icon = '🌙';
+            }
+            document.getElementById('greetingTitle').textContent = `${icon} ${greeting}, ${username}!`;
+            document.getElementById('greetingSubtitle').textContent = 'Hệ thống đang hoạt động tốt';
+        }
+
+        async function loadSummary() {
+            try {
+                const response = await fetch(apiEndpoints.summary);
+                if (!response.ok) {
+                    throw new Error('Không thể tải dữ liệu tổng quan');
+                }
+                const data = await response.json();
+                renderSummary(data);
+            } catch (error) {
+                renderList('dailyStats', [{ label: 'Lỗi tải dữ liệu', value: '-' }]);
+                renderList('estimateStats', [{ label: 'Vui lòng thử lại', value: '-' }]);
+                renderList('invoiceStats', [{ label: 'Không có dữ liệu', value: '-' }]);
+                document.getElementById('dailySubtitle').textContent = 'Không thể tải dữ liệu';
+                document.getElementById('estimateSubtitle').textContent = 'Không thể tải dữ liệu';
+                document.getElementById('invoiceSubtitle').textContent = 'Không thể tải dữ liệu';
+            }
+        }
+
+        function renderSummary(data) {
+            const subtitle = `Dữ liệu: ${formatTimestamp(data.timestamp)}`;
+            renderList('dailyStats', [
+                { label: 'Tổng người dùng', value: data.totalUsers },
+                { label: 'Tổng chi nhánh', value: data.totalBranches }
+            ]);
+            renderList('estimateStats', [
+                { label: 'Nhân viên', value: data.totalEmployees },
+                { label: 'Quản lý', value: data.totalManagers }
+            ]);
+            renderList('invoiceStats', [
+                { label: 'Tổng sản phẩm', value: data.totalProducts },
+                { label: 'Tổng khách hàng', value: data.totalCustomers }
+            ]);
+            document.getElementById('dailySubtitle').textContent = subtitle;
+            document.getElementById('estimateSubtitle').textContent = subtitle;
+            document.getElementById('invoiceSubtitle').textContent = subtitle;
+            document.getElementById('financeTimestamp').textContent = subtitle;
+        }
+
+        function renderList(elId, data) {
+            const wrap = document.getElementById(elId);
+            wrap.innerHTML = '';
+            data.forEach(item => {
+                const row = document.createElement('div');
+                row.className = 'stat-row';
+                const label = document.createElement('div');
+                label.className = 'stat-label';
+                label.textContent = item.label;
+                const value = document.createElement('div');
+                value.className = 'stat-value';
+                value.textContent = formatNumber(item.value);
+                row.append(label, value);
+                wrap.appendChild(row);
+            });
+        }
+
+        function setEmptyCharts() {
+            document.getElementById('cashLegend').innerHTML = '';
+            document.getElementById('cashNote').textContent = 'Chưa có dữ liệu.';
+            document.getElementById('cashTimestamp').textContent = '';
+            document.getElementById('revenueNote').textContent = 'Chưa có dữ liệu.';
+            document.getElementById('revenueTimestamp').textContent = '';
+            document.getElementById('pieSubtitle').textContent = 'Chưa có dữ liệu';
+            document.getElementById('pieTimestamp').textContent = '';
+            document.getElementById('donutLegend').innerHTML = '';
+            document.getElementById('donutValue').textContent = '--%';
+            document.getElementById('donutChart').style.background = 'conic-gradient(#d1d5db 0deg 360deg)';
+        }
+
+        function fillSessionInfo() {
+            const userId = sessionStorage.getItem('userId');
+            const username = sessionStorage.getItem('username') || 'Owner';
+            const token = sessionStorage.getItem('accessToken');
+            document.getElementById('userId').textContent = userId || '-';
+            document.getElementById('username').textContent = username;
+        }
+
+        function wireEmployeeForm() {
+            const form = document.getElementById('employeeForm');
+            const status = document.getElementById('employeeStatus');
+            form.addEventListener('submit', async event => {
+                event.preventDefault();
+                status.textContent = '';
+                status.className = 'status-message';
+                const data = Object.fromEntries(new FormData(form).entries());
+                const payload = {
+                    username: (data.empUsername || '').trim(),
+                    password: data.empPassword || '',
+                    email: (data.empEmail || '').trim(),
+                    fullName: (data.empName || '').trim(),
+                    phoneNumber: (data.empPhone || '').trim() || null,
+                    role: data.empRole,
+                    branchId: data.empBranch ? Number(data.empBranch) : null
+                };
+
+                try {
+                    const response = await fetch(apiEndpoints.users, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    if (!response.ok) {
+                        const message = await response.text();
+                        throw new Error(message || 'Không thể tạo tài khoản');
+                    }
+                    status.textContent = 'Tạo tài khoản thành công.';
+                    status.classList.add('status-success');
+                    form.reset();
+                    await loadSummary();
+                } catch (error) {
+                    status.textContent = error.message || 'Có lỗi xảy ra.';
+                    status.classList.add('status-error');
+                }
+            });
+        }
+
+        function wirePasswordToggle(inputId, buttonId) {
+            const input = document.getElementById(inputId);
+            const toggleBtn = document.getElementById(buttonId);
+            if (!input || !toggleBtn) {
+                return;
+            }
+            const eyeIcon = toggleBtn.querySelector('.eye-icon');
+            const eyeSlashIcon = toggleBtn.querySelector('.eye-slash-icon');
+            toggleBtn.addEventListener('click', () => {
+                const isPassword = input.type === 'password';
+                input.type = isPassword ? 'text' : 'password';
+                if (eyeIcon && eyeSlashIcon) {
+                    eyeIcon.style.display = isPassword ? 'none' : 'block';
+                    eyeSlashIcon.style.display = isPassword ? 'block' : 'none';
+                }
+            });
+        }
+
+        async function loadBranches() {
+            const branchSelect = document.getElementById('empBranch');
+            try {
+                const response = await fetch(apiEndpoints.branches);
+                if (!response.ok) {
+                    throw new Error('Không thể tải chi nhánh');
+                }
+                const branches = await response.json();
+                branchSelect.innerHTML = '<option value="">-- Chọn chi nhánh --</option>';
+                branches.forEach(branch => {
+                    const option = document.createElement('option');
+                    option.value = branch.id;
+                    option.textContent = branch.name || `Chi nhánh #${branch.id}`;
+                    branchSelect.appendChild(option);
+                });
+                if (!branches.length) {
+                    branchSelect.innerHTML = '<option value="">Chưa có chi nhánh</option>';
+                }
+            } catch (error) {
+                branchSelect.innerHTML = '<option value="">Không tải được chi nhánh</option>';
+            }
+        }
+
+        function logout() {
+            if (confirm('Bạn có chắc muốn đăng xuất?')) {
+                sessionStorage.clear();
+                window.location.href = '/pages/login.html';
+            }
+        }
+
+        function formatNumber(value) {
+            if (value === null || value === undefined || value === '-') {
+                return '-';
+            }
+            return numberFormatter.format(value);
+        }
+
+        function timeStamp() {
+            const now = new Date();
+            return now.toLocaleString('vi-VN', { hour12: false });
+        }
+
+        function formatTimestamp(value) {
+            if (!value) {
+                return timeStamp();
+            }
+            const parsed = new Date(value);
+            if (Number.isNaN(parsed.getTime())) {
+                return value;
+            }
+            return parsed.toLocaleString('vi-VN', { hour12: false });
+        }
+
+        function initials(name) {
+            return name.split(' ').map(part => part[0]).join('').slice(0, 2).toUpperCase() || 'OW';
+        }
+
+        function handleSearchKeypress(event) {
+            if (event.key === 'Enter') {
+                const query = event.target.value.trim();
+                if (query) {
+                    performSearch(query);
+                }
+            }
+        }
+
+        async function performSearch(query) {
+            const searchLower = query.toLowerCase();
+            
+            // Quick navigation based on keywords
+            if (searchLower.includes('sản phẩm') || searchLower.includes('product')) {
+                window.location.href = 'owner-products.html';
+            } else if (searchLower.includes('khách') || searchLower.includes('customer')) {
+                window.location.href = 'customer-list.html';
+            } else if (searchLower.includes('nhân viên') || searchLower.includes('employee') || searchLower.includes('user')) {
+                window.location.href = 'owner-users.html';
+            } else if (searchLower.includes('báo cáo') || searchLower.includes('report')) {
+                window.location.href = 'owner-reports.html';
+            } else if (searchLower.includes('kho') || searchLower.includes('inventory')) {
+                window.location.href = 'owner-inventory.html';
+            } else if (searchLower.includes('khuyến mãi') || searchLower.includes('promotion')) {
+                window.location.href = 'owner-promotions.html';
+            } else if (searchLower.includes('nhập hàng') || searchLower.includes('purchase')) {
+                const purchaseLink = document.querySelector('[data-purchase-link="true"]');
+                if (purchaseLink && window.openPurchaseDrawer) {
+                    window.openPurchaseDrawer({ currentTarget: purchaseLink, preventDefault: () => {} });
+                }
+            } else {
+                // Default: search products
+                Swal.fire({
+                    icon: 'info',
+                    title: 'Tìm kiếm',
+                    text: `Đang tìm kiếm "${query}" trong sản phẩm...`,
+                    timer: 1500,
+                    showConfirmButton: false
+                }).then(() => {
+                    window.location.href = `owner-products.html?search=${encodeURIComponent(query)}`;
+                });
+            }
+        }
+
+        // Load financial data and render charts
+        async function loadFinancialData() {
+            try {
+                const response = await fetch(apiEndpoints.financial);
+                if (!response.ok) {
+                    throw new Error('Không thể tải dữ liệu tài chính');
+                }
+                const data = await response.json();
+                
+                // Update finance stats
+                document.getElementById('totalRevenue').textContent = formatNumber(data.totalRevenue) + ' ₫';
+                document.getElementById('totalExpense').textContent = formatNumber(data.totalExpense) + ' ₫';
+                document.getElementById('netProfit').textContent = formatNumber(data.netProfit) + ' ₫';
+                document.getElementById('profitMargin').textContent = data.profitMargin.toFixed(1) + '%';
+                document.getElementById('financeTimestamp').textContent = `Cập nhật: ${formatTimestamp(data.timestamp)}`;
+
+                // Render charts with real data
+                if (data.dailyRevenues && data.dailyRevenues.length > 0) {
+                    renderRevenueChart(data.dailyRevenues);
+                    renderCashFlowChart(data.dailyRevenues);
+                } else {
+                    document.getElementById('revenueChart').textContent = 'Chưa có dữ liệu doanh thu trong tháng này.';
+                    document.getElementById('cashChart').textContent = 'Chưa có dữ liệu thu chi trong tháng này.';
+                }
+
+                // Render revenue distribution pie chart
+                if (data.categoryRevenues && data.categoryRevenues.length > 0) {
+                    renderRevenueDistribution(data.categoryRevenues, data.totalRevenue);
+                } else {
+                    document.getElementById('donutChart').style.background = 'conic-gradient(#d1d5db 0deg 360deg)';
+                    document.getElementById('donutValue').textContent = '--';
+                    document.getElementById('donutLegend').innerHTML = '<p style="color: var(--muted);">Chưa có dữ liệu doanh thu theo danh mục.</p>';
+                }
+            } catch (error) {
+                console.error('Error loading financial data:', error);
+                // Show error message
+                document.getElementById('totalRevenue').textContent = 'Lỗi tải dữ liệu';
+                document.getElementById('totalExpense').textContent = 'Lỗi tải dữ liệu';
+                document.getElementById('netProfit').textContent = 'Lỗi tải dữ liệu';
+                document.getElementById('profitMargin').textContent = '--';
+            }
+        }
+
+        function renderRevenueChart(dailyRevenues) {
+            const container = document.getElementById('revenueChart');
+            
+            // Get last 10 days
+            const last10Days = dailyRevenues.slice(-10);
+            if (last10Days.length === 0) {
+                container.textContent = 'Chưa có dữ liệu doanh thu.';
+                return;
+            }
+            
+            const revenues = last10Days.map(d => parseFloat(d.revenue));
+            const maxRevenue = Math.max(...revenues);
+            const barWidth = 100 / last10Days.length;
+            
+            let svg = '<svg viewBox="0 0 100 60" style="width:100%; height:100%;">';
+            
+            revenues.forEach((revenue, i) => {
+                const height = maxRevenue > 0 ? (revenue / maxRevenue) * 50 : 0;
+                const x = i * barWidth + barWidth * 0.1;
+                const y = 55 - height;
+                const color = '#3b82f6';
+                
+                svg += `<rect x="${x}" y="${y}" width="${barWidth * 0.8}" height="${height}" fill="${color}" rx="1"/>`;
+            });
+            
+            svg += '</svg>';
+            container.innerHTML = svg;
+            
+            const firstDate = new Date(last10Days[0].date);
+            const lastDate = new Date(last10Days[last10Days.length - 1].date);
+            document.getElementById('revenueNote').textContent = 
+                `Biểu đồ cột thể hiện doanh thu từ ${firstDate.getDate()}/${firstDate.getMonth()+1} đến ${lastDate.getDate()}/${lastDate.getMonth()+1}/${lastDate.getFullYear()}`;
+            document.getElementById('revenueTimestamp').textContent = `Cập nhật: ${timeStamp()}`;
+        }
+
+        function renderCashFlowChart(dailyRevenues) {
+            const container = document.getElementById('cashChart');
+            
+            // Get last 15 days
+            const last15Days = dailyRevenues.slice(-15);
+            if (last15Days.length === 0) {
+                container.textContent = 'Chưa có dữ liệu thu chi.';
+                return;
+            }
+            
+            const revenues = last15Days.map(d => parseFloat(d.revenue));
+            const maxValue = Math.max(...revenues);
+            
+            let svg = '<svg viewBox="0 0 100 50" style="width:100%; height:100%;">';
+            
+            // Create line chart
+            const points = revenues.map((value, i) => {
+                const x = (i / (revenues.length - 1)) * 95 + 2.5;
+                const y = maxValue > 0 ? 45 - ((value / maxValue) * 40) : 45;
+                return `${x},${y}`;
+            }).join(' ');
+            
+            // Area under line
+            svg += `<polygon points="2.5,45 ${points} 97.5,45" fill="#3b82f620" />`;
+            // Line
+            svg += `<polyline points="${points}" fill="none" stroke="#3b82f6" stroke-width="0.5" />`;
+            // Points
+            revenues.forEach((value, i) => {
+                const x = (i / (revenues.length - 1)) * 95 + 2.5;
+                const y = maxValue > 0 ? 45 - ((value / maxValue) * 40) : 45;
+                svg += `<circle cx="${x}" cy="${y}" r="0.8" fill="#3b82f6" />`;
+            });
+            
+            svg += '</svg>';
+            container.innerHTML = svg;
+            
+            document.getElementById('cashNote').textContent = 'Biểu đồ đường thể hiện xu hướng doanh thu theo ngày';
+            document.getElementById('cashTimestamp').textContent = `Cập nhật: ${timeStamp()}`;
+            
+            // Add legend
+            const legend = document.getElementById('cashLegend');
+            legend.innerHTML = '<div class="legend-item"><span class="legend-dot" style="background:#3b82f6;"></span><span>Dòng tiền thuần</span></div>';
+        }
+
+        function renderRevenueDistribution(categoryRevenues, totalRevenue) {
+            // Update donut chart
+            let startAngle = 0;
+            let gradientParts = [];
+            
+            // Color palette
+            const colors = ['#3b82f6', '#fbbf24', '#10b981', '#e11d48', '#6366f1', '#8b5cf6', '#ec4899', '#f97316'];
+            
+            categoryRevenues.forEach((cat, idx) => {
+                const color = colors[idx % colors.length];
+                const angle = (cat.percentage / 100) * 360;
+                gradientParts.push(`${color} ${startAngle}deg ${startAngle + angle}deg`);
+                startAngle += angle;
+            });
+            
+            const donutChart = document.getElementById('donutChart');
+            donutChart.style.background = `conic-gradient(${gradientParts.join(', ')})`;
+            
+            document.getElementById('donutValue').textContent = '100%';
+            
+            // Update legend
+            const legend = document.getElementById('donutLegend');
+            legend.innerHTML = categoryRevenues.map((cat, idx) => {
+                const color = colors[idx % colors.length];
+                return `
+                    <div class="legend-item">
+                        <span class="legend-dot" style="background:${color};"></span>
+                        <div style="display:flex; flex-direction:column;">
+                            <span style="font-weight:600; color:var(--text);">${cat.categoryName}</span>
+                            <span style="font-size:12px; color:var(--muted);">${cat.percentage.toFixed(1)}% • ${formatNumber(cat.revenue)} ₫</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            document.getElementById('pieSubtitle').textContent = 'Phân bố theo danh mục';
+            document.getElementById('pieTimestamp').textContent = `Cập nhật: ${timeStamp()}`;
+        }
+
+        // Initialize charts on load
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                loadFinancialData();
+            }, 500);
+        });
+
+        function showQuickStart() {
+            Swal.fire({
+                title: '📘 Hướng dẫn sử dụng BizFlow Owner',
+                html: `
+                    <div style="text-align: left; padding: 10px; max-height: 400px; overflow-y: auto;">
+                        <h3 style="color: var(--primary); margin-top: 0;">🏠 Tổng quan</h3>
+                        <p>Dashboard hiển thị các chỉ số kinh doanh quan trọng, doanh thu, chi phí và lợi nhuận của toàn hệ thống.</p>
+                        
+                        <h3 style="color: var(--primary);">📊 Các chức năng chính</h3>
+                        <ul style="padding-left: 20px;">
+                            <li><strong>Báo cáo doanh thu:</strong> Xem báo cáo chi tiết theo ngày, tháng, năm</li>
+                            <li><strong>Quản lý sản phẩm:</strong> Thêm, sửa, xóa sản phẩm trong hệ thống</li>
+                            <li><strong>Quản lý kho:</strong> Theo dõi tồn kho, cảnh báo hết hàng</li>
+                            <li><strong>Nhập hàng & Giá vốn:</strong> Quản lý nhập hàng và tính giá vốn</li>
+                            <li><strong>Quản lý nhân viên:</strong> Thêm, chỉnh sửa tài khoản nhân viên</li>
+                            <li><strong>Khuyến mãi:</strong> Tạo và quản lý chương trình khuyến mãi</li>
+                        </ul>
+                        
+                        <h3 style="color: var(--primary);">🔍 Tìm kiếm nhanh</h3>
+                        <p>Sử dụng ô tìm kiếm phía trên để nhanh chóng truy cập các chức năng:</p>
+                        <ul style="padding-left: 20px;">
+                            <li>Nhập "sản phẩm" để đến trang sản phẩm</li>
+                            <li>Nhập "báo cáo" để xem báo cáo</li>
+                            <li>Nhập "nhân viên" để quản lý nhân viên</li>
+                            <li>Nhập tên sản phẩm để tìm kiếm cụ thể</li>
+                        </ul>
+                        
+                        <h3 style="color: var(--primary);">🔔 Thông báo</h3>
+                        <p>Click vào biểu tượng chuông để xem cảnh báo tồn kho và các thông báo quan trọng khác.</p>
+                        
+                        <h3 style="color: var(--primary);">💡 Mẹo</h3>
+                        <p>Tất cả dữ liệu được đồng bộ thời gian thực. Làm mới trang để cập nhật thông tin mới nhất.</p>
+                    </div>
+                `,
+                icon: 'info',
+                confirmButtonText: 'Đã hiểu',
+                width: '600px',
+                confirmButtonColor: '#2f3a8f'
+            });
+        }
+
+        function goToAlerts() {
+            window.location.href = 'owner-inventory-alerts.html';
+        }
+
+        async function refreshDashboard() {
+            const refreshIcon = event.target;
+            refreshIcon.style.transform = 'rotate(360deg)';
+            refreshIcon.style.transition = 'transform 0.5s ease';
+            
+            try {
+                await Promise.all([
+                    loadSummary(),
+                    loadFinancialData()
+                ]);
+                
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Đã cập nhật!',
+                    text: 'Dữ liệu dashboard đã được làm mới',
+                    timer: 1500,
+                    showConfirmButton: false
+                });
+            } catch (error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Lỗi',
+                    text: 'Không thể làm mới dữ liệu. Vui lòng thử lại.',
+                    confirmButtonColor: '#2f3a8f'
+                });
+            } finally {
+                setTimeout(() => {
+                    refreshIcon.style.transform = 'rotate(0deg)';
+                }, 500);
+            }
+        }
+
+        function openPurchaseDrawerQuick() {
+            const purchaseLink = document.querySelector('[data-purchase-link="true"]');
+            if (purchaseLink && window.openPurchaseDrawer) {
+                window.openPurchaseDrawer({ currentTarget: purchaseLink, preventDefault: () => {} });
+            }
+        }
+    </script>
+        
+        
+    <div id="purchaseBackdrop" class="purchase-backdrop"></div>
+    <aside id="purchaseDrawer" class="purchase-drawer" aria-hidden="true">
+        <button id="purchaseClose" class="purchase-close" type="button" aria-label="Đóng">×</button>
+        <iframe id="purchaseFrame" class="purchase-frame" title="Nhập hàng & Giá vốn"></iframe>
+    </aside>
+    <script>
+        (function () {
+            const initDrawer = () => {
+                const links = document.querySelectorAll('[data-purchase-link="true"]');
+                const drawer = document.getElementById('purchaseDrawer');
+                const frame = document.getElementById('purchaseFrame');
+                const closeBtn = document.getElementById('purchaseClose');
+                const backdrop = document.getElementById('purchaseBackdrop');
+
+                if (!links.length || !drawer || !frame) return;
+
+                let previousActiveLink = null;
+
+                const openDrawer = (eventOrLink) => {
+                    const link = eventOrLink && eventOrLink.currentTarget ? eventOrLink.currentTarget : eventOrLink;
+                    if (eventOrLink && eventOrLink.preventDefault) {
+                        eventOrLink.preventDefault();
+                    }
+
+                    const rawUrl = (link && link.dataset && link.dataset.purchaseHref) ? link.dataset.purchaseHref : 'owner-purchase.html';
+                    const cacheBuster = `v=${Date.now()}`;
+                    const url = rawUrl.includes('?') ? `${rawUrl}&${cacheBuster}` : `${rawUrl}?${cacheBuster}`;
+                    frame.src = url;
+
+                    const allNavItems = document.querySelectorAll('.nav-item');
+                    for (let i = 0; i < allNavItems.length; i++) {
+                        if (allNavItems[i].classList.contains('active')) {
+                            previousActiveLink = allNavItems[i];
+                        }
+                        allNavItems[i].classList.remove('active');
+                    }
+                    if (link && link.classList) {
+                        link.classList.add('drawer-active');
+                    }
+
+                    document.body.classList.add('purchase-open');
+                    drawer.setAttribute('aria-hidden', 'false');
+                    return false;
+                };
+
+                const closeDrawer = () => {
+                    const activeDrawerLink = document.querySelector('.nav-item.drawer-active');
+                    if (activeDrawerLink) {
+                        activeDrawerLink.classList.remove('drawer-active');
+                    }
+                    if (previousActiveLink) {
+                        previousActiveLink.classList.add('active');
+                    }
+                    document.body.classList.remove('purchase-open');
+                    drawer.setAttribute('aria-hidden', 'true');
+                };
+
+                for (let i = 0; i < links.length; i++) {
+                    links[i].addEventListener('click', openDrawer);
+                }
+
+                window.openPurchaseDrawer = function(e){ return openDrawer(e); };
+                if (closeBtn) closeBtn.addEventListener('click', closeDrawer);
+                if (backdrop) backdrop.addEventListener('click', closeDrawer);
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape') closeDrawer();
+                });
+            };
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initDrawer);
+            } else {
+                initDrawer();
+            }
+        })();
+    </script>    <script>
+        if (window.self !== window.top) {
+            document.body.classList.add('in-drawer');
+        }
+    </script>
+    <script src="../assets/js/inventory-alerts-notification.js"></script>
+</body>
+</html>
+
+
+
+
+
+

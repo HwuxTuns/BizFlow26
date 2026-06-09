@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BizFlow Admin - Quản lý Đổi/Trả hàng</title>
+    <meta name="description" content="Quản lý yêu cầu đổi trả hàng - BizFlow Admin">
+    <link rel="stylesheet" href="../assets/css/admin-base.css?v=20260420">
+    <style>
+        /* ---- Return Management Styles ---- */
+        .status-filter-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+        .filter-chip {
+            padding: 8px 18px;
+            border-radius: 24px;
+            border: 1px solid var(--border);
+            background: #fff;
+            color: var(--muted);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .filter-chip:hover {
+            background: #f9fafb;
+            color: var(--text);
+        }
+        .filter-chip.active {
+            background: var(--accent-soft);
+            border-color: rgba(var(--accent-rgb), 0.3);
+            color: var(--accent);
+        }
+        .filter-chip .count {
+            background: #f3f4f6;
+            padding: 1px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            color: var(--text);
+        }
+        .filter-chip.active .count {
+            background: rgba(var(--accent-rgb), 0.15);
+            color: var(--accent);
+        }
+
+        .return-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 20px;
+            margin-bottom: 12px;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+        }
+        .return-card:hover {
+            border-color: rgba(var(--accent-rgb), 0.4);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+        }
+        .return-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 14px;
+            gap: 12px;
+        }
+        .return-card-id {
+            font-weight: 700;
+            font-size: 15px;
+            color: var(--accent);
+        }
+        .return-card-date {
+            font-size: 12px;
+            color: var(--muted);
+            margin-top: 4px;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 5px 14px;
+            border-radius: 24px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            white-space: nowrap;
+        }
+        .badge-pending { background: rgba(245,158,11,0.15); color: #b45309; border: 1px solid rgba(245,158,11,0.3); }
+        .badge-approved { background: rgba(59,130,246,0.15); color: #1d4ed8; border: 1px solid rgba(59,130,246,0.3); }
+        .badge-completed { background: rgba(16,185,129,0.15); color: #047857; border: 1px solid rgba(16,185,129,0.3); }
+        .badge-rejected { background: rgba(239,68,68,0.15); color: #b91c1c; border: 1px solid rgba(239,68,68,0.3); }
+
+        .return-card-body {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px;
+            font-size: 13px;
+        }
+        .return-field {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+        .return-field-label {
+            color: var(--muted);
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+        .return-field-value {
+            font-weight: 500;
+            color: var(--text);
+        }
+
+        .return-card-images {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+            flex-wrap: wrap;
+        }
+        .return-card-images img {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .return-card-images img:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+        }
+
+        .return-card-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-top: 16px;
+            padding-top: 14px;
+            border-top: 1px solid var(--border);
+            flex-wrap: wrap;
+        }
+
+        .mini-select {
+            padding: 8px 12px;
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.06);
+            color: #e2e8f0;
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        .action-btn.approve {
+            background: linear-gradient(135deg, #10b981, #34d399);
+            color: #fff;
+        }
+        .action-btn.reject {
+            background: linear-gradient(135deg, #ef4444, #f87171);
+            color: #fff;
+        }
+        .action-btn.complete {
+            background: linear-gradient(135deg, #6366f1, #818cf8);
+            color: #fff;
+        }
+
+        .admin-note-input {
+            flex: 1;
+            min-width: 200px;
+            height: 38px;
+            background: #f9fafb;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 0 12px;
+            color: var(--text);
+            font-size: 13px;
+        }
+        .admin-note-input::placeholder { color: var(--muted); }
+        .admin-note-input:focus {
+            outline: none;
+            border-color: rgba(var(--accent-rgb), 0.5);
+            box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.15);
+        }
+
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .stat-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+        }
+        .stat-value {
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 4px;
+        }
+        .stat-label {
+            font-size: 12px;
+            color: var(--muted);
+            font-weight: 600;
+        }
+        .stat-pending .stat-value { color: #f59e0b; }
+        .stat-approved .stat-value { color: #3b82f6; }
+        .stat-completed .stat-value { color: #10b981; }
+        .stat-rejected .stat-value { color: #ef4444; }
+
+        .image-modal {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.85);
+            display: none; align-items: center; justify-content: center;
+            z-index: 2000; cursor: pointer;
+        }
+        .image-modal.open { display: flex; }
+        .image-modal img {
+            max-width: 90vw; max-height: 90vh;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 48px 20px;
+            color: #64748b;
+        }
+        .empty-state svg { margin-bottom: 16px; }
+        /* Confirm Modal */
+        .confirm-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.5);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 3000;
+            animation: fadeIn 0.2s ease;
+        }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .confirm-box {
+            background: #fff;
+            border-radius: 16px;
+            padding: 28px 32px;
+            max-width: 420px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+            text-align: center;
+        }
+        .confirm-box h3 {
+            font-size: 18px;
+            margin-bottom: 12px;
+            color: var(--text);
+        }
+        .confirm-box p {
+            font-size: 14px;
+            color: var(--muted);
+            margin-bottom: 24px;
+            line-height: 1.6;
+        }
+        .confirm-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+        .confirm-actions button {
+            padding: 10px 24px;
+            border-radius: 10px;
+            border: none;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .confirm-cancel {
+            background: #f3f4f6;
+            color: #374151;
+        }
+        .confirm-cancel:hover {
+            background: #e5e7eb;
+        }
+        .confirm-ok {
+            background: linear-gradient(135deg, #6366f1, #818cf8);
+            color: #fff;
+        }
+        .confirm-ok:hover {
+            box-shadow: 0 4px 16px rgba(99,102,241,0.3);
+        }
+        .confirm-ok.danger {
+            background: linear-gradient(135deg, #ef4444, #f87171);
+        }
+        .confirm-ok.danger:hover {
+            box-shadow: 0 4px 16px rgba(239,68,68,0.3);
+        }
+        .confirm-ok.success {
+            background: linear-gradient(135deg, #10b981, #34d399);
+        }
+        .confirm-ok.success:hover {
+            box-shadow: 0 4px 16px rgba(16,185,129,0.3);
+        }
+    </style>
+</head>
+<body data-admin-page="returns">
+    <div class="layout">
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="brand-mark">BF</div>
+                <div>
+                    <div class="brand-title">BizFlow</div>
+                    <div class="brand-subtitle">Admin Control</div>
+                </div>
+            </div>
+
+            <div class="nav-group">
+                <div class="nav-title">Tổng quan</div>
+                <a class="nav-item" data-page="home" href="admin-home.html"><span class="icon" data-icon="H"></span><span>Trang chủ</span></a>
+                <a class="nav-item" data-page="users" href="admin-users.html"><span class="icon" data-icon="U"></span><span>Người dùng</span></a>
+                <a class="nav-item" data-page="products" href="admin-products.html"><span class="icon" data-icon="P"></span><span>Sản phẩm</span></a>
+                <a class="nav-item" data-page="orders" href="admin-orders.html"><span class="icon" data-icon="O"></span><span>Đơn hàng</span></a>
+                <a class="nav-item active" data-page="returns" href="admin-returns.html"><span class="icon" data-icon="R"></span><span>Đổi/Trả hàng</span></a>
+                <a class="nav-item" data-page="warranties" href="admin-warranties.html"><span class="icon" data-icon="W"></span><span>Bảo hành</span></a>
+                <a class="nav-item" data-page="shipping" href="admin-orders.html?filter=shipping"><span class="icon" data-icon="S"></span><span>Vận chuyển</span></a>
+            </div>
+
+            <div class="nav-group">
+                <div class="nav-title">Hệ thống</div>
+                <a class="nav-item" data-page="reports" href="admin-reports.html"><span class="icon" data-icon="B"></span><span>Báo cáo</span></a>
+            </div>
+
+            <div class="sidebar-footer">
+                <div>Trạng thái hệ thống: Online</div>
+                <div>Cập nhật: <span id="sidebarTime">--:--</span></div>
+            </div>
+        </aside>
+
+        <div class="content">
+            <header class="topbar">
+                <div class="top-left">
+                    <div class="page-title">Quản lý Đổi/Trả hàng</div>
+                    <div class="search">
+                        <span>🔍</span>
+                        <input id="searchInput" type="text" placeholder="Tìm theo mã đơn, tên khách, SĐT..." />
+                    </div>
+                </div>
+                <div class="top-right">
+                    <span class="pill">ADMIN</span>
+                    <div class="user-chip">
+                        <div class="avatar" id="userAvatar">AD</div>
+                        <div>
+                            <div id="userGreeting">Admin</div>
+                            <small>Quản trị viên</small>
+                        </div>
+                        <button class="icon-btn" title="Đăng xuất" onclick="adminLayout.logout()">⎋</button>
+                    </div>
+                </div>
+            </header>
+
+            <main class="main">
+                <!-- Stats -->
+                <div class="stats-row" id="statsRow">
+                    <div class="stat-card stat-pending">
+                        <div class="stat-value" id="countPending">0</div>
+                        <div class="stat-label">Chờ xử lý</div>
+                    </div>
+                    <div class="stat-card stat-approved">
+                        <div class="stat-value" id="countApproved">0</div>
+                        <div class="stat-label">Đã duyệt</div>
+                    </div>
+                    <div class="stat-card stat-completed">
+                        <div class="stat-value" id="countCompleted">0</div>
+                        <div class="stat-label">Hoàn tất</div>
+                    </div>
+                    <div class="stat-card stat-rejected">
+                        <div class="stat-value" id="countRejected">0</div>
+                        <div class="stat-label">Từ chối</div>
+                    </div>
+                </div>
+
+                <!-- Filters -->
+                <div class="status-filter-row" id="filterRow">
+                    <div class="filter-chip active" data-status="" onclick="filterByStatus('')">Tất cả <span class="count" id="countAll">0</span></div>
+                    <div class="filter-chip" data-status="PENDING" onclick="filterByStatus('PENDING')">⏳ Chờ xử lý</div>
+                    <div class="filter-chip" data-status="APPROVED" onclick="filterByStatus('APPROVED')">✅ Đã duyệt</div>
+                    <div class="filter-chip" data-status="COMPLETED" onclick="filterByStatus('COMPLETED')">🎉 Hoàn tất</div>
+                    <div class="filter-chip" data-status="REJECTED" onclick="filterByStatus('REJECTED')">❌ Từ chối</div>
+                </div>
+
+                <!-- Request List -->
+                <section id="returnsList">
+                    <div class="empty-state">
+                        <p>Đang tải dữ liệu...</p>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <!-- Image Modal -->
+    <div class="image-modal" id="imageModal" onclick="closeImageModal()">
+        <img id="imageModalImg" src="" alt="Hình ảnh minh chứng">
+    </div>
+
+    <script src="../assets/js/admin-layout.js"></script>
+    <script>
+        // API Config
+        const API_BASE = window.location.port === '3000'
+            ? 'http://localhost:8000/api'
+            : '/api';
+
+        let allRequests = [];
+        let currentFilter = '';
+        let currentQuery = '';
+
+        const REASON_MAP = {
+            'DAMAGED': 'Hư hỏng',
+            'WRONG_PRODUCT': 'Sai sản phẩm',
+            'NOT_SATISFIED': 'Không ưng ý',
+            'DEFECTIVE': 'Lỗi kỹ thuật',
+            'EXPIRED': 'Hết hạn',
+            'OTHER': 'Khác'
+        };
+
+        function formatCurrency(amount) {
+            if (amount === null || amount === undefined) return '0 ₫';
+            return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
+        }
+
+        function formatDateTime(value) {
+            if (!value) return '—';
+            try {
+                const d = new Date(value);
+                if (isNaN(d.getTime())) return '—';
+                return d.toLocaleString('vi-VN');
+            } catch { return '—'; }
+        }
+
+        function escapeHtml(text) {
+            if (text === null || text === undefined) return '';
+            const div = document.createElement('div');
+            div.textContent = String(text);
+            return div.innerHTML;
+        }
+
+        // ---- Fetch Data ----
+        async function fetchReturnRequests() {
+            const container = document.getElementById('returnsList');
+            container.innerHTML = '<div class="empty-state"><p>Đang tải dữ liệu...</p></div>';
+
+            try {
+                const params = new URLSearchParams();
+                if (currentFilter) params.set('status', currentFilter);
+                if (currentQuery) params.set('keyword', currentQuery);
+
+                const url = `${API_BASE}/orders/return-requests?${params}`;
+                const res = await fetch(url);
+
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+                allRequests = await res.json();
+                updateStats();
+                renderList(allRequests);
+            } catch (err) {
+                console.error(err);
+                container.innerHTML = `<div class="empty-state" style="color:#f87171;"><p>Lỗi tải dữ liệu: ${escapeHtml(err.message)}</p></div>`;
+            }
+        }
+
+        function updateStats() {
+            const counts = { PENDING: 0, APPROVED: 0, COMPLETED: 0, REJECTED: 0 };
+            allRequests.forEach(r => {
+                if (counts[r.status] !== undefined) counts[r.status]++;
+            });
+
+            document.getElementById('countPending').textContent = counts.PENDING;
+            document.getElementById('countApproved').textContent = counts.APPROVED;
+            document.getElementById('countCompleted').textContent = counts.COMPLETED;
+            document.getElementById('countRejected').textContent = counts.REJECTED;
+            document.getElementById('countAll').textContent = allRequests.length;
+        }
+
+        function renderList(requests) {
+            const container = document.getElementById('returnsList');
+
+            if (!requests || requests.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <svg viewBox="0 0 64 64" width="48" height="48" opacity="0.3"><rect x="8" y="12" width="48" height="40" rx="4" stroke="currentColor" stroke-width="2" fill="none"/><path d="M8 24h48" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+                        <p>Không có yêu cầu đổi/trả nào</p>
+                    </div>`;
+                return;
+            }
+
+            container.innerHTML = requests.map(req => {
+                const statusClass = (req.status || '').toLowerCase();
+                const statusLabel = {
+                    'PENDING': '⏳ Chờ xử lý',
+                    'APPROVED': '✅ Đã duyệt',
+                    'REJECTED': '❌ Từ chối',
+                    'COMPLETED': '🎉 Hoàn tất'
+                }[req.status] || req.status;
+
+                // Parse evidence images
+                let imagesHtml = '';
+                if (req.evidenceImages) {
+                    try {
+                        const images = JSON.parse(req.evidenceImages);
+                        if (Array.isArray(images) && images.length > 0) {
+                            imagesHtml = `
+                                <div class="return-card-images">
+                                    ${images.map((src, idx) => {
+                                        const safeSrc = escapeHtml(src);
+                                        return `<img src="${safeSrc}" alt="Minh chứng" data-req-id="${req.id}" data-img-idx="${idx}" onclick="openImageModalSafe(this, event)">`;
+                                    }).join('')}
+                                </div>
+                            `;
+                        }
+                    } catch (e) {}
+                }
+
+                const isPending = req.status === 'PENDING';
+                const isApproved = req.status === 'APPROVED';
+
+                return `
+                    <div class="return-card" id="card-${req.id}">
+                        <div class="return-card-header">
+                            <div>
+                                <div class="return-card-id">Yêu cầu #${req.id}</div>
+                                <div class="return-card-date">${formatDateTime(req.createdAt)}</div>
+                            </div>
+                            <span class="badge badge-${statusClass}">${statusLabel}</span>
+                        </div>
+                        <div class="return-card-body">
+                            <div class="return-field">
+                                <span class="return-field-label">Hoá đơn</span>
+                                <span class="return-field-value">${escapeHtml(req.invoiceNumber || '—')}</span>
+                            </div>
+                            <div class="return-field">
+                                <span class="return-field-label">Khách hàng</span>
+                                <span class="return-field-value">${escapeHtml(req.customerName || 'Khách lẻ')}</span>
+                            </div>
+                            <div class="return-field">
+                                <span class="return-field-label">SĐT</span>
+                                <span class="return-field-value">${escapeHtml(req.customerPhone || '—')}</span>
+                            </div>
+                            <div class="return-field">
+                                <span class="return-field-label">Sản phẩm</span>
+                                <span class="return-field-value">${escapeHtml(req.productName || '—')}</span>
+                            </div>
+                            <div class="return-field">
+                                <span class="return-field-label">Số lượng</span>
+                                <span class="return-field-value">${req.quantity}</span>
+                            </div>
+                            <div class="return-field">
+                                <span class="return-field-label">Lý do</span>
+                                <span class="return-field-value">${escapeHtml(REASON_MAP[req.reason] || req.reason || '—')}</span>
+                            </div>
+                            <div class="return-field">
+                                <span class="return-field-label">Hình thức</span>
+                                <span class="return-field-value">${req.requestType === 'EXCHANGE' ? '🔄 Đổi SP' : '💰 Hoàn tiền'}</span>
+                            </div>
+                            ${req.reasonDetail ? `
+                            <div class="return-field" style="grid-column: 1/-1;">
+                                <span class="return-field-label">Chi tiết lý do</span>
+                                <span class="return-field-value">${escapeHtml(req.reasonDetail)}</span>
+                            </div>` : ''}
+                            ${req.adminNote ? `
+                            <div class="return-field" style="grid-column: 1/-1;">
+                                <span class="return-field-label">Ghi chú Admin</span>
+                                <span class="return-field-value" style="color:#fbbf24;">${escapeHtml(req.adminNote)}</span>
+                            </div>` : ''}
+                        </div>
+                        ${imagesHtml}
+                        <div class="return-card-actions">
+                            <input type="text" class="admin-note-input" id="note-${req.id}" placeholder="Ghi chú xử lý..." value="${escapeHtml(req.adminNote || '')}">
+                            ${isPending ? `
+                                <button class="action-btn approve" onclick="confirmAction(${req.id}, 'APPROVED', 'Duyệt yêu cầu #${req.id}?', 'Sản phẩm: ${escapeHtml(req.productName || '')} — SL: ${req.quantity}')">✅ Duyệt</button>
+                                <button class="action-btn reject" onclick="confirmAction(${req.id}, 'REJECTED', 'Từ chối yêu cầu #${req.id}?', 'Sản phẩm: ${escapeHtml(req.productName || '')} — SL: ${req.quantity}')">❌ Từ chối</button>
+                            ` : ''}
+                            ${isApproved ? `
+                                <button class="action-btn complete" onclick="confirmAction(${req.id}, 'COMPLETED', 'Hoàn tất yêu cầu #${req.id}?', 'Sản phẩm sẽ được hoàn kho và trừ điểm tích lũy tương ứng.')">🎉 Hoàn tất</button>
+                            ` : ''}
+                            ${!isPending && !isApproved ? `
+                                <button class="action-btn" onclick="confirmAction(${req.id}, 'PENDING', 'Mở lại yêu cầu #${req.id}?', 'Yêu cầu sẽ trở về trạng thái Chờ xử lý.')">↩ Mở lại</button>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // ---- Update Status ----
+        async function updateReturnStatus(id, newStatus) {
+            const noteInput = document.getElementById(`note-${id}`);
+            const adminNote = noteInput ? noteInput.value.trim() : '';
+
+            try {
+                const res = await fetch(`${API_BASE}/orders/return-requests/${id}/status`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status: newStatus, adminNote: adminNote })
+                });
+
+                if (!res.ok) {
+                    const err = await res.json().catch(() => ({}));
+                    throw new Error(err.message || `HTTP ${res.status}`);
+                }
+
+                // Refresh
+                await fetchReturnRequests();
+            } catch (err) {
+                console.error(err);
+                alert('Lỗi cập nhật: ' + err.message);
+            }
+        }
+
+        // ---- Filter ----
+        function filterByStatus(status) {
+            currentFilter = status;
+            document.querySelectorAll('.filter-chip').forEach(chip => {
+                chip.classList.toggle('active', chip.dataset.status === status);
+            });
+            fetchReturnRequests();
+        }
+
+        // ---- Image Modal (XSS-safe) ----
+        function openImageModalSafe(imgEl, event) {
+            event.stopPropagation();
+            const src = imgEl.src; // Browser-sanitized URL
+            if (!src || (!src.startsWith('data:image/') && !src.startsWith('http://') && !src.startsWith('https://'))) {
+                return; // Block non-image URLs
+            }
+            const modal = document.getElementById('imageModal');
+            document.getElementById('imageModalImg').src = src;
+            modal.classList.add('open');
+        }
+
+        function closeImageModal() {
+            document.getElementById('imageModal').classList.remove('open');
+        }
+
+        // ---- Confirm Dialog ----
+        function confirmAction(id, newStatus, title, detail) {
+            const btnClass = newStatus === 'REJECTED' ? 'danger' : (newStatus === 'COMPLETED' ? 'success' : '');
+            const overlay = document.createElement('div');
+            overlay.className = 'confirm-overlay';
+            overlay.innerHTML = `
+                <div class="confirm-box">
+                    <h3>${title}</h3>
+                    <p>${detail}</p>
+                    <div class="confirm-actions">
+                        <button class="confirm-cancel" onclick="this.closest('.confirm-overlay').remove()">Huỷ</button>
+                        <button class="confirm-ok ${btnClass}" id="confirmOkBtn">Xác nhận</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(overlay);
+            overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.remove(); });
+            document.getElementById('confirmOkBtn').addEventListener('click', () => {
+                overlay.remove();
+                updateReturnStatus(id, newStatus);
+            });
+        }
+
+        // ---- Init ----
+        window.addEventListener('load', () => {
+            adminLayout.enforceAuth();
+            adminLayout.renderHeader();
+            adminLayout.setActiveNav();
+
+            const searchInput = document.getElementById('searchInput');
+            let searchTimeout;
+            searchInput.addEventListener('input', () => {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(() => {
+                    currentQuery = searchInput.value.trim();
+                    fetchReturnRequests();
+                }, 400);
+            });
+
+            fetchReturnRequests();
+        });
+    </script>
+</body>
+</html>

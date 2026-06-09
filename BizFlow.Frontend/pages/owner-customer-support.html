@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BizFlow - Chăm sóc khách hàng</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #2f3a8f;
+      --primary-dark: #1f2a66;
+      --primary-light: #3d47b0;
+      --highlight: #7dd3fc;
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --border: #e5e7eb;
+      --shadow: 0 10px 30px rgba(31, 41, 55, 0.08);
+      --shadow-lg: 0 20px 50px rgba(31, 41, 55, 0.15);
+    }
+
+    @keyframes pulse-badge {
+      0%, 100% {
+        box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+      }
+      50% {
+        box-shadow: 0 0 0 6px rgba(239, 68, 68, 0);
+      }
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(10px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 250px 1fr;
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      background: linear-gradient(180deg, var(--primary-dark) 0%, var(--primary) 100%);
+      color: #e5e7eb;
+      padding: 18px 0;
+      display: flex;
+      flex-direction: column;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      box-shadow: 4px 0 16px rgba(31, 41, 55, 0.12);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 0 20px 14px;
+      margin-bottom: 6px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .brand-mark {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      background: rgba(255,255,255,0.15);
+      color: #fff;
+      font-weight: 700;
+      font-size: 16px;
+      backdrop-filter: blur(4px);
+    }
+
+    .brand-name { font-weight: 700; font-size: 14px; }
+    .brand-sub { font-size: 12px; color: #c7d2fe; opacity: 0.9; }
+
+    .nav {
+      display: flex;
+      flex-direction: column;
+      padding: 8px 0;
+      gap: 2px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 11px 18px;
+      margin: 0 10px;
+      border-radius: 10px;
+      color: #e5e7eb;
+      text-decoration: none;
+      border-left: 3px solid transparent;
+      transition: all 0.3s ease;
+      font-weight: 500;
+      font-size: 14px;
+    }
+
+    .nav-item:hover { 
+      background: rgba(255,255,255,0.1);
+      transform: translateX(2px);
+    }
+
+    .nav-item.active {
+      background: rgba(255,255,255,0.15);
+      border-left-color: var(--highlight);
+      color: #fff;
+      box-shadow: inset 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .nav-item .icon { width: 18px; text-align: center; }
+
+    .content {
+      padding: 28px;
+      display: grid;
+      gap: 20px;
+    }
+
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .page-title {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--primary-dark);
+      letter-spacing: -0.5px;
+    }
+
+    .owner-chip {
+      border: 2px solid var(--primary);
+      border-radius: 999px;
+      background: rgba(47, 58, 143, 0.05);
+      padding: 8px 16px;
+      font-weight: 600;
+      color: var(--primary);
+      font-size: 13px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .owner-chip::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #10b981;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    .chat-wrapper {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      box-shadow: var(--shadow-lg);
+      padding: 16px;
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 16px;
+      max-height: calc(100vh - 160px);
+      overflow: hidden;
+    }
+
+    .conversation-list {
+      border: 1px solid #dbe4f3;
+      border-radius: 14px;
+      overflow-y: auto;
+      overflow-x: hidden;
+      background: linear-gradient(to bottom, #fafbfc, #f3f4f8);
+      max-height: 100%;
+      box-shadow: inset 0 2px 8px rgba(0,0,0,0.02);
+    }
+
+    .conversation-list::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .conversation-list::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .conversation-list::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 3px;
+    }
+
+    .conversation-list::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+
+    .conv-item {
+      width: 100%;
+      border: none;
+      border-bottom: 1px solid #eef2fb;
+      background: transparent;
+      text-align: left;
+      padding: 12px 14px;
+      cursor: pointer;
+      display: grid;
+      gap: 4px;
+      grid-template-columns: 1fr auto;
+      align-items: start;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+    }
+
+    .conv-item::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background: transparent;
+      transition: all 0.25s ease;
+    }
+
+    .conv-item:hover { 
+      background: rgba(79, 127, 242, 0.05);
+      transform: translateX(2px);
+    }
+    
+    .conv-item.active { 
+      background: linear-gradient(90deg, rgba(79, 127, 242, 0.1) 0%, transparent 100%);
+      border-left: 3px solid var(--primary);
+      padding-left: 11px;
+    }
+
+    .conv-item.active::before {
+      background: var(--primary);
+    }
+    
+    .conv-item.unread {
+      background: rgba(239, 68, 68, 0.05);
+    }
+
+    .conv-item.unread::before {
+      background: #ef4444;
+    }
+    
+    .conv-item small { 
+      color: var(--muted); 
+      font-size: 12px;
+    }
+    
+    .conv-content {
+      display: grid;
+      gap: 4px;
+      min-width: 0;
+      overflow: hidden;
+    }
+    
+    .conv-item strong {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      font-weight: 600;
+      font-size: 14px;
+    }
+    
+    .conv-badge-container {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 6px;
+      margin-left: 8px;
+    }
+
+    .conv-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .conv-pending {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 6px;
+      background: #fecdd3;
+      color: #991b1b;
+      border: none;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 3px 8px;
+      line-height: 1.2;
+      white-space: nowrap;
+    }
+
+    .unread-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+      color: #fff;
+      font-weight: 700;
+      font-size: 11px;
+      line-height: 1;
+      animation: pulse-badge 2s infinite;
+      box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+    }
+
+    .chat-box {
+      border: 1px solid #dbe4f3;
+      border-radius: 14px;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      min-height: 0;
+      max-height: 100%;
+      background: linear-gradient(180deg, #fff 0%, #f8fbff 100%);
+      overflow: hidden;
+      box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+    }
+
+    .chat-head {
+      padding: 16px;
+      border-bottom: 1px solid #e8eef8;
+      font-weight: 700;
+      font-size: 16px;
+      color: var(--primary-dark);
+    }
+
+    .chat-messages {
+      padding: 16px;
+      overflow-y: auto;
+      overflow-x: hidden;
+      display: grid;
+      gap: 12px;
+      background: linear-gradient(to bottom, rgba(248, 251, 255, 0.8), #f8fbff);
+      min-height: 0;
+    }
+
+    .chat-messages::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .chat-messages::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .chat-messages::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 3px;
+    }
+
+    .msg {
+      max-width: 75%;
+      padding: 10px 14px;
+      border-radius: 12px;
+      display: grid;
+      gap: 4px;
+      font-size: 14px;
+      animation: fadeInUp 0.3s ease;
+      word-wrap: break-word;
+    }
+
+    .msg.owner {
+      justify-self: end;
+      background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+      color: #fff;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+      border-radius: 12px 2px 12px 12px;
+    }
+
+    .msg.user {
+      justify-self: start;
+      background: #fff;
+      border: 1px solid #e0e7ff;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      border-radius: 2px 12px 12px 12px;
+    }
+
+    .msg .sender {
+      font-size: 11px;
+      opacity: 0.7;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .msg .time {
+      font-size: 11px;
+      opacity: 0.6;
+    }
+
+    .chat-input {
+      border-top: 1px solid #e8eef8;
+      padding: 14px 16px;
+      display: flex;
+      gap: 10px;
+      flex-shrink: 0;
+      background: linear-gradient(to bottom, #f8fbff, #fff);
+    }
+
+    .chat-input input {
+      flex: 1;
+      border: 1px solid #dde5f3;
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 14px;
+      background: #fff;
+      transition: all 0.3s ease;
+    }
+
+    .chat-input input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(47, 58, 143, 0.1);
+    }
+
+    .chat-input button {
+      border: none;
+      border-radius: 10px;
+      padding: 10px 18px;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      color: #fff;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      font-size: 14px;
+      box-shadow: 0 4px 12px rgba(47, 58, 143, 0.2);
+    }
+
+    .chat-input button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(47, 58, 143, 0.3);
+    }
+
+    .chat-input button:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 8px rgba(47, 58, 143, 0.2);
+    }
+
+    @media (max-width: 1100px) {
+      .chat-wrapper {
+        grid-template-columns: 1fr;
+        min-height: auto;
+      }
+    }
+
+    @media (max-width: 900px) {
+      .layout { grid-template-columns: 1fr; }
+      .sidebar { position: static; height: auto; }
+      .content { padding: 16px; }
+    }
+  </style>
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">BF</div>
+      <div>
+        <div class="brand-name">BizFlow</div>
+        <div class="brand-sub">Owner Center</div>
+      </div>
+    </div>
+    <nav class="nav">
+      <a class="nav-item" href="owner-dashboard.html"><span class="icon">🏠</span><span>Tổng quan</span></a>
+      <a class="nav-item" href="owner-reports.html"><span class="icon">📈</span><span>Báo cáo doanh thu</span></a>
+      <a class="nav-item" href="owner-products.html"><span class="icon">📦</span><span>Sản phẩm</span></a>
+      <a class="nav-item" href="owner-categories.html"><span class="icon">🗂️</span><span>Danh mục</span></a>
+      <a class="nav-item" href="owner-inventory.html"><span class="icon">🏬</span><span>Quản lý kho</span></a>
+      <a class="nav-item" href="owner-purchase.html"><span class="icon">🛒</span><span>Nhập hàng và giá vốn</span></a>
+      <a class="nav-item" href="owner-users.html"><span class="icon">👥</span><span>Quản lý nhân viên</span></a>
+      <a class="nav-item" href="owner-promotions.html"><span class="icon">🎯</span><span>Khuyến mãi</span></a>
+      <a class="nav-item active" href="owner-customer-support.html"><span class="icon">📞</span><span>Chăm sóc khách hàng</span></a>
+      <a class="nav-item" href="owner-inventory-alerts.html"><span class="icon">🔔</span><span>Thông báo tồn kho</span></a>
+      <a class="nav-item" href="owner-reviews.html"><span class="icon">⭐</span><span>Đánh giá</span></a>
+      <a class="nav-item" href="display-settings.html"><span class="icon">⚙️</span><span>Thiết lập</span></a>
+    </nav>
+  </aside>
+
+  <main class="content">
+    <div class="page-header">
+      <h1 class="page-title">Chăm sóc khách hàng</h1>
+      <div class="owner-chip" id="ownerLabel">Owner</div>
+    </div>
+
+    <section class="chat-wrapper">
+      <div class="conversation-list" id="conversationList"></div>
+      <div class="chat-box">
+        <div class="chat-head" id="chatHead">Chọn khách hàng để bắt đầu trả lời</div>
+        <div class="chat-messages" id="chatMessages"></div>
+        <div class="chat-input">
+          <input type="text" id="chatInput" placeholder="Nhập phản hồi cho khách hàng..." />
+          <button id="sendBtn" type="button">Gửi</button>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script>
+const API_BASE = (() => {
+  if (window.API_BASE_URL || window.API_BASE) return window.API_BASE_URL || window.API_BASE;
+  if (["localhost", "127.0.0.1"].includes(window.location.hostname) && window.location.port !== "8080") return "http://localhost:8000/api";
+  return `${window.location.origin}/api`;
+})();
+
+let ownerId = Number(sessionStorage.getItem('userId')) || null;
+let ownerName = sessionStorage.getItem('username') || 'Owner';
+let activeUserId = null;
+let activeUserName = null;
+let pollTimer = null;
+const userNameById = new Map();
+
+document.getElementById('ownerLabel').textContent = ownerName;
+document.getElementById('sendBtn').addEventListener('click', sendReply);
+document.getElementById('chatInput').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    sendReply();
+  }
+});
+
+function formatTime(value) {
+  const d = value ? new Date(value) : new Date();
+  if (Number.isNaN(d.getTime())) return '';
+  return d.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
+}
+
+function escapeAttr(value) {
+  return String(value || '').replace(/"/g, '&quot;');
+}
+
+function resolveCustomerDisplayName(rawName, userId) {
+  const clean = (rawName || '').trim();
+  const looksGeneric = !clean
+    || clean.toLowerCase() === 'nguoi dung'
+    || clean.toLowerCase() === 'người dùng'
+    || /^user\s*#\d+$/i.test(clean)
+    || /^khach\s*hang\s*#\d+$/i.test(clean)
+    || /^khách\s*hàng\s*#\d+$/i.test(clean);
+
+  if (!looksGeneric) return clean;
+
+  const id = Number(userId);
+  if (Number.isFinite(id) && userNameById.has(id)) {
+    return userNameById.get(id);
+  }
+
+  return Number.isFinite(id) ? `Khách hàng #${id}` : 'Khách hàng';
+}
+
+async function ensureUserDirectory() {
+  if (userNameById.size > 0) return;
+
+  const token = sessionStorage.getItem('accessToken') || '';
+  const res = await fetch(`${API_BASE}/users`, {
+    headers: { 'Authorization': `Bearer ${token}` }
+  });
+
+  if (!res.ok) return;
+  const rows = await res.json();
+
+  (rows || []).forEach((u) => {
+    const id = Number(u?.id);
+    if (!Number.isFinite(id)) return;
+    const fullName = String(u?.fullName || '').trim();
+    const username = String(u?.username || '').trim();
+    if (fullName) {
+      userNameById.set(id, fullName);
+    } else if (username) {
+      userNameById.set(id, username);
+    }
+  });
+}
+
+async function markMessagesAsRead(userId, ownerId) {
+  if (!userId || !ownerId) return;
+
+  try {
+    const res = await fetch(`${API_BASE}/messages/mark-as-read`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${sessionStorage.getItem('accessToken') || ''}`
+      },
+      body: JSON.stringify({
+        senderId: userId,
+        receiverId: ownerId
+      })
+    });
+
+    if (!res.ok) return;
+  } catch (error) {
+    console.error('Lỗi khi đánh dấu tin nhắn đã đọc:', error);
+  }
+}
+
+async function loadConversations() {
+  if (!ownerId) return;
+  await ensureUserDirectory();
+
+  const res = await fetch(`${API_BASE}/conversations?ownerId=${ownerId}`, {
+    headers: { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken') || ''}` }
+  });
+  if (!res.ok) return;
+  const rows = await res.json();
+  const list = document.getElementById('conversationList');
+
+  if (!rows || rows.length === 0) {
+    list.innerHTML = '<div style="padding:12px;color:#6b7280;">Chưa có liên hệ nào.</div>';
+    return;
+  }
+
+  list.innerHTML = rows.map(item => {
+    const displayName = resolveCustomerDisplayName(item.userName, item.userId);
+    const hasUnread = Number(item.unreadCount) > 0;
+    const unreadCount = Number(item.unreadCount) || 0;
+    return `
+    <button class="conv-item ${Number(item.userId) === Number(activeUserId) ? 'active' : ''} ${hasUnread ? 'unread' : ''}" type="button" data-user-id="${item.userId}" data-user-name="${escapeAttr(displayName)}">
+      <div class="conv-content">
+        <div class="conv-title">
+          <strong>${displayName.replace(/</g,'&lt;')}</strong>
+          ${hasUnread ? '<span class="conv-pending">chờ phản hồi</span>' : ''}
+        </div>
+        <span style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${(item.lastMessage || '').replace(/</g,'&lt;')}</span>
+        <small>${formatTime(item.lastMessageAt)}</small>
+      </div>
+      <div class="conv-badge-container">
+        ${hasUnread ? `
+          <span class="unread-badge" title="Tin nhắn chưa đọc">${unreadCount}</span>
+        ` : ''}
+      </div>
+    </button>
+  `;
+  }).join('');
+
+  list.querySelectorAll('.conv-item').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      activeUserName = btn.dataset.userName || ('User #' + activeUserId);
+      activeUserId = Number(btn.dataset.userId);
+      
+      // Đánh dấu tin nhắn là đã đọc
+      await markMessagesAsRead(activeUserId, ownerId);
+      
+      await loadConversations();
+      await loadThread();
+    });
+  });
+
+  if (!activeUserId && rows[0]) {
+    activeUserId = Number(rows[0].userId);
+    activeUserName = resolveCustomerDisplayName(rows[0].userName, rows[0].userId);
+    await loadConversations();
+    await loadThread();
+  }
+}
+
+function renderThread(rows) {
+  const box = document.getElementById('chatMessages');
+  box.innerHTML = (rows || []).map(m => {
+    const isOwner = Number(m.senderId) === Number(ownerId);
+    const sender = isOwner
+      ? (m.senderName || ownerName)
+      : resolveCustomerDisplayName(m.senderName, m.senderId);
+    return `
+      <div class="msg ${isOwner ? 'owner' : 'user'}">
+        <div class="sender">${sender.replace(/</g,'&lt;')}</div>
+        <div>${(m.content || '').replace(/</g,'&lt;')}</div>
+        <div class="time">${formatTime(m.createdAt)}</div>
+      </div>
+    `;
+  }).join('');
+  box.scrollTop = box.scrollHeight;
+}
+
+async function loadThread() {
+  if (!activeUserId || !ownerId) return;
+  const displayName = activeUserName || ('User #' + activeUserId);
+  document.getElementById('chatHead').textContent = `Đang trò chuyện với ${displayName}`;
+
+  const res = await fetch(`${API_BASE}/messages/${activeUserId}/${ownerId}`, {
+    headers: { 'Authorization': `Bearer ${sessionStorage.getItem('accessToken') || ''}` }
+  });
+  if (!res.ok) return;
+  const rows = await res.json();
+  renderThread(rows);
+}
+
+async function sendReply() {
+  const input = document.getElementById('chatInput');
+  const content = (input.value || '').trim();
+  if (!content || !activeUserId || !ownerId) return;
+
+  const res = await fetch(`${API_BASE}/messages`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${sessionStorage.getItem('accessToken') || ''}`
+    },
+    body: JSON.stringify({
+      senderId: ownerId,
+      receiverId: activeUserId,
+      senderName: ownerName,
+      receiverName: activeUserName || ('User #' + activeUserId),
+      content
+    })
+  });
+
+  if (!res.ok) return;
+  input.value = '';
+  await loadThread();
+  await loadConversations();
+}
+
+function startPolling() {
+  if (pollTimer) clearInterval(pollTimer);
+  pollTimer = setInterval(async () => {
+    await loadConversations();
+    await loadThread();
+  }, 5000);
+}
+
+(async function init() {
+  await loadConversations();
+  startPolling();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BizFlow - Quản lý Sản phẩm (Admin)</title>
+    <link rel="stylesheet" href="../assets/css/admin-base.css?v=20260204">
+</head>
+<body data-admin-page="products">
+    <div class="layout">
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="brand-mark">BF</div>
+                <div>
+                    <div class="brand-title">BizFlow</div>
+                    <div class="brand-subtitle">Admin Control</div>
+                </div>
+            </div>
+
+            <div class="nav-group">
+                <div class="nav-title">Tổng quan</div>
+                <a class="nav-item" data-page="home" href="admin-home.html"><span class="icon" data-icon="H"></span><span>Trang chủ</span></a>
+                <a class="nav-item" data-page="users" href="admin-users.html"><span class="icon" data-icon="U"></span><span>Người dùng</span></a>
+                <a class="nav-item" data-page="products" href="admin-products.html"><span class="icon" data-icon="P"></span><span>Sản phẩm</span></a>
+                <a class="nav-item" data-page="orders" href="admin-orders.html"><span class="icon" data-icon="O"></span><span>Đơn hàng</span></a>
+                <a class="nav-item" data-page="returns" href="admin-returns.html"><span class="icon" data-icon="R"></span><span>Đổi/Trả hàng</span></a>
+                <a class="nav-item" data-page="warranties" href="admin-warranties.html"><span class="icon" data-icon="W"></span><span>Bảo hành</span></a>
+                <a class="nav-item" data-page="shipping" href="admin-orders.html?filter=shipping"><span class="icon" data-icon="S"></span><span>Vận chuyển</span></a>
+            </div>
+
+            <div class="nav-group">
+                <div class="nav-title">Hệ thống</div>
+                <a class="nav-item" data-page="reports" href="admin-reports.html"><span class="icon" data-icon="B"></span><span>Báo cáo</span></a>
+            </div>
+
+            <div class="sidebar-footer">
+                <div>Trạng thái hệ thống: Online</div>
+                <div>Cập nhật: <span id="sidebarTime">--:--</span></div>
+            </div>
+        </aside>
+
+        <div class="content">
+            <header class="topbar">
+                <div class="top-left">
+                    <div class="page-title">Quản lý Sản phẩm</div>
+                    <div class="search">
+                        <span>🔍</span>
+                        <input type="text" id="searchInput" placeholder="Tìm sản phẩm, mã, danh mục..." />
+                    </div>
+                </div>
+                <div class="top-right">
+                    <span class="pill">ADMIN</span>
+                    <div class="user-chip">
+                        <div class="avatar" id="userAvatar">AD</div>
+                        <div>
+                            <div id="userGreeting">Admin</div>
+                            <small>Quản trị viên</small>
+                        </div>
+                        <button class="icon-btn" title="Đăng xuất" onclick="adminLayout.logout()">⎋</button>
+                    </div>
+                </div>
+            </header>
+
+            <main class="main">
+                <section class="card">
+                    <div class="card-title">Danh sách sản phẩm</div>
+                    <div class="card-subtitle">Dữ liệu đồng bộ từ microservice Sản phẩm.</div>
+                    <div class="actions">
+                        <button class="action-btn" type="button" onclick="location.href='admin-home.html'">Quay lại</button>
+            
+                        <div style="flex: 1;"></div>
+                        <select id="pageSize" class="mini-select" aria-label="Số dòng mỗi trang">
+                            <option value="10">10 / trang</option>
+                            <option value="20" selected>20 / trang</option>
+                            <option value="50">50 / trang</option>
+                            <option value="100">100 / trang</option>
+                        </select>
+                    </div>
+
+                    <div class="muted" style="margin-top: 10px; display:flex; align-items:center; justify-content: space-between; gap: 10px; flex-wrap: wrap;">
+                        <div id="productsMeta">—</div>
+                        <div style="display:flex; align-items:center; gap: 10px; flex-wrap: wrap;">
+                            <button class="action-btn sm" type="button" id="prevPageBtn" onclick="goPrevPage()">◀ Trước</button>
+                            <span id="pageInfo">Trang 1/1</span>
+                            <button class="action-btn sm" type="button" id="nextPageBtn" onclick="goNextPage()">Sau ▶</button>
+                        </div>
+                    </div>
+
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Mã</th>
+                                <th>Tên</th>
+                                <th>Giá</th>
+                                <th>Tồn kho</th>
+                                <th>Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody id="productsBody">
+                            <tr>
+                                <td colspan="5" class="empty-box">Chưa có dữ liệu sản phẩm - kết nối tới microservice Sản phẩm để hiển thị.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <!-- Modal Chi tiết Sản phẩm -->
+    <div id="productModal" class="modal" style="display: none;">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <h2>Chi tiết Sản phẩm</h2>
+                <button class="close-btn" onclick="closeProductModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="product-detail">
+                    <div class="detail-row">
+                        <label>Tên sản phẩm:</label>
+                        <div id="modalProductName" class="detail-value">-</div>
+                    </div>
+                    <div class="detail-row">
+                        <label>SKU / Mã sản phẩm:</label>
+                        <div id="modalProductSku" class="detail-value">-</div>
+                    </div>
+                    <div class="detail-row">
+                        <label>Mô tả:</label>
+                        <div id="modalProductDesc" class="detail-value">-</div>
+                    </div>
+                    <div class="detail-row">
+                        <label>Danh mục:</label>
+                        <div id="modalProductCategory" class="detail-value">-</div>
+                    </div>
+                    <div class="detail-row">
+                        <label>Giá:</label>
+                        <div id="modalProductPrice" class="detail-value">-</div>
+                    </div>
+                    <div class="detail-row">
+                        <label>Tồn kho:</label>
+                        <div id="modalProductStock" class="detail-value">-</div>
+                    </div>
+                    <div class="detail-row">
+                        <label>Trạng thái:</label>
+                        <div id="modalProductStatus" class="detail-value">-</div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="action-btn" onclick="closeProductModal()">Đóng</button>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .modal {
+            position: fixed;
+            z-index: 9999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-content {
+            background-color: white;
+            border-radius: 8px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .modal-header h2 {
+            margin: 0;
+            font-size: 1.5rem;
+            color: #333;
+        }
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 2rem;
+            cursor: pointer;
+            color: #666;
+            line-height: 1;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+        }
+        .close-btn:hover {
+            color: #000;
+        }
+        .modal-body {
+            padding: 20px;
+        }
+        .product-detail {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .detail-row {
+            display: grid;
+            grid-template-columns: 180px 1fr;
+            gap: 15px;
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 6px;
+        }
+        .detail-row label {
+            font-weight: 600;
+            color: #555;
+        }
+        .detail-value {
+            color: #333;
+            word-wrap: break-word;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        .status-active {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .status-inactive {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .modal-footer {
+            padding: 15px 20px;
+            border-top: 1px solid #e0e0e0;
+            text-align: right;
+        }
+    </style>
+
+    <script src="../assets/js/admin-layout.js"></script>
+    <script>
+        // API Configuration
+        const API_BASE_URL = '/api/admin/products';
+
+        // Paging state
+        let currentQuery = '';
+        let currentPage = 1;
+        let currentPageSize = 20;
+        let totalCount = 0;
+        let totalPages = 1;
+
+        (function injectMiniSelectStyle() {
+            const style = document.createElement('style');
+            style.textContent = `
+                .mini-select { padding: 8px 10px; border-radius: 10px; border: 1px solid rgba(15,23,42,.15); background: #fff; color: #0f172a; }
+                .action-btn.sm { padding: 8px 10px; border-radius: 10px; }
+            `;
+            document.head.appendChild(style);
+        })();
+
+        function clampPage() {
+            const tp = Math.max(1, Number(totalPages || 1));
+            currentPage = Math.min(Math.max(1, currentPage), tp);
+            return tp;
+        }
+
+        function buildProductsUrl() {
+            const params = new URLSearchParams();
+            if (currentQuery) params.set('q', currentQuery);
+            params.set('page', String(Math.max(0, (currentPage || 1) - 1)));
+            params.set('size', String(currentPageSize || 20));
+            return `${API_BASE_URL}?${params.toString()}`;
+        }
+
+        function renderPagination(currentRows) {
+            const headerTotal = Number(totalCount);
+            const shown = Number(currentRows || 0);
+            const total = headerTotal > 0 ? headerTotal : shown;
+            const tp = clampPage();
+            const pageInfo = document.getElementById('pageInfo');
+            const prevBtn = document.getElementById('prevPageBtn');
+            const nextBtn = document.getElementById('nextPageBtn');
+            const meta = document.getElementById('productsMeta');
+
+            const from = total === 0 ? 0 : (currentPage - 1) * currentPageSize + 1;
+            const to = total === 0 ? 0 : Math.min(total, (currentPage - 1) * currentPageSize + (currentRows || 0));
+
+            if (pageInfo) pageInfo.textContent = `Trang ${currentPage}/${tp}`;
+            if (meta) meta.textContent = total === 0 ? 'Hiển thị 0 / 0 sản phẩm' : `Hiển thị ${shown} / ${total} sản phẩm`;
+            if (prevBtn) prevBtn.disabled = currentPage <= 1;
+            if (nextBtn) nextBtn.disabled = currentPage >= tp;
+        }
+
+        function goPrevPage() {
+            currentPage = Math.max(1, currentPage - 1);
+            loadProducts();
+        }
+
+        function goNextPage() {
+            const tp = Math.max(1, Number(totalPages || 1));
+            currentPage = Math.min(tp, currentPage + 1);
+            loadProducts();
+        }
+        
+        // Load products from API (server-side pagination)
+        async function loadProducts(searchQuery) {
+            const tbody = document.getElementById('productsBody');
+            
+            try {
+                // Show loading state
+                tbody.innerHTML = '<tr><td colspan="5" class="empty-box">Đang tải dữ liệu...</td></tr>';
+
+                if (typeof searchQuery === 'string') {
+                    currentQuery = searchQuery.trim();
+                }
+
+                const url = buildProductsUrl();
+                
+                // Fetch products from API
+                const response = await fetch(url);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const headerTotalCount = Number(response.headers.get('X-Total-Count'));
+                const headerTotalPages = Number(response.headers.get('X-Total-Pages'));
+
+                const products = await response.json();
+                const bodyCount = Array.isArray(products) ? products.length : 0;
+
+                // Fallback when backend doesn't return pagination headers
+                totalCount = (Number.isFinite(headerTotalCount) && headerTotalCount > 0) ? headerTotalCount : bodyCount;
+                totalPages = (Number.isFinite(headerTotalPages) && headerTotalPages > 0)
+                    ? headerTotalPages
+                    : Math.max(1, Math.ceil((totalCount || 0) / (currentPageSize || 20)));
+                
+                // Clear loading state
+                tbody.innerHTML = '';
+                
+                if (products.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" class="empty-box">Không có sản phẩm nào.</td></tr>';
+                    renderPagination(0);
+                    return;
+                }
+                
+                // Render products
+                products.forEach(product => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td><strong>${escapeHtml(product.sku)}</strong></td>
+                        <td>${escapeHtml(product.name)}</td>
+                        <td>${formatCurrency(product.price)}</td>
+                        <td>${product.stock || 0}</td>
+                        <td>
+                            <button class="action-btn sm" onclick="viewProduct(${product.id})">Xem</button>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+
+                renderPagination(products.length);
+                
+            } catch (error) {
+                console.error('Error loading products:', error);
+                tbody.innerHTML = `<tr><td colspan="5" class="empty-box" style="color: red;">
+                    Lỗi khi tải dữ liệu: ${error.message}<br>
+                    <small>Đảm bảo AdminProductService đang chạy trên ${API_BASE_URL}</small>
+                </td></tr>`;
+                totalCount = 0;
+                totalPages = 1;
+                renderPagination(0);
+            }
+        }
+        
+        // Helper function to escape HTML
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        // Helper function to format currency
+        function formatCurrency(amount) {
+            if (!amount) return '0 ₫';
+            return new Intl.NumberFormat('vi-VN', {
+                style: 'currency',
+                currency: 'VND'
+            }).format(amount);
+        }
+        
+        // Search products
+        function searchProducts() {
+            const searchInput = document.getElementById('searchInput');
+            const searchTerm = searchInput.value.trim();
+
+            currentPage = 1;
+            loadProducts(searchTerm);
+        }
+        
+        // Update loadProducts to accept search query
+        async function loadProductsOriginal() {
+            // Original function renamed
+        }
+        
+        // View product details
+        async function viewProduct(id) {
+            try {
+                // Fetch product details from API
+                const response = await fetch(`${API_BASE_URL}/${id}`);
+                
+                if (!response.ok) {
+                    throw new Error(`Không thể tải thông tin sản phẩm`);
+                }
+                
+                const product = await response.json();
+                
+                // Populate modal with product data
+                document.getElementById('modalProductName').textContent = product.name || 'N/A';
+                document.getElementById('modalProductSku').textContent = product.sku || 'N/A';
+                document.getElementById('modalProductDesc').textContent = product.description || 'Không có mô tả';
+                document.getElementById('modalProductCategory').textContent = product.category || 'Chưa phân loại';
+                document.getElementById('modalProductPrice').textContent = formatCurrency(product.price);
+                document.getElementById('modalProductStock').textContent = product.stock || 0;
+                
+                // Status badge
+                const statusElement = document.getElementById('modalProductStatus');
+                const isActive = product.active === true || product.active === null;
+                const statusText = isActive ? 'Active' : 'Inactive';
+                const statusClass = isActive ? 'status-active' : 'status-inactive';
+                statusElement.innerHTML = `<span class="status-badge ${statusClass}">${statusText}</span>`;
+                
+                // Show modal
+                document.getElementById('productModal').style.display = 'flex';
+                
+            } catch (error) {
+                console.error('Error fetching product details:', error);
+                alert('Lỗi khi tải thông tin sản phẩm: ' + error.message);
+            }
+        }
+        
+        // Close modal
+        function closeProductModal() {
+            document.getElementById('productModal').style.display = 'none';
+        }
+        
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('productModal');
+            if (event.target === modal) {
+                closeProductModal();
+            }
+        }
+        
+        // Edit product
+        function editProduct(id) {
+            alert(`Chỉnh sửa sản phẩm ID: ${id}`);
+            // TODO: Implement edit product
+        }
+        
+        // Initialize page
+        window.addEventListener('load', () => {
+            
+            // Setup search
+            const searchInput = document.getElementById('searchInput');
+            const pageSizeEl = document.getElementById('pageSize');
+            let searchTimeout;
+            searchInput.addEventListener('input', () => {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(() => {
+                    searchProducts();
+                }, 500); // Debounce 500ms
+            });
+
+            pageSizeEl?.addEventListener('change', () => {
+                const val = parseInt(pageSizeEl.value, 10);
+                currentPageSize = Number.isFinite(val) && val > 0 ? val : 20;
+                currentPage = 1;
+                loadProducts(currentQuery);
+            });
+            adminLayout.enforceAuth();
+            adminLayout.renderHeader();
+            adminLayout.setActiveNav();
+            
+            // Load products data
+            currentPageSize = parseInt(pageSizeEl?.value || '20', 10) || 20;
+            loadProducts('');
+        });
+    </script>
+</body>
+</html>
