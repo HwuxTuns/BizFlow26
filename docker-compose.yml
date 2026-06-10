@@ -342,7 +342,8 @@ services:
     networks:
       - bizflow-net
     mem_limit: 512m
-    cpus: 2.0
+    cpus: 1.0
+
 
   # =========================
   # 6. CATALOG SERVICE (SPRING BOOT)
@@ -372,7 +373,8 @@ services:
     networks:
       - bizflow-net
     mem_limit: 512m
-    cpus: 2.0
+    cpus: 1.0
+
 
   # =========================
   # 7. INVENTORY SERVICE (SPRING BOOT)
@@ -397,7 +399,8 @@ services:
     networks:
       - bizflow-net
     mem_limit: 512m
-    cpus: 2.0
+    cpus: 1.0
+
 
   # =========================
   # 8. CUSTOMER SERVICE (SPRING BOOT)
@@ -430,7 +433,8 @@ services:
     networks:
       - bizflow-net
     mem_limit: 512m
-    cpus: 2.0
+    cpus: 1.0
+
 
   # =========================
   # 9. AUTHENTICATION SERVICE (SPRING BOOT)
@@ -461,7 +465,8 @@ services:
     networks:
       - bizflow-net
     mem_limit: 512m
-    cpus: 2.0
+    cpus: 1.0
+
 
   # =========================
   # 10. REPORT SERVICE (SPRING BOOT)
@@ -500,7 +505,8 @@ services:
     networks:
       - bizflow-net
     mem_limit: 512m
-    cpus: 2.0
+    cpus: 1.0
+
 
   # =========================
   # 11. AI SERVICE (PYTHON FASTAPI)
