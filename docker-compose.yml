@@ -147,6 +147,8 @@ services:
         condition: service_started
       admin-report-service:
         condition: service_started
+      admin-home-service:
+        condition: service_started
     networks:
       - bizflow-net
     mem_limit: 256m
@@ -252,6 +254,31 @@ services:
         condition: service_healthy
       kafka:
         condition: service_started
+    networks:
+      - bizflow-net
+    mem_limit: 512m
+    cpus: 0.3
+
+  # =========================
+  # 4.5 ADMIN HOME SERVICE (SPRING BOOT)
+  # =========================
+  admin-home-service:
+    build:
+      context: ./BizFlow.AdminHomeService
+      dockerfile: Dockerfile
+    container_name: bizflow-admin-home-service
+    restart: always
+    ports:
+      - "8200:8200"
+    environment:
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_USER: root
+      DB_PASSWORD: ${MYSQL_ROOT_PASSWORD:-123456}
+      JAVA_OPTS: -Xms128m -Xmx256m
+    depends_on:
+      mysql:
+        condition: service_healthy
     networks:
       - bizflow-net
     mem_limit: 512m
